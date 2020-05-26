@@ -11,7 +11,6 @@ module.exports = {
             msg.channel.send('Please specify a game')
         } else {
             let gameSearch = args.join(' ')
-
             if (!page){var page = 0}
 
             function getData(search, callback) {
@@ -22,7 +21,6 @@ module.exports = {
             }
 
             let getResult = getData(gameSearch)
-
             const Embed = new Discord.MessageEmbed();
             Embed.setColor('#1ABC9C');
             Embed.setTitle(getResult["products"][page]["product-name"]);
@@ -31,14 +29,13 @@ module.exports = {
             if (getResult["products"][page]["cib-price"] / 100 !== 0.0) {Embed.addField('CIB Price:', `$${getResult["products"][0]["cib-price"] / 100}`, true);}
             if (getResult["products"][page]["new-price"] / 100 !== 0.0) {Embed.addField('NEW Price:', `$${getResult["products"][0]["new-price"] / 100}`, true);}
             Embed.addField('Search Query', gameSearch, true);
-            Embed.addField('Result', `1/${Object.keys(getResult).length+1}`, true)
-            Embed.addField('Get more info about this game', `https://www.pricecharting.com/game/${getResult["products"][0]["id"]}`)
+            Embed.addField('Result', `1/${Object.keys(getResult).length+1}`, true);
+            Embed.addField('Get more info about this game', `https://www.pricecharting.com/game/${getResult["products"][0]["id"]}`);
 
             msg.channel.send(Embed).then(msg => {
-                msg.react('⬅')
-                msg.react('➡')
+                msg.react('⬅');
+                msg.react('➡');
             });
-
 
         }
     }
