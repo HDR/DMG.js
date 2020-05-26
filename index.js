@@ -13,7 +13,7 @@ for (const file of commands) {
 }
 
 client.on('ready', () => {
-    console.log("Bot Online")
+    console.log("DMG.js Online")
     client.user.setActivity('Online!')
 });
 
