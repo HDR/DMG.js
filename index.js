@@ -43,16 +43,19 @@ client.on('messageReactionAdd', async (reaction, user) => {
 
     if(reaction.message.author.id !== user.id && reaction.message.author.id === client.user.id){
         let pricechecker = require('./commands/pricechecker')
-        page = reaction.message.embeds[0].fields[reaction.message.embeds[0].fields.length-2].value.split('/');
+        page = reaction.message.embeds[0].fields[parseInt(reaction.message.embeds[0].fields.length)-2].value.split('/');
         search = reaction.message.embeds[0].fields[reaction.message.embeds[0].fields.length-3].value;
         if(reaction.emoji.name === '➡') {
             await reaction.users.remove(user.id);
-            pricechecker.edit(reaction.message, search, parseInt(page[0])+1)
+            if(page[0] !== page[1]) {
+                console.log("debug")
+                pricechecker.edit(reaction.message, search, parseInt(page[0]))
+            }
         }
         if(reaction.emoji.name === '⬅'){
             await reaction.users.remove(user.id);
-            if(!page[0] < 1){
-                pricechecker.edit(reaction.message, search, parseInt(page[0])-1)
+            if(parseInt(page[0]) !== 1){
+                pricechecker.edit(reaction.message, search, parseInt(page[0])-2)
             }
 
         }
