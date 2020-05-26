@@ -1,0 +1,6 @@
+
+config.json
+.idea
+node_modules
+package-lock.json
+dmg-jsbot.iml
