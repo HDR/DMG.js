@@ -13,7 +13,7 @@ module.exports = {
             let gameSearch = args.join(' ')
             if (!page){var page = 0}
 
-            function getData(search, callback) {
+            function getData(search) {
                 var xmlHttp = new XMLHttpRequest();
                 xmlHttp.open("GET", `https://www.pricecharting.com/api/products?t=${pricechecker}&q=${search}`, false)
                 xmlHttp.send(null);
