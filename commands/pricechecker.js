@@ -25,12 +25,11 @@ function buildEmbed(gameSearch, page) {
 }
 
 module.exports = {
-    name: 'price check',
+    name: 'pricecheck',
     aliases: ['pricecheck', 'price', 'pc'],
     description: 'Price Checker',
     execute: function (msg, args) {
-        if (!args.length) {
-            msg.channel.send('Please specify a game')
+        if (!args.length) { msg.channel.send('Please specify a game')
         } else {
             let gameSearch = args.join(' ')
             msg.channel.send(buildEmbed(gameSearch, 0)).then(msg => {
