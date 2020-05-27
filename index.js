@@ -48,7 +48,6 @@ client.on('messageReactionAdd', async (reaction, user) => {
         if(reaction.emoji.name === '➡') {
             await reaction.users.remove(user.id);
             if(page[0] !== page[1]) {
-                console.log("debug")
                 pricechecker.edit(reaction.message, search, parseInt(page[0]))
             }
         }
