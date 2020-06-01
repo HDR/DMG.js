@@ -6,7 +6,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/speech": "^3.6.0",
     "discord.js": "^12.2.0",
+    "ffmpeg": "0.0.4",
+    "node-opus": "^0.3.3",
     "os-utils": "0.0.14",
     "physical-cpu-count": "^2.0.0",
     "xmlhttprequest": "^1.8.0"

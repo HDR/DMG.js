@@ -1,12 +1,19 @@
 const Discord = require("discord.js");
-var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { currencyconverter } = require('../config.json')
 
 function getData(from, to) {
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", `https://free.currencyconverterapi.com/api/v6/convert?q=${from}_${to}&compact=ultra&apiKey=${currencyconverter}`, false)
+    const xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("GET", `https://free.currconv.com/api/v7/convert?q=${from}_${to}&compact=ultra&apiKey=${currencyconverter}`, false)
     xmlHttp.send(null);
     return JSON.parse(xmlHttp.responseText);
+}
+
+function getCurrencies() {
+    const xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("GET", `https://free.currconv.com/api/v7/currencies?apiKey=${currencyconverter}`, false)
+    xmlHttp.send(null);
+    return JSON.parse(xmlHttp.responseText)["results"];
 }
 
 module.exports = {
@@ -17,9 +24,18 @@ module.exports = {
         if (!args[0] || !args[1] ||  !args[2]) {
             msg.channel.send('Please specify the Amount, Base Currency & Target Currency')
         } else {
+            if (!(args[1].toUpperCase() in getCurrencies())) {
+                msg.channel.send("⚠️ Please specify a valid base currency, you can find a list of valid Currencies at https://free.currconv.com/api/v7/currencies?apiKey=do-not-use-this-key")
+                return
+            }
+            if (!(args[2].toUpperCase() in getCurrencies())) {
+                msg.channel.send("⚠️ Please specify a valid target currency, you can find a list of valid Currencies at https://free.currconv.com/api/v7/currencies?apiKey=do-not-use-this-key")
+                return
+            }
             let data = getData(args[1], args[2]);
+            console.log(data);
             if(Object.keys(data).length === 0 && data.constructor === Object){
-                msg.channel.send('Please specify a valid currency, you can find a list of valid Currencies at https://free.currconv.com/api/v7/currencies?apiKey=do-not-use-this-key')
+                msg.channel.send('⚠ Something went wrong attempting to fetch data, please try again.')
             } else {
                 amount = Object.values(getData(args[1], args[2]))[0]
                 currencies = Object.keys(getData(args[1], args[2]))[0].split('_')

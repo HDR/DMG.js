@@ -1,5 +1,3 @@
-index = require('../index')
-
 module.exports = {
     name: 'echo',
     aliases: ['echo'],
