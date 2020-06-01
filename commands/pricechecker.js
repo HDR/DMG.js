@@ -1,6 +1,8 @@
 const Discord = require("discord.js");
+const constants = require('../constants')
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { pricechecker } = require('../config.json')
+const client = require('../index')
 
 function getData(search) {
     const xmlHttp = new XMLHttpRequest();
@@ -13,6 +15,39 @@ function getData(search) {
         return result;
     }
 }
+
+function edit (msg, args, page) {
+    msg.edit(buildEmbed(args, page))
+}
+
+constants.client.on('messageReactionAdd', async (reaction, user) => {
+    if (reaction.partial) {
+        try {
+            await reaction.fetch();
+        } catch (error) {
+            console.log("Failed to fetch reaction")
+            return;
+        }
+    }
+
+    if(reaction.message.author.id !== user.id && reaction.message.author.id === constants.client.user.id){
+        let page = reaction.message.embeds[0].fields[parseInt(reaction.message.embeds[0].fields.length)-2].value.split('/');
+        let search = reaction.message.embeds[0].fields[reaction.message.embeds[0].fields.length-3].value;
+        if(reaction.emoji.name === '➡') {
+            await reaction.users.remove(user.id);
+            if(page[0] !== page[1]) {
+                edit(reaction.message, search, parseInt(page[0]))
+            }
+        }
+        if(reaction.emoji.name === '⬅'){
+            await reaction.users.remove(user.id);
+            if(parseInt(page[0]) !== 1){
+                edit(reaction.message, search, parseInt(page[0])-2)
+            }
+
+        }
+    }
+})
 
 function buildEmbed(gameSearch, page) {
     let getResult = getData(gameSearch)
@@ -56,8 +91,4 @@ module.exports = {
 
         }
     },
-
-    edit: function (msg, args, page) {
-        msg.edit(buildEmbed(args, page))
-    }
 }
