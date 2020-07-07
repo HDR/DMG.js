@@ -42,13 +42,13 @@ module.exports = {
             Embed.setColor('#30f80c');
             Embed.setTitle('Server Statistics');
             Embed.addField('CPU Usage:', `${info}%`, true);
-            Embed.addField('\u200B', '\u200B', true)
+            Embed.addField('\u200B', '\u200B', true) //These are here for spacing reasons
             Embed.addField('Ram Usage:', `${parseInt(osutil.totalmem() - osutil.freemem()).toFixed(0)}MB/${parseInt(osutil.totalmem()).toFixed(0)}MB`, true)
             Embed.addField("Cores", pcc, true)
-            Embed.addField('\u200B', '\u200B', true)
+            Embed.addField('\u200B', '\u200B', true) //These are here for spacing reasons
             Embed.addField("Threads:", lcc, true)
             Embed.addField("Bot Uptime:", millisecondsToStr(osutil.processUptime() * 1000), true)
-            Embed.addField('\u200B', '\u200B', true)
+            Embed.addField('\u200B', '\u200B', true) //These are here for spacing reasons
             Embed.addField("System Uptime:", millisecondsToStr(os.uptime() * 1000), true)
             msg.channel.send(Embed);
         })
