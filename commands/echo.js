@@ -1,7 +1,7 @@
 module.exports = {
     name: 'echo',
     aliases: ['echo'],
-    description: 'Server Statistics',
+    description: 'Speak or edit as the bot',
     execute: function (msg, args) {
         let message;
         if(msg.member.hasPermission("MANAGE_GUILD")) {
