@@ -4,3 +4,8 @@ config.json
 node_modules
 package-lock.json
 dmg-jsbot.iml
+config.json.save
+texttovcc.js
+debug.js
+j4u-tracker.js
+stupidremover.js
