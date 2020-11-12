@@ -1,6 +1,9 @@
 {
   "token" : "",
-  "prefix" : "",
+  "prefixes" : ["", ""],
   "pricechecker" : "",
-  "currencyconverter" : ""
+  "currencyconverter" : "",
+  "cse_api_key": "",
+  "cse_cx" : "",
+  "marketChannel": ""
 }
