@@ -31,7 +31,6 @@ constants.client.on('message', msg => {
                 msg.reply(`Something went wrong attempting to execute command`);
             }
         }
-        else return;
     }
 });
 
