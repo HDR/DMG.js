@@ -13,8 +13,9 @@ module.exports = {
             Embed.setColor(fetchedMessage.member.displayHexColor)
             Embed.setAuthor(`${fetchedMessage.author.username}#${fetchedMessage.author.discriminator}`, fetchedMessage.author.avatarURL(), argstr)
             Embed.setDescription(fetchedMessage.content)
-            Embed.setFooter(`#${fetchedMessage.channel.name} - ${fetchedMessage.createdAt}`)
+            Embed.setFooter(`#${fetchedMessage.channel.name} - ${fetchedMessage.createdAt} \nQuote Requested By ${msg.author.username + "#" + msg.author.discriminator}`)
             msg.channel.send(Embed)
+            msg.delete()
         }).catch(console.error)
     }
 }
