@@ -1,4 +1,3 @@
-const Discord = require("discord.js");
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { currencyconverter } = require('../config.json')
 
