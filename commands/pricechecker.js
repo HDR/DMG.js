@@ -84,8 +84,8 @@ module.exports = {
             let gameSearch = args.join(' ')
             msg.channel.send(buildEmbed(gameSearch, 0)).then(msg => {
                 if (buildEmbed(gameSearch, 0) !== `Could not find any results for ${gameSearch}`) {
-                    msg.react('⬅');
-                    msg.react('➡');
+                    msg.react('⬅').then();
+                    msg.react('➡').then();
                 }
             });
 
