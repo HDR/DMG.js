@@ -9,3 +9,8 @@ texttovcc.js
 debug.js
 j4u-tracker.js
 stupidremover.js
+/commands/logger.js
+/commands/logging/
+/commands/discordlog.db
+/commands/warningHandler.js
+commands/pricechecker/price-guide.csv

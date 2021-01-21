@@ -2,7 +2,6 @@ const Discord = require("discord.js");
 const constants = require('../constants')
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { pricechecker } = require('../config.json')
-const client = require('../index')
 
 function getData(search) {
     const xmlHttp = new XMLHttpRequest();
@@ -17,7 +16,7 @@ function getData(search) {
 }
 
 function edit (msg, args, page) {
-    msg.edit(buildEmbed(args, page))
+    msg.edit(buildEmbed(args, page)).then()
 }
 
 constants.client.on('messageReactionAdd', async (reaction, user) => {
