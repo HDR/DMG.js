@@ -32,7 +32,6 @@ module.exports = {
                 return
             }
             let data = getData(args[1], args[2]);
-            console.log(data);
             if(Object.keys(data).length === 0 && data.constructor === Object){
                 msg.channel.send('⚠ Something went wrong attempting to fetch data, please try again.')
             } else {
