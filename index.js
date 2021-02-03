@@ -11,11 +11,6 @@ for (const file of commands) {
     constants.client.commands.set(command.name, command)
 }
 
-constants.client.on('ready', () => {
-    console.log("DMG.js Online")
-    constants.client.user.setActivity('Online!')
-});
-
 constants.client.on('message', msg => {
     for (const px of prefixes) {
         if(msg.content.trim().startsWith(px)){

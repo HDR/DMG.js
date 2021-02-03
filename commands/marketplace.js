@@ -20,6 +20,8 @@ constants.client.on('message', async msg => {
                                 message.unpin();
                             }
                         }));
+                        msg.author.send("https://tenor.com/view/hello-there-gif-9442662");
+                        msg.author.send("Hello there, this is just a reminder that you should include the region/country in your listing and if you're selling something please include the price, this makes it easier for other users to navigate the marketplace");
                         msg.pin();
 
                     }

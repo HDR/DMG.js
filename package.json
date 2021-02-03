@@ -25,9 +25,12 @@
     "os-utils": "0.0.14",
     "physical-cpu-count": "^2.0.0",
     "sqlite3": "^5.0.0",
+    "table-scraper": "^1.0.3",
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
+    "cron": "^1.8.2",
+    "node-cron": "^2.0.3",
     "node-os-utils": "^1.2.2"
   },
   "description": "A port of DMG-Bot from python to JavaScript"
