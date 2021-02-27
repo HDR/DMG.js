@@ -17,13 +17,11 @@ module.exports = {
         }
     ],
     choices: [],
-    execute: function (msg, args) {
-        let message;
-        if(msg.member.hasPermission("MANAGE_GUILD")) {
-            let channelid = args[0].replace(/[#<>]/g, '')
-            let channel = msg.client.channels.cache.get(channelid)
-            message = args.splice(1, args.length - 1).join(' ')
-            channel.send(message)
-            }
+    execute: function (channel, args, member) {
+        if(member.hasPermission("MANAGE_GUILD")) {
+            let channelid = args[0].value.replace(/[#<>]/g, '')
+            let chnl = channel.client.channels.cache.get(channelid)
+            chnl.send(args[1].value)
+        }
     }
 }

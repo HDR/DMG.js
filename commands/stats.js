@@ -13,31 +13,32 @@ module.exports = {
         }
     ],
     choices: [],
-    execute: function (msg, args) {
+    execute: function (channel, args, member) {
         const Embed = new Discord.MessageEmbed();
         Embed.setColor('#FCBA03');
         Embed.setTitle("User Statistics");
-        if (!args.length) {
-            Embed.addField('User', msg.author.username + "#" + msg.author.discriminator, true);
-            Embed.addField('ID', msg.author.id);
-            Embed.addField('Join Date', new Date(msg.member.joinedAt).toDateString(), true);
-            Embed.addField('Account Age', (new Date(Math.abs(msg.author.createdAt - Date.now()))/1000/60/60/24|0) + " Days", true)
-            Embed.setImage(msg.author.avatarURL())
-            msg.channel.send(embed=Embed)
+        if (typeof args === 'undefined') {
+            Embed.addField('User', `${member.user.username}#${member.user.discriminator}`, true);
+            Embed.addField('ID', member.user.id);
+            Embed.addField('Join Date', new Date(member.joinedAt).toDateString(), true);
+            Embed.addField('Account Age', (new Date(Math.abs(member.user.createdAt - Date.now()))/1000/60/60/24|0) + " Days", true)
+            Embed.setImage(member.user.avatarURL())
+            Embed.setFooter(`Requested by ${member.user.username}#${member.user.discriminator}`)
+            channel.send(embed=Embed)
         } else {
-            let argStr = args.join(' ').replace(/\D+/g, '')
-            let member = msg.guild.members.cache.get(argStr)
-            if (msg.member.hasPermission("MANAGE_MESSAGES")) {
-                if(member) {
-                    Embed.addField('User', member.user.username + "#" + member.user.discriminator, true);
-                    Embed.addField('ID', member.id);
-                    Embed.addField('Join Date', new Date(member.joinedAt).toDateString(), true);
-                    Embed.addField('Account Age', (new Date(Math.abs(member.user.createdAt - Date.now()))/1000/60/60/24|0) + " Days", true)
-                    Embed.setImage(member.user.avatarURL)
-                    msg.channel.send(embed=Embed)
-                } else {msg.channel.send("I could not find that user, please try again")}
+            let user = channel.guild.members.cache.get(args[0].value)
+            if (member.hasPermission("MANAGE_MESSAGES")) {
+                if(user) {
+                    Embed.addField('User', user.user.username + "#" + user.user.discriminator, true);
+                    Embed.addField('ID', user.id);
+                    Embed.addField('Join Date', new Date(user.joinedAt).toDateString(), true);
+                    Embed.addField('Account Age', (new Date(Math.abs(user.user.createdAt - Date.now()))/1000/60/60/24|0) + " Days", true)
+                    Embed.setImage(user.user.avatarURL)
+                    Embed.setFooter(`Requested by ${member.user.username}#${member.user.discriminator}`)
+                    channel.send(embed=Embed)
+                } else {channel.send(`<@!${member.id}> I could not find that user, please try again`)}
             } else {
-                msg.channel.send("Only moderators and above may check the stats of others.")
+                channel.send(`<@!${member.id}> Only moderators and above may check the stats of others.`)
             }
 
         }

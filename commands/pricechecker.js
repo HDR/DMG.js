@@ -15,8 +15,8 @@ function getData(search) {
     }
 }
 
-function edit (msg, args, page) {
-    msg.edit(buildEmbed(args, page)).then()
+function edit (msg, args, page, member) {
+    msg.edit(buildEmbed(args, page, member)).then()
 }
 
 constants.client.on('messageReactionAdd', async (reaction, user) => {
@@ -32,23 +32,24 @@ constants.client.on('messageReactionAdd', async (reaction, user) => {
     if(reaction.message.author.id !== user.id && reaction.message.author.id === constants.client.user.id){
         let page = reaction.message.embeds[0].fields[parseInt(reaction.message.embeds[0].fields.length)-2].value.split('/');
         let search = reaction.message.embeds[0].fields[reaction.message.embeds[0].fields.length-3].value;
+        let footer = reaction.message.embeds[0].footer.text;
         if(reaction.emoji.name === '➡') {
-            await reaction.users.remove(user.id);
+            await reaction.users.remove(user.id).then();
             if(page[0] !== page[1]) {
-                edit(reaction.message, search, parseInt(page[0]))
+                edit(reaction.message, search, parseInt(page[0]), footer)
             }
         }
         if(reaction.emoji.name === '⬅'){
-            await reaction.users.remove(user.id);
+            await reaction.users.remove(user.id).then();
             if(parseInt(page[0]) !== 1){
-                edit(reaction.message, search, parseInt(page[0])-2)
+                edit(reaction.message, search, parseInt(page[0])-2, footer)
             }
 
         }
     }
 })
 
-function buildEmbed(gameSearch, page) {
+function buildEmbed(gameSearch, page, member) {
     let getResult = getData(gameSearch)
     if(getResult ===  "error"){
         return `Could not find any results for ${gameSearch}`
@@ -69,6 +70,7 @@ function buildEmbed(gameSearch, page) {
         Embed.addField('Search Query', gameSearch, true);
         Embed.addField('Result', `${page + 1}/${Object.keys(getResult.products).length}`, true);
         Embed.addField('Get more info about this game', `https://www.pricecharting.com/game/${getResult["products"][page]["id"]}`);
+        Embed.setFooter(`${member}`)
         return Embed;
     }
 }
@@ -86,17 +88,12 @@ module.exports = {
         }
     ],
     choices: [],
-    execute: function (msg, args) {
-        if (!args.length) { msg.channel.send('Please specify a game')
-        } else {
-            let gameSearch = args.join(' ')
-            msg.channel.send(buildEmbed(gameSearch, 0)).then(msg => {
-                if (buildEmbed(gameSearch, 0) !== `Could not find any results for ${gameSearch}`) {
-                    msg.react('⬅').then();
-                    msg.react('➡').then();
-                }
-            });
-
-        }
+    execute: function (channel, args, member) {
+        channel.send(buildEmbed(args[0].value, 0, `Requested by ${member.user.username}#${member.user.discriminator}`)).then(msg => {
+            if (buildEmbed(args[0].value, 0) !== `Could not find any results for ${args[0].value} <@!${member.user.id}>`) {
+                msg.react('⬅').then();
+                msg.react('➡').then();
+            }
+        });
     },
 }

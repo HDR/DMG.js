@@ -1,5 +1,6 @@
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { currencyconverter } = require('../config.json')
+const Discord = require("discord.js");
 
 function getData(from, to) {
     const xmlHttp = new XMLHttpRequest();
@@ -40,26 +41,32 @@ module.exports = {
         }
     ],
     choices: [],
-    execute: function (msg, args) {
-        if (!args[0] || !args[1] ||  !args[2]) {
-            msg.channel.send('Please specify the Amount, Base Currency & Target Currency')
+    execute: function (channel, args, member) {
+        if (!(args[1].value.toUpperCase() in getCurrencies())) {
+            channel.send("⚠️ Please specify a valid base currency, you can find a list of valid Currencies at https://free.currconv.com/api/v7/currencies?apiKey=do-not-use-this-key")
+            return
+        }
+        if (!(args[2].value.toUpperCase() in getCurrencies())) {
+            channel.send("⚠️ Please specify a valid target currency, you can find a list of valid Currencies at https://free.currconv.com/api/v7/currencies?apiKey=do-not-use-this-key")
+            return
+        }
+        let data = getData(args[1].value, args[2].value);
+        if(Object.keys(data).length === 0 && data.constructor === Object){
+            channel.send('⚠ Something went wrong attempting to fetch data, please try again.')
         } else {
-            if (!(args[1].toUpperCase() in getCurrencies())) {
-                msg.channel.send("⚠️ Please specify a valid base currency, you can find a list of valid Currencies at https://free.currconv.com/api/v7/currencies?apiKey=do-not-use-this-key")
-                return
-            }
-            if (!(args[2].toUpperCase() in getCurrencies())) {
-                msg.channel.send("⚠️ Please specify a valid target currency, you can find a list of valid Currencies at https://free.currconv.com/api/v7/currencies?apiKey=do-not-use-this-key")
-                return
-            }
-            let data = getData(args[1], args[2]);
-            if(Object.keys(data).length === 0 && data.constructor === Object){
-                msg.channel.send('⚠ Something went wrong attempting to fetch data, please try again.')
-            } else {
-                amount = Object.values(getData(args[1], args[2]))[0]
-                currencies = Object.keys(getData(args[1], args[2]))[0].split('_')
-                msg.channel.send(`💸 ${parseInt(args[0]).toFixed(1)} ${currencies[0]} -> ${args[0] * amount.toFixed(2)} ${currencies[1]} `)
-            }
+            amount = Object.values(getData(args[1].value, args[2].value))[0]
+            currencies = Object.keys(getData(args[1].value, args[2].value))[0].split('_')
+            const Embed = new Discord.MessageEmbed();
+            Embed.setColor('#2EB2C9');
+            Embed.setTitle("Currency Conversion");
+            Embed.addField("Base Currency", args[1].value.toUpperCase(), true)
+            Embed.addField("Target Currency", args[2].value.toUpperCase(), true)
+            Embed.addField("‎", "‎", true)
+            Embed.addField("Base Amount", `${args[0].value} ${args[1].value.toUpperCase()}`,true)
+            Embed.addField("Converted Amount", `${args[0].value * amount.toFixed(2)} ${currencies[1]}`, true)
+            Embed.addField("‎", "‎", true)
+            Embed.setFooter(`Requested by ${member.user.username}#${member.user.discriminator}`)
+            channel.send(embed=Embed)
         }
     }
 }
