@@ -2,6 +2,21 @@ module.exports = {
     name: 'echo',
     aliases: ['echo'],
     description: 'Echo a message as the bot',
+    options: [
+        {
+            "name": "channel",
+            "description": "Target channel",
+            "type": 7,
+            "required": true
+        },
+        {
+            "name": "Message",
+            "description": "Message Content",
+            "type": 3,
+            "required": true
+        }
+    ],
+    choices: [],
     execute: function (msg, args) {
         let message;
         if(msg.member.hasPermission("MANAGE_GUILD")) {

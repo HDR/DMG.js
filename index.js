@@ -9,7 +9,23 @@ constants.client.commands = new Discord.Collection();
 for (const file of commands) {
     const command = require(`./commands/${file}`);
     constants.client.commands.set(command.name, command)
+    constants.client.api.applications('419539233850785792').guilds('297663164701605888').commands.post({data: {
+            name: command.name,
+            description: command.description,
+            options: command.options,
+            choices: command.choices
+       }}).then(console.log)
 }
+
+constants.client.ws.on('INTERACTION_CREATE', async interaction => {
+    //const guild = constants.client.guilds.cache.get(interaction.guild_id)
+    //const channel = guild.channels.cache.get(interaction.channel_id);
+    //try{
+    //    command.execute(interaction.data.name, args);
+    //}
+    console.log(interaction)
+    console.log(interaction.data.options)
+})
 
 constants.client.on('message', msg => {
     for (const px of prefixes) {
@@ -29,4 +45,4 @@ constants.client.on('message', msg => {
     }
 });
 
-constants.client.login(token);
+constants.client.login(token).then();

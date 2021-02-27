@@ -1,56 +1,45 @@
-const Discord = require('discord.js')
-const os = require('os')
-const osutil = require('os-utils')
-const osu = require('node-os-utils')
-
-function millisecondsToStr (milliseconds) {
-    function numberEnding (number) {
-        return (number > 1) ? 's' : '';
-    }
-
-    let temp = Math.floor(milliseconds / 1000);
-    const days = Math.floor((temp %= 31536000) / 86400);
-    if (days) {
-        return days + ' day' + numberEnding(days);
-    }
-    const hours = Math.floor((temp %= 86400) / 3600);
-    if (hours) {
-        return hours + ' hour' + numberEnding(hours);
-    }
-    const minutes = Math.floor((temp %= 3600) / 60);
-    if (minutes) {
-        return minutes + ' minute' + numberEnding(minutes);
-    }
-    const seconds = temp % 60;
-    if (seconds) {
-        return seconds + ' second' + numberEnding(seconds);
-    }
-    return 'less than a second'; //'just now' //or other string you like;
-}
+const Discord = require("discord.js");
 
 module.exports = {
     name: 'stats',
-    aliases: ['stats'],
-    description: 'Server Statistics',
+    aliases: ['me', 'ustats'],
+    description: 'Displays user statistics',
+    options: [
+        {
+            "name": "user",
+            "description": "Get another user's stats",
+            "type": 6 ,
+            "required": false
+        }
+    ],
+    choices: [],
     execute: function (msg, args) {
-        const pcc = require('physical-cpu-count')
-        const lcc = require('os').cpus().length
         const Embed = new Discord.MessageEmbed();
-        var cpu = osu.cpu
+        Embed.setColor('#FCBA03');
+        Embed.setTitle("User Statistics");
+        if (!args.length) {
+            Embed.addField('User', msg.author.username + "#" + msg.author.discriminator, true);
+            Embed.addField('ID', msg.author.id);
+            Embed.addField('Join Date', new Date(msg.member.joinedAt).toDateString(), true);
+            Embed.addField('Account Age', (new Date(Math.abs(msg.author.createdAt - Date.now()))/1000/60/60/24|0) + " Days", true)
+            Embed.setImage(msg.author.avatarURL())
+            msg.channel.send(embed=Embed)
+        } else {
+            let argStr = args.join(' ').replace(/\D+/g, '')
+            let member = msg.guild.members.cache.get(argStr)
+            if (msg.member.hasPermission("MANAGE_MESSAGES")) {
+                if(member) {
+                    Embed.addField('User', member.user.username + "#" + member.user.discriminator, true);
+                    Embed.addField('ID', member.id);
+                    Embed.addField('Join Date', new Date(member.joinedAt).toDateString(), true);
+                    Embed.addField('Account Age', (new Date(Math.abs(member.user.createdAt - Date.now()))/1000/60/60/24|0) + " Days", true)
+                    Embed.setImage(member.user.avatarURL)
+                    msg.channel.send(embed=Embed)
+                } else {msg.channel.send("I could not find that user, please try again")}
+            } else {
+                msg.channel.send("Only moderators and above may check the stats of others.")
+            }
 
-        cpu.usage(1000).then(info => {
-            Embed.setColor('#30f80c');
-            Embed.setTitle('Server Statistics');
-            Embed.addField('CPU Usage:', `${info}%`, true);
-            Embed.addField('\u200B', '\u200B', true) //These are here for spacing reasons
-            Embed.addField('Ram Usage:', `${parseInt(osutil.totalmem() - osutil.freemem()).toFixed(0)}MB/${parseInt(osutil.totalmem()).toFixed(0)}MB`, true)
-            Embed.addField("Cores", pcc, true)
-            Embed.addField('\u200B', '\u200B', true) //These are here for spacing reasons
-            Embed.addField("Threads:", lcc, true)
-            Embed.addField("Bot Uptime:", millisecondsToStr(osutil.processUptime() * 1000), true)
-            Embed.addField('\u200B', '\u200B', true) //These are here for spacing reasons
-            Embed.addField("System Uptime:", millisecondsToStr(os.uptime() * 1000), true)
-            msg.channel.send(Embed);
-        })
+        }
     }
 }

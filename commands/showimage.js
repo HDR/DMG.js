@@ -14,9 +14,28 @@ function getData(search) {
 }
 
 module.exports = {
-    name: 'showimage',
+    name: 'image',
     aliases: ['image', 'i', 'simage'],
     description: 'Pulls the first image search result from google',
+    options: [
+        {
+            "name": "Search",
+            "description": "Image you want to search for",
+            "type": 3 ,
+            "required": true
+        }
+    ],
+    choices: [
+        {
+            "name": "Spoiler",
+            "value": "no"
+        },
+        {
+            "name": "Spoiler",
+            "value": "yes"
+        }
+
+    ],
     execute: function (msg, args) {
         const image = getData(args.join(' '))
         if(msg["content"].includes("simage" )) {

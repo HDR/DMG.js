@@ -1,7 +1,22 @@
 module.exports = {
     name: 'edit',
     aliases: ['edit'],
-    description: 'Edit a message as the bot',
+    description: 'Edit a message posted by the bot',
+    options: [
+        {
+            "name": "URL",
+            "description": "Link to message you want to edit",
+            "type": 3 ,
+            "required": true
+        },
+        {
+            "name": "Contents",
+            "description": "New message contents",
+            "type": 3 ,
+            "required": true
+        }
+    ],
+    choices: [],
     execute: function (msg, args) {
         let message;
         if(msg.member.hasPermission("MANAGE_GUILD")) {

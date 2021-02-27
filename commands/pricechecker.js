@@ -76,7 +76,16 @@ function buildEmbed(gameSearch, page) {
 module.exports = {
     name: 'pricecheck',
     aliases: ['pricecheck', 'price', 'pc'],
-    description: 'Price Checker',
+    description: 'GB,GBC & GBA Price Checker',
+    options: [
+        {
+            "name": "game",
+            "description": "GB, GBC or GBA game",
+            "type": 3,
+            "required": true
+        }
+    ],
+    choices: [],
     execute: function (msg, args) {
         if (!args.length) { msg.channel.send('Please specify a game')
         } else {
