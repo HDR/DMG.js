@@ -1,6 +1,7 @@
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { currencyconverter } = require('../config.json')
 const Discord = require("discord.js");
+const constants = require('../constants')
 
 function getData(from, to) {
     const xmlHttp = new XMLHttpRequest();
@@ -41,7 +42,7 @@ module.exports = {
         }
     ],
     choices: [],
-    execute: function (channel, args, member) {
+    execute: function (channel, args, member, interaction) {
         if (!(args[1].value.toUpperCase() in getCurrencies())) {
             channel.send("⚠️ Please specify a valid base currency, you can find a list of valid Currencies at https://free.currconv.com/api/v7/currencies?apiKey=do-not-use-this-key")
             return
@@ -54,19 +55,19 @@ module.exports = {
         if(Object.keys(data).length === 0 && data.constructor === Object){
             channel.send('⚠ Something went wrong attempting to fetch data, please try again.')
         } else {
-            amount = Object.values(getData(args[1].value, args[2].value))[0]
-            currencies = Object.keys(getData(args[1].value, args[2].value))[0].split('_')
+            let amount = Object.values(getData(args[1].value, args[2].value))[0]
+            let currencies = Object.keys(getData(args[1].value, args[2].value))[0].split('_')
             const Embed = new Discord.MessageEmbed();
+            let conversion = args[0].value * amount
             Embed.setColor('#2EB2C9');
             Embed.setTitle("Currency Conversion");
             Embed.addField("Base Currency", args[1].value.toUpperCase(), true)
             Embed.addField("Target Currency", args[2].value.toUpperCase(), true)
             Embed.addField("‎", "‎", true)
             Embed.addField("Base Amount", `${args[0].value} ${args[1].value.toUpperCase()}`,true)
-            Embed.addField("Converted Amount", `${args[0].value * amount.toFixed(2)} ${currencies[1]}`, true)
+            Embed.addField("Converted Amount", `${conversion.toFixed(2)} ${currencies[1]}`, true)
             Embed.addField("‎", "‎", true)
-            Embed.setFooter(`Requested by ${member.user.username}#${member.user.discriminator}`)
-            channel.send(embed=Embed)
+            constants.client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {embeds: [Embed]}}})
         }
     }
 }

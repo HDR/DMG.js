@@ -13,8 +13,7 @@ for (const file of commands) {
     constants.client.api.applications('419539233850785792').commands.post({data: {
             name: command.name,
             description: command.description,
-            options: command.options,
-            choices: command.choices
+            options: command.options
        }}).then()
 }
 
@@ -29,7 +28,7 @@ constants.client.ws.on('INTERACTION_CREATE', interaction => {
     const member = guild.members.cache.get(interaction.member.user.id)
     const command = constants.client.commands.get(interaction.data.name) || constants.client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.data.name));
     try{
-        command.execute(channel, interaction.data.options, member);
+        command.execute(channel, interaction.data.options, member, interaction);
     } catch (error) {
         console.error(error);
     }

@@ -1,3 +1,4 @@
+const constants = require('../constants')
 const sqlite3 = require('sqlite3');
 
 module.exports = {
@@ -19,7 +20,7 @@ module.exports = {
         }
     ],
     choices: [],
-    execute: function (channel, args, member) {
+    execute: function (channel, args, member, interaction) {
         let db = new sqlite3.Database('./dmg.db', (err) => {if (err) {console.log(err.message);} console.log("Loaded Warning Database")});
         db.serialize(() => {db.prepare(`CREATE TABLE IF NOT EXISTS warnings (User text, WarningMessage text, WarnedBy text, Date text)`).run().finalize();});
         if (member.roles.cache.find(r => r.name === "Yokoi Watch" || r.name === "MGB")) {
@@ -29,11 +30,11 @@ module.exports = {
                     if (err) {
                         return console.log(`Join ${err.message}`)
                     } else {
-                        channel.send(`<@!${user.id}> You have been warned by <@!${member.user.id}> With the following warning \`${args[1].value}\``)
+                        constants.client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `<@!${user.id}> You have been warned by <@!${member.user.id}> With the following warning \`${args[1].value}\``}}})
                     }
                 })
             }  else {
-                channel.send(`<@!${channel.author.id}> Could not find that user in this guild`)
+                constants.client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `Could not find that user in this guild`}}})
             }
         }
         db.close()

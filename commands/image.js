@@ -1,3 +1,4 @@
+const constants = require('../constants')
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { cse_api_key, cse_cx } = require('../config.json')
 
@@ -25,23 +26,15 @@ module.exports = {
             "required": true
         }
     ],
-    choices: [
-        {
-            "name": "Spoiler",
-            "value": "no"
-        },
-        {
-            "name": "Spoiler",
-            "value": "yes"
-        }
-
-    ],
-    execute: function (msg, args) {
-        const image = getData(args.join(' '))
-        if(msg["content"].includes("simage" )) {
-            msg.channel.send(`||${image}||`)
-        } else {
-            msg.channel.send(image)
-        }
+    execute: function (channel, args, member, interaction) {
+        //const Embed = new Discord.MessageEmbed();
+        //Embed.setColor('#41F097');
+        //Embed.setTitle("Image Search");
+        //Embed.setAuthor(`${member.user.name}#${member.user.discriminator}`)
+        //Embed.setTimestamp()
+        //console.log(image)
+        //Embed.setImage("")
+        //channel.send(image)
+        constants.client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4, data: {content: getData(args[0].value)}}})
     }
 }
