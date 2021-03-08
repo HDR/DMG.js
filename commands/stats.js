@@ -35,7 +35,7 @@ module.exports = {
                     Embed.addField('Join Date', new Date(user.joinedAt).toDateString(), true);
                     Embed.addField('Account Age', (new Date(Math.abs(user.user.createdAt - Date.now()))/1000/60/60/24|0) + " Days", true)
                     Embed.setFooter(`Requested by ${member.user.username}#${member.user.discriminator}`)
-                    channel.send(Embed)
+                    constants.client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {embeds: [Embed]}}})
                 } else {constants.client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `I could not find that user, please try again`}}})}
             } else {
                 constants.client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `Only moderators and above may check the stats of others`}}})
