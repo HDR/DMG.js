@@ -30,7 +30,7 @@ module.exports = {
                     if (err) {
                         return console.log(`Join ${err.message}`)
                     } else {
-                        constants.client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `<@!${user.id}> You have been warned by <@!${member.user.id}> With the following warning \`${args[1].value}\``}}})
+                        constants.client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `<@!${user.id}> Was successfully warned with the following warning \`${args[1].value}\``, flags: 64}}}).then(user.send(`You have been warned by the Game Boy Discord staff with the following warning \`${args[1].value}\``))
                     }
                 })
             }  else {

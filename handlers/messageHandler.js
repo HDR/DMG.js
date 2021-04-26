@@ -7,8 +7,12 @@ constants.client.on('message', msg => {
         let guild = constants.client.guilds.cache.get('246604458744610816');
         const Embed = new Discord.MessageEmbed();
         Embed.setColor('#0D22CC');
-        Embed.setTitle('User Sent Message to DMG')
-        Embed.addField('User:', msg.author.username + "#" + msg.author.discriminator, false)
+        if(msg.author.bot){
+            Embed.setTitle('DMG Sent Message to User')
+        } else {
+            Embed.setTitle('User Sent Message to DMG')
+            Embed.addField('User:', msg.author.username + "#" + msg.author.discriminator, false)
+        }
         Embed.addField('Message:', msg.content);
         guild.channels.cache.get('477166711536091136').send(Embed);
     }
