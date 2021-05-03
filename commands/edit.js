@@ -1,4 +1,4 @@
-const constants = require('../constants')
+const {client} = require("../constants");
 module.exports = {
     name: 'edit',
     aliases: ['edit'],
@@ -24,7 +24,7 @@ module.exports = {
             let chnl = channel.client.channels.cache.get(splitstr[5])
             chnl.messages.fetch(splitstr[6]).then(msg => {
                 msg.edit(args[1].value).then()
-                constants.client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `Edited message in ${chnl.name}`}}})
+                client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `Edited message in ${chnl.name}`}}})
             })
         }
     }

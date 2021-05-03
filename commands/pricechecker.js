@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const constants = require('../constants')
+const {client} = require("../constants");
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { pricechecker } = require('../config.json')
 
@@ -19,7 +19,7 @@ function edit (msg, args, page, member) {
     msg.edit(buildEmbed(args, page, member)).then()
 }
 
-constants.client.on('messageReactionAdd', async (reaction, user) => {
+client.on('messageReactionAdd', async (reaction, user) => {
     if (reaction.partial) {
         try {
             await reaction.fetch();
@@ -29,7 +29,7 @@ constants.client.on('messageReactionAdd', async (reaction, user) => {
         }
     }
 
-    if(reaction.message.author.id !== user.id && reaction.message.author.id === constants.client.user.id){
+    if(reaction.message.author.id !== user.id && reaction.message.author.id === client.user.id){
         let page = reaction.message.embeds[0].fields[parseInt(reaction.message.embeds[0].fields.length)-2].value.split('/');
         if(!page){return;}
         let search = reaction.message.embeds[0].fields[reaction.message.embeds[0].fields.length-3].value;
@@ -75,7 +75,7 @@ function buildEmbed(gameSearch, page) {
 }
 
 function addNavigators(){
-    let msg = constants.client.user.lastMessage
+    let msg = client.user.lastMessage
     if(!msg.content.startsWith("Could not find any results for")){
         msg.react('⬅').then();
         msg.react('➡').then();
@@ -96,7 +96,7 @@ module.exports = {
     ],
     choices: [],
     execute: function (channel, args, member, interaction) {
-        constants.client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {embeds: [buildEmbed(args[0].value, 0)]}}})
+        client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {embeds: [buildEmbed(args[0].value, 0)]}}})
         setTimeout(addNavigators, 2000)
     },
 }

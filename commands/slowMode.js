@@ -1,8 +1,9 @@
 const {client} = require("../constants");
+
 module.exports = {
-    name: 'echo',
-    aliases: ['echo'],
-    description: '[Admin] Echo a message as the bot',
+    name: 'slowmode',
+    aliases: ['slowmode'],
+    description: 'Set channel slow modes (admin only)',
     options: [
         {
             "name": "channel",
@@ -11,9 +12,9 @@ module.exports = {
             "required": true
         },
         {
-            "name": "Message",
-            "description": "Message Content",
-            "type": 3,
+            "name": "delay",
+            "description": "per-user slow mode delay in seconds",
+            "type": 4,
             "required": true
         }
     ],
@@ -22,8 +23,8 @@ module.exports = {
         if(member.hasPermission("MANAGE_GUILD")) {
             let channelid = args[0].value.replace(/[#<>]/g, '')
             let chnl = channel.client.channels.cache.get(channelid)
-            chnl.send(args[1].value)
-            client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `Echoed message to ${chnl.name}`}}})
+            chnl.setRateLimitPerUser(args[1].value, "Slow mode set by bot").then()
+            client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `Set ${chnl.name} slow mode to ${args[1].value} seconds`, flags: 64}}})
         }
     }
 }

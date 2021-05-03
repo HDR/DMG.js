@@ -1,6 +1,6 @@
 const sqlite3 = require('sqlite3');
 const Discord = require("discord.js");
-const constants = require('../constants')
+const {client} = require("../constants");
 
 module.exports = {
     name: 'warnings',
@@ -43,16 +43,16 @@ module.exports = {
                                 if(data[0] && wWarnee1) {Embed.addField("Warning Message", data[0].warningMessage, true); Embed.addField("Warned By", wWarnee1.user.tag, true); Embed.addField("Date", new Date(Math.trunc(data[0].date)).toDateString(), true)}
                                 if(data[1] && wWarnee2) {Embed.addField("Warning Message", data[1].warningMessage, true); Embed.addField("Warned By", wWarnee2.user.tag, true); Embed.addField("Date", new Date(Math.trunc(data[1].date)).toDateString(), true)}
                                 if(data[2] && wWarnee3) {Embed.addField("Warning Message", data[2].warningMessage, true); Embed.addField("Warned By", wWarnee3.user.tag, true); Embed.addField("Date", new Date(Math.trunc(data[2].date)).toDateString(), true)}
-                                constants.client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {embeds: [Embed]}}})
+                                client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {embeds: [Embed]}}})
 
                             }
                         } else {
-                            constants.client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `User has no warnings`}}})
+                            client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `User has no warnings`}}})
                         }
                     });
                 });
             } else {
-                constants.client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `Could not find that user in this guild`}}})
+                client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `Could not find that user in this guild`}}})
             }
             db.close()
         }

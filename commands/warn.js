@@ -1,4 +1,4 @@
-const constants = require('../constants')
+const {client} = require("../constants");
 const sqlite3 = require('sqlite3');
 
 module.exports = {
@@ -30,11 +30,11 @@ module.exports = {
                     if (err) {
                         return console.log(`Join ${err.message}`)
                     } else {
-                        constants.client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `<@!${user.id}> Was successfully warned with the following warning \`${args[1].value}\``, flags: 64}}}).then(user.send(`You have been warned by the Game Boy Discord staff with the following warning \`${args[1].value}\``))
+                        client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `<@!${user.id}> Was successfully warned with the following warning \`${args[1].value}\``, flags: 64}}}).then(user.send(`You have been warned by the Game Boy Discord staff with the following warning \`${args[1].value}\``))
                     }
                 })
             }  else {
-                constants.client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `Could not find that user in this guild`}}})
+                client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `Could not find that user in this guild`}}})
             }
         }
         db.close()

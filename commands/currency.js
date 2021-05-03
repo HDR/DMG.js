@@ -1,7 +1,7 @@
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { currencyconverter } = require('../config.json')
 const Discord = require("discord.js");
-const constants = require('../constants')
+const {client} = require("../constants");
 
 function getData(from, to) {
     const xmlHttp = new XMLHttpRequest();
@@ -67,7 +67,7 @@ module.exports = {
             Embed.addField("Base Amount", `${args[0].value} ${args[1].value.toUpperCase()}`,true)
             Embed.addField("Converted Amount", `${conversion.toFixed(2)} ${currencies[1]}`, true)
             Embed.addField("‎", "‎", true)
-            constants.client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {embeds: [Embed]}}})
+            client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {embeds: [Embed]}}})
         }
     }
 }

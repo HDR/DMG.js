@@ -1,4 +1,4 @@
-const constants = require('../constants')
+const {client} = require("../constants");
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { cse_api_key, cse_cx } = require('../config.json')
 
@@ -35,6 +35,6 @@ module.exports = {
         //console.log(image)
         //Embed.setImage("")
         //channel.send(image)
-        constants.client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4, data: {content: getData(args[0].value)}}})
+        client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4, data: {content: getData(args[0].value)}}})
     }
 }

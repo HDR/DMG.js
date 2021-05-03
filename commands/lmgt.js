@@ -1,4 +1,4 @@
-const constants = require('../constants')
+const {client} = require("../constants");
 
 module.exports = {
     name: 'letmegooglethat',
@@ -14,6 +14,6 @@ module.exports = {
     ],
     choices: [],
     execute: function (channel, args, member, interaction) {
-        constants.client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `https://letmegooglethat.com/?q=${args[0].value.split(' ').join('+')}`}}})
+        client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `https://letmegooglethat.com/?q=${args[0].value.split(' ').join('+')}`}}})
     }
 }

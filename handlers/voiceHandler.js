@@ -1,6 +1,6 @@
-const constants = require('../constants')
+const {client} = require("../constants");
 
-constants.client.on('voiceStateUpdate', (oldState, newState) => {
+client.on('voiceStateUpdate', (oldState, newState) => {
     if (oldState.member.user.bot) return;
 
     if(newState.channelID !== null) {

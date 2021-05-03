@@ -1,16 +1,17 @@
-const constants = require('./constants')
+const {client} = require("./constants");
 const Discord = require('discord.js')
 const { token } = require('./config.json')
 const fs = require('fs')
-
 const commands = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const handlers = fs.readdirSync('./handlers').filter(file => file.endsWith('.js'));
-constants.client.commands = new Discord.Collection();
+const eventLoggers = fs.readdirSync('./eventLoggers').filter(file => file.endsWith('.js'));
+
+client.commands = new Discord.Collection();
 
 for (const file of commands) {
     const command = require(`./commands/${file}`);
-    constants.client.commands.set(command.name, command)
-    constants.client.api.applications('419539233850785792').commands.post({data: {
+    client.commands.set(command.name, command)
+    client.api.applications('419539233850785792').commands.post({data: {
             name: command.name,
             description: command.description,
             options: command.options
@@ -19,14 +20,20 @@ for (const file of commands) {
 
 for (const file of handlers) {
     const handler = require(`./handlers/${file}`);
-    constants.client.commands.set(handler.name, handler)
+    client.commands.set(handler.name, handler)
 }
 
-constants.client.ws.on('INTERACTION_CREATE', interaction => {
-    const guild = constants.client.guilds.cache.get(interaction.guild_id)
+for (const file of eventLoggers) {
+    const eventLogger = require(`./eventLoggers/${file}`);
+    client.commands.set(eventLogger.name, eventLogger)
+}
+
+
+client.ws.on('INTERACTION_CREATE', interaction => {
+    const guild = client.guilds.cache.get(interaction.guild_id)
     const channel = guild.channels.cache.get(interaction.channel_id);
     const member = guild.members.cache.get(interaction.member.user.id)
-    const command = constants.client.commands.get(interaction.data.name) || constants.client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.data.name));
+    const command = client.commands.get(interaction.data.name) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.data.name));
     try{
         command.execute(channel, interaction.data.options, member, interaction);
     } catch (error) {
@@ -34,4 +41,4 @@ constants.client.ws.on('INTERACTION_CREATE', interaction => {
     }
 })
 
-constants.client.login(token).then();
+client.login(token).then();

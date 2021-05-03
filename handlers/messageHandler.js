@@ -1,10 +1,10 @@
-const constants = require('../constants')
+const {client} = require("../constants");
 const Discord = require("discord.js");
 
-constants.client.on('message', msg => {
+client.on('message', msg => {
     let cooldown = new Set();
     if (msg.guild === null) {
-        let guild = constants.client.guilds.cache.get('246604458744610816');
+        let guild = client.guilds.cache.get('246604458744610816');
         const Embed = new Discord.MessageEmbed();
         Embed.setColor('#0D22CC');
         if(msg.author.bot){

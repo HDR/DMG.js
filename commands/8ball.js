@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const constants = require('../constants')
+const {client} = require("../constants");
 
 module.exports = {
     name: '8ball',
@@ -16,6 +16,6 @@ module.exports = {
         Embed.setDescription(random)
         Embed.setThumbnail("https://gameboy.github.io/assets/images/site/logo.png")
         Embed.setURL("https://gameboy.github.io/")
-        constants.client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {embeds: [Embed]}}})
+        client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {embeds: [Embed]}}})
     }
 }
