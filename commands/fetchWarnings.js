@@ -8,7 +8,7 @@ module.exports = {
     description: 'Get user warnings',
     options: [
         {
-            "name": "User",
+            "name": "user",
             "description": "User to warn",
             "type": 6,
             "required": true

@@ -7,13 +7,13 @@ module.exports = {
     description: 'Give a warning to a user',
     options: [
         {
-            "name": "User",
+            "name": "user",
             "description": "User to warn",
             "type": 6,
             "required": true
         },
         {
-            "name": "Warning",
+            "name": "warning",
             "description": "Warning Message",
             "type": 3,
             "required": true

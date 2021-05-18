@@ -17,7 +17,7 @@ client.on('guildMemberAdd', async (member) => {
 // Track reactions to check if user has accepted the rules
 client.on('messageReactionAdd', (reaction, member) => {
     if (reaction.message.channel.id === "561362821221187594"){
-        if (reaction.emoji.name === "cartridge") {
+        if (reaction.emoji.name === "pokeball") {
             reaction.message.guild.members.fetch(member.id).then((discordUser) => {
                 if (discordUser.roles.cache.has("786733810897125407")){
                     const Embed = new Discord.MessageEmbed();

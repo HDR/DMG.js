@@ -5,13 +5,13 @@ module.exports = {
     description: 'Edit a message posted by the bot',
     options: [
         {
-            "name": "URL",
+            "name": "url",
             "description": "Link to message you want to edit",
             "type": 3 ,
             "required": true
         },
         {
-            "name": "Contents",
+            "name": "contents",
             "description": "New message contents",
             "type": 3 ,
             "required": true

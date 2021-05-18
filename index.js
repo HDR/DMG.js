@@ -1,6 +1,6 @@
 const {client} = require("./constants");
 const Discord = require('discord.js')
-const { token } = require('./config.json')
+const { token, permissions } = require('./config.json')
 const fs = require('fs')
 const commands = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const handlers = fs.readdirSync('./handlers').filter(file => file.endsWith('.js'));
@@ -19,13 +19,11 @@ for (const file of commands) {
 }
 
 for (const file of handlers) {
-    const handler = require(`./handlers/${file}`);
-    client.commands.set(handler.name, handler)
+    require(`./handlers/${file}`);
 }
 
 for (const file of eventLoggers) {
-    const eventLogger = require(`./eventLoggers/${file}`);
-    client.commands.set(eventLogger.name, eventLogger)
+    require(`./eventLoggers/${file}`);
 }
 
 

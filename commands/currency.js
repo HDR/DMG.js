@@ -23,19 +23,19 @@ module.exports = {
     description: 'Currency Converter',
     options: [
         {
-            "name": "Amount",
+            "name": "amount",
             "description": "Amount you want to convert",
             "type": 4,
             "required": true
         },
         {
-            "name": "Base",
+            "name": "base",
             "description": "3 Characters of base currency",
             "type": 3,
             "required": true
         },
         {
-            "name": "Target",
+            "name": "target",
             "description": "3 Characters of target currency",
             "type": 3,
             "required": true

@@ -6,7 +6,7 @@ module.exports = {
     description: 'Let me google that link generator, for people that are unable to use gogole',
     options: [
         {
-            "name": "Search",
+            "name": "search",
             "description": "what do you want to google?",
             "type": 3,
             "required": true

@@ -11,7 +11,7 @@ module.exports = {
             "required": true
         },
         {
-            "name": "Message",
+            "name": "message",
             "description": "Message Content",
             "type": 3,
             "required": true

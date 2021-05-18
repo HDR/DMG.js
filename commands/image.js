@@ -20,7 +20,7 @@ module.exports = {
     description: 'Pulls the first image search result from google',
     options: [
         {
-            "name": "Search",
+            "name": "query",
             "description": "Image you want to search for",
             "type": 3 ,
             "required": true
