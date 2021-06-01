@@ -1,10 +1,5 @@
 const Discord = require("discord.js");
-<<<<<<< Updated upstream
-const constants = require('../constants')
-=======
-const { WebhookClient } = require('discord.js');
 const {client} = require("../constants");
->>>>>>> Stashed changes
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { pricechecker } = require('../config.json')
 
@@ -24,7 +19,7 @@ function edit (msg, args, page) {
     msg.edit(buildEmbed(args, page)).then()
 }
 
-constants.client.on('messageReactionAdd', async (reaction, user) => {
+client.on('messageReactionAdd', async (reaction, user) => {
     if (reaction.partial) {
         try {
             await reaction.fetch();
@@ -34,17 +29,18 @@ constants.client.on('messageReactionAdd', async (reaction, user) => {
         }
     }
 
-    if(reaction.message.author.id !== user.id && reaction.message.author.id === constants.client.user.id){
+    if(reaction.message.author.id !== user.id && reaction.message.author.id === client.user.id){
         let page = reaction.message.embeds[0].fields[parseInt(reaction.message.embeds[0].fields.length)-2].value.split('/');
+        if(!page){return;}
         let search = reaction.message.embeds[0].fields[reaction.message.embeds[0].fields.length-3].value;
         if(reaction.emoji.name === '➡') {
-            await reaction.users.remove(user.id);
+            await reaction.users.remove(user.id).then();
             if(page[0] !== page[1]) {
                 edit(reaction.message, search, parseInt(page[0]))
             }
         }
         if(reaction.emoji.name === '⬅'){
-            await reaction.users.remove(user.id);
+            await reaction.users.remove(user.id).then();
             if(parseInt(page[0]) !== 1){
                 edit(reaction.message, search, parseInt(page[0])-2)
             }
@@ -62,13 +58,13 @@ function buildEmbed(gameSearch, page) {
         Embed.setColor('#1ABC9C');
         Embed.setTitle(getResult["products"][page]["product-name"]);
         Embed.addField('Console', getResult["products"][page]["console-name"], false);
-        if (getResult["products"][page]["loose-price"] / 100 !== 0.0) {
+        if (getResult["products"][page]["loose-price"]) {
             Embed.addField('Loose Price:', `$${getResult["products"][page]["loose-price"] / 100}`, true);
         }
-        if (getResult["products"][page]["cib-price"] / 100 !== 0.0) {
+        if (getResult["products"][page]["cib-price"]) {
             Embed.addField('CIB Price:', `$${getResult["products"][page]["cib-price"] / 100}`, true);
         }
-        if (getResult["products"][page]["new-price"] / 100 !== 0.0) {
+        if (getResult["products"][page]["new-price"]) {
             Embed.addField('NEW Price:', `$${getResult["products"][page]["new-price"] / 100}`, true);
         }
         Embed.addField('Search Query', gameSearch, true);
@@ -78,24 +74,25 @@ function buildEmbed(gameSearch, page) {
     }
 }
 
+function addNavigators(){
+    let msg = client.user.lastMessage
+    if(!msg.content.startsWith("Could not find any results for")){
+        msg.react('⬅').then();
+        msg.react('➡').then();
+    }
+}
+
 module.exports = {
     name: 'pricecheck',
     aliases: ['pricecheck', 'price', 'pc'],
-    description: 'Price Checker',
-    execute: function (msg, args) {
-        if (!args.length) { msg.channel.send('Please specify a game')
-        } else {
-            let gameSearch = args.join(' ')
-            msg.channel.send(buildEmbed(gameSearch, 0)).then(msg => {
-                if (buildEmbed(gameSearch, 0) !== `Could not find any results for ${gameSearch}`) {
-                    msg.react('⬅').then();
-                    msg.react('➡').then();
-                }
-            });
-
+    description: 'GB,GBC & GBA Price Checker',
+    options: [
+        {
+            "name": "game",
+            "description": "GB, GBC or GBA game",
+            "type": 3,
+            "required": true
         }
-<<<<<<< Updated upstream
-=======
     ],
     choices: [],
     execute: function (channel, args, member, interaction) {
@@ -127,7 +124,6 @@ module.exports = {
                     }
                     ],}}})
         setTimeout(addNavigators, 2000)
->>>>>>> Stashed changes
     },
 
     previous: function (interaction) {
