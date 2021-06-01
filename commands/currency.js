@@ -25,24 +25,24 @@ module.exports = {
         {
             "name": "amount",
             "description": "Amount you want to convert",
-            "type": 4,
+            "type": 'INTEGER',
             "required": true
         },
         {
             "name": "base",
             "description": "3 Characters of base currency",
-            "type": 3,
+            "type": 'STRING',
             "required": true
         },
         {
             "name": "target",
             "description": "3 Characters of target currency",
-            "type": 3,
+            "type": 'STRING',
             "required": true
         }
     ],
     choices: [],
-    execute: function (channel, args, member, interaction) {
+    execute: async function (channel, args, member, interaction) {
         if (!(args[1].value.toUpperCase() in getCurrencies())) {
             channel.send("⚠️ Please specify a valid base currency, you can find a list of valid Currencies at https://free.currconv.com/api/v7/currencies?apiKey=do-not-use-this-key")
             return
@@ -52,7 +52,7 @@ module.exports = {
             return
         }
         let data = getData(args[1].value, args[2].value);
-        if(Object.keys(data).length === 0 && data.constructor === Object){
+        if (Object.keys(data).length === 0 && data.constructor === Object) {
             channel.send('⚠ Something went wrong attempting to fetch data, please try again.')
         } else {
             let amount = Object.values(getData(args[1].value, args[2].value))[0]
@@ -64,10 +64,10 @@ module.exports = {
             Embed.addField("Base Currency", args[1].value.toUpperCase(), true)
             Embed.addField("Target Currency", args[2].value.toUpperCase(), true)
             Embed.addField("‎", "‎", true)
-            Embed.addField("Base Amount", `${args[0].value} ${args[1].value.toUpperCase()}`,true)
+            Embed.addField("Base Amount", `${args[0].value} ${args[1].value.toUpperCase()}`, true)
             Embed.addField("Converted Amount", `${conversion.toFixed(2)} ${currencies[1]}`, true)
             Embed.addField("‎", "‎", true)
-            client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {embeds: [Embed]}}})
+            await interaction.reply(Embed);
         }
     }
 }

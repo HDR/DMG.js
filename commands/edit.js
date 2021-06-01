@@ -7,13 +7,13 @@ module.exports = {
         {
             "name": "url",
             "description": "Link to message you want to edit",
-            "type": 3 ,
+            "type": 'STRING',
             "required": true
         },
         {
             "name": "contents",
             "description": "New message contents",
-            "type": 3 ,
+            "type": 'STRING',
             "required": true
         }
     ],
@@ -24,7 +24,7 @@ module.exports = {
             let chnl = channel.client.channels.cache.get(splitstr[5])
             chnl.messages.fetch(splitstr[6]).then(msg => {
                 msg.edit(args[1].value).then()
-                client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `Edited message in ${chnl.name}`}}})
+                interaction.reply(`Edited message in ${chnl.name}`, { ephemeral: true });
             })
         }
     }

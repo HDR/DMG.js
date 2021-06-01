@@ -9,13 +9,13 @@ module.exports = {
         {
             "name": "user",
             "description": "User to warn",
-            "type": 6,
+            "type": 'USER',
             "required": true
         },
         {
             "name": "warning",
             "description": "Warning Message",
-            "type": 3,
+            "type": 'STRING',
             "required": true
         }
     ],
@@ -30,11 +30,11 @@ module.exports = {
                     if (err) {
                         return console.log(`Join ${err.message}`)
                     } else {
-                        client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `<@!${user.id}> Was successfully warned with the following warning \`${args[1].value}\``, flags: 64}}}).then(user.send(`You have been warned by the Game Boy Discord staff with the following warning \`${args[1].value}\``))
+                        interaction.reply('`<@!${user.id}> Was successfully warned with the following warning \\`${args[1].value}\\``', { ephemeral: true }).then(user.send(`You have been warned by the Game Boy Discord staff with the following warning \`${args[1].value}\``));
                     }
                 })
             }  else {
-                client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `Could not find that user in this guild`}}})
+                interaction.reply('Could not find that user in this guild', { ephemeral: true });
             }
         }
         db.close()

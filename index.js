@@ -8,14 +8,21 @@ const eventLoggers = fs.readdirSync('./eventLoggers').filter(file => file.endsWi
 
 client.commands = new Discord.Collection();
 
+//Docs -
+// Slash commands: https://deploy-preview-638--discordjs-guide.netlify.app/interactions/registering-slash-commands.html
+// Buttons: https://deploy-preview-674--discordjs-guide.netlify.app/interactions/buttons.html
+// v12 to V13: https://deploy-preview-551--discordjs-guide.netlify.app/additional-info/changes-in-v13.html#rolemanager
+
 for (const file of commands) {
     const command = require(`./commands/${file}`);
     client.commands.set(command.name, command)
-    client.api.applications('419539233850785792').commands.post({data: {
-            name: command.name,
-            description: command.description,
-            options: command.options
-        }}).then()
+    const data = {
+        name: command.name,
+        description: command.description,
+        options: command.options
+    };
+
+    await client.application?.commands.create(data);
 }
 
 for (const file of handlers) {
@@ -26,24 +33,17 @@ for (const file of eventLoggers) {
     require(`./eventLoggers/${file}`);
 }
 
-
-client.ws.on('INTERACTION_CREATE', interaction => {
-    const guild = client.guilds.cache.get(interaction.guild_id)
-    const channel = guild.channels.cache.get(interaction.channel_id);
+client.on('interaction', interaction => {
+    const guild = client.guilds.cache.get(interaction.guildID)
+    const channel = guild.channels.cache.get(interaction.channelID);
     const member = guild.members.cache.get(interaction.member.user.id)
     const command = client.commands.get(interaction.data.name) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.data.name));
 
-    if(interaction.data.custom_id){
-        const buttonCommand = client.commands.get(interaction.message.interaction.name) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.message.interaction.name));
-        buttonCommand[interaction.data.custom_id.substr(7, interaction.data.custom_id.length-7)](interaction);
-
-    } else {
-        try{
-            command.execute(channel, interaction.data.options, member, interaction);
-        } catch (error) {
-            console.error(error);
-        }
+    try{
+        command.execute(channel, interaction.data.options, member, interaction);
+    } catch (error) {
+        console.error(error);
     }
-})
+});
 
 client.login(token).then();

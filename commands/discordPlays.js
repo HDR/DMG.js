@@ -11,13 +11,13 @@ module.exports = {
         if(!member.roles.cache.has('836221224584871968')){
             if(!member.roles.cache.has('837715471599927316')) {
                 member.roles.add(guild.roles.cache.find(role => role.id === "836221224584871968")).then();
-                client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `You can now see the discord-plays channel`, flags: 64}}})
+                interaction.reply('You can now see the discord-plays channel', { ephemeral: true });
             } else {
-                client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `You can not access the discord-plays channel as you have been banned from it.`, flags: 64}}})
+                interaction.reply('You can not access the discord-plays channel as you have been banned from it.', { ephemeral: true });
             }
         } else {
             member.roles.remove(guild.roles.cache.find(role => role.id === "836221224584871968")).then();
-            client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `You can no longer see the discord-plays channel`, flags: 64}}})
+            interaction.reply('You can no longer see the discord-plays channel', { ephemeral: true });
         }
     }
 }

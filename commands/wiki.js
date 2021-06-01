@@ -14,6 +14,6 @@ module.exports = {
         Embed.setDescription("The official game boy discord wiki, the answer to a lot of your questions.")
         Embed.setThumbnail("https://gameboy.github.io/assets/images/site/logo.png")
         Embed.setURL("https://gameboy.github.io/")
-        client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {embeds: [Embed]}}})
+        interaction.reply(Embed, { ephemeral: true });
     }
 }

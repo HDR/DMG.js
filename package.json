@@ -11,9 +11,9 @@
   "license": "GPLv3",
   "dependencies": {
     "@discordjs/opus": "github:discordjs/opus",
-    "@google-cloud/speech": "^3.6.0",
+    "@google-cloud/speech": "^4.5.1",
     "discord-tts": "^1.0.1",
-    "discord.js": "^12.5.1",
+    "discord.js": "github:monbrey/discord.js#message-components",
     "fetch": "^1.1.0",
     "ffmpeg": "0.0.4",
     "image-hash": "^4.0.1",

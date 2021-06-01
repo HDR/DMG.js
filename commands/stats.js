@@ -9,7 +9,7 @@ module.exports = {
         {
             "name": "user",
             "description": "Get another user's stats",
-            "type": 6 ,
+            "type": 'USER',
             "required": false
         }
     ],
@@ -25,7 +25,8 @@ module.exports = {
             Embed.addField('Account Age', (new Date(Math.abs(member.user.createdAt - Date.now()))/1000/60/60/24|0) + " Days", true)
             Embed.addField('Avatar URL', member.user.avatarURL())
             Embed.setFooter(`Requested by ${member.user.username}#${member.user.discriminator}`)
-            client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {embeds: [Embed], flags:64}}})
+            interaction.reply(Embed, { ephemeral: true });
+
         } else {
             let user = channel.guild.members.cache.get(args[0].value)
             if (member.hasPermission("MANAGE_MESSAGES")) {
@@ -35,10 +36,10 @@ module.exports = {
                     Embed.addField('Join Date', new Date(user.joinedAt).toDateString(), true);
                     Embed.addField('Account Age', (new Date(Math.abs(user.user.createdAt - Date.now()))/1000/60/60/24|0) + " Days", true)
                     Embed.setFooter(`Requested by ${member.user.username}#${member.user.discriminator}`)
-                    client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {embeds: [Embed], flags:64}}})
-                } else {client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `I could not find that user, please try again`, flags:64}}})}
+                    interaction.reply(Embed, { ephemeral: true });
+                } else {interaction.reply('I could not find that user, please try again', { ephemeral: true });}
             } else {
-                client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `Only moderators and above may check the stats of others`, flags:64}}})
+                interaction.reply('Only moderators and above may check the stats of others', { ephemeral: true });
             }
 
         }

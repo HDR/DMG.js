@@ -22,7 +22,7 @@ module.exports = {
         {
             "name": "query",
             "description": "Image you want to search for",
-            "type": 3 ,
+            "type": 'STRING',
             "required": true
         }
     ],
@@ -35,6 +35,6 @@ module.exports = {
         //console.log(image)
         //Embed.setImage("")
         //channel.send(image)
-        client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4, data: {content: getData(args[0].value)}}})
+        interaction.reply(`${getData(args[0].value)}`, { ephemeral: true });
     }
 }

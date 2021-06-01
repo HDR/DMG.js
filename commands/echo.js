@@ -7,13 +7,13 @@ module.exports = {
         {
             "name": "channel",
             "description": "Target channel",
-            "type": 7,
+            "type": 'CHANNEL',
             "required": true
         },
         {
             "name": "message",
             "description": "Message Content",
-            "type": 3,
+            "type": 'INTEGER',
             "required": true
         }
     ],
@@ -23,7 +23,7 @@ module.exports = {
             let channelid = args[0].value.replace(/[#<>]/g, '')
             let chnl = channel.client.channels.cache.get(channelid)
             chnl.send(args[1].value)
-            client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `Echoed message to ${chnl.name}`}}})
+            interaction.reply(`Echoed message to ${chnl.name}`, { ephemeral: true });
         }
     }
 }

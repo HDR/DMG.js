@@ -10,7 +10,7 @@ module.exports = {
         {
             "name": "user",
             "description": "User to warn",
-            "type": 6,
+            "type": 'USER',
             "required": true
         }
     ],
@@ -43,16 +43,16 @@ module.exports = {
                                 if(data[0] && wWarnee1) {Embed.addField("Warning Message", data[0].warningMessage, true); Embed.addField("Warned By", wWarnee1.user.tag, true); Embed.addField("Date", new Date(Math.trunc(data[0].date)).toDateString(), true)}
                                 if(data[1] && wWarnee2) {Embed.addField("Warning Message", data[1].warningMessage, true); Embed.addField("Warned By", wWarnee2.user.tag, true); Embed.addField("Date", new Date(Math.trunc(data[1].date)).toDateString(), true)}
                                 if(data[2] && wWarnee3) {Embed.addField("Warning Message", data[2].warningMessage, true); Embed.addField("Warned By", wWarnee3.user.tag, true); Embed.addField("Date", new Date(Math.trunc(data[2].date)).toDateString(), true)}
-                                client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {embeds: [Embed]}}})
+                                interaction.reply(Embed, { ephemeral: true });
 
                             }
                         } else {
-                            client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `User has no warnings`}}})
+                            interaction.reply('User has no warnings', { ephemeral: true });
                         }
                     });
                 });
             } else {
-                client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `Could not find that user in this guild`}}})
+                interaction.reply('Could not find that user in this guild', { ephemeral: true });
             }
             db.close()
         }

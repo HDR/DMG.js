@@ -8,12 +8,12 @@ module.exports = {
         {
             "name": "search",
             "description": "what do you want to google?",
-            "type": 3,
+            "type": 'STRING',
             "required": true
         }
     ],
     choices: [],
     execute: function (channel, args, member, interaction) {
-        client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `https://letmegooglethat.com/?q=${args[0].value.split(' ').join('+')}`}}})
+        interaction.reply(`https://letmegooglethat.com/?q=${args[0].value.split(' ').join('+')}`, { ephemeral: true });
     }
 }
