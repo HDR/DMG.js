@@ -14,3 +14,7 @@ stupidremover.js
 /commands/discordlog.db
 /commands/warningHandler.js
 commands/pricechecker/price-guide.csv
+warnings.db
+commands/playsound.js
+commands/test.js
+handlers/redditHandler.js

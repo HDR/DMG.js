@@ -1,5 +1,10 @@
 const Discord = require("discord.js");
+<<<<<<< Updated upstream
 const constants = require('../constants')
+=======
+const { WebhookClient } = require('discord.js');
+const {client} = require("../constants");
+>>>>>>> Stashed changes
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { pricechecker } = require('../config.json')
 
@@ -89,5 +94,150 @@ module.exports = {
             });
 
         }
+<<<<<<< Updated upstream
+=======
+    ],
+    choices: [],
+    execute: function (channel, args, member, interaction) {
+        client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {embeds: [buildEmbed(args[0].value, 0)],
+                    components: [{
+                        "type": 1,
+                        "components": [
+                            {
+                                "type": 2,
+                                "label": "Previous",
+                                "emoji": {
+                                    "name": '⬅'
+                                },
+                                "style": 2,
+                                "custom_id": "button_previous",
+                                "disabled": true
+                            },
+                            {
+                                "type": 2,
+                                "label": "Next",
+                                "emoji": {
+                                    "name": '➡'
+                                },
+                                "style": 2,
+                                "custom_id": "button_next",
+                                "disabled": false
+                            }
+                        ]
+                    }
+                    ],}}})
+        setTimeout(addNavigators, 2000)
+>>>>>>> Stashed changes
     },
+
+    previous: function (interaction) {
+        console.log("Previous Func")
+        let msg = interaction.message
+        let page = msg.embeds[0].fields[parseInt(msg.embeds[0].fields.length)-2].value.split('/');
+        if(!page){return;}
+        let search = msg.embeds[0].fields[msg.embeds[0].fields.length-3].value;
+
+        if(parseInt(page[0]) !== 1){
+            page = parseInt(page[0])-2
+        }
+
+        client.api.interactions(interaction.token, msg.id).patch({data: {type: 4,data: {embeds: [buildEmbed(search, page)],
+                    components: [{
+                        "type": 1,
+                        "components": [
+                            {
+                                "type": 2,
+                                "label": "Previous",
+                                "emoji": {
+                                    "name": '⬅'
+                                },
+                                "style": 2,
+                                "custom_id": "button_previous",
+                                "disabled": false
+                            },
+                            {
+                                "type": 2,
+                                "label": "Next",
+                                "emoji": {
+                                    "name": '➡'
+                                },
+                                "style": 2,
+                                "custom_id": "button_next",
+                                "disabled": false
+                            }
+                        ]
+                    }
+                    ],}}})
+    },
+
+    next: function (interaction) {
+        console.log("Next Func")
+
+        client.api.webhooks(client.user.id, interaction.token).messages(interaction.message.id).patch({data: {type: 7, data: {content: 'Debug',
+                    components: [{
+                        "type": 1,
+                        "components": [
+                            {
+                                "type": 2,
+                                "label": "Previous",
+                                "emoji": {
+                                    "name": '⬅'
+                                },
+                                "style": 2,
+                                "custom_id": "button_previous",
+                                "disabled": false
+                            },
+                            {
+                                "type": 2,
+                                "label": "Next",
+                                "emoji": {
+                                    "name": '➡'
+                                },
+                                "style": 2,
+                                "custom_id": "button_next",
+                                "disabled": false
+                            }
+                        ]
+                    }
+                    ],}}}).then();
+
+        //let msg = interaction.message
+        //let page = msg.embeds[0].fields[parseInt(msg.embeds[0].fields.length) - 2].value.split('/');
+        //if (!page) {
+        //    return;
+        //}
+        //let search = msg.embeds[0].fields[msg.embeds[0].fields.length - 3].value;
+//
+        //if (page[0] !== page[1]) {
+        //    page = parseInt(page[0]);
+        //}
+//
+
+        //client.api.webhooks(client.user.id, interaction.token).messages('@original').patch({data: {type: 7,data: {embeds: [buildEmbed(search, page)],
+        //            components: [{
+        //                "type": 1,
+        //                "components": [
+        //                    {
+        //                        "type": 2,
+        //                        "label": "Previous",
+        //                        "emoji": {
+        //                            "name": '⬅'
+        //                        },
+        //                        "style": 2,
+        //                        "custom_id": "button_previous",
+        //                        "disabled": false
+        //                    },
+        //                    {
+        //                        "type": 2,
+        //                        "label": "Next",
+        //                        "emoji": {
+        //                            "name": '➡'
+        //                        },
+        //                        "style": 2,
+        //                        "custom_id": "button_next"
+        //                    }
+        //                ]
+        //            }
+        //            ],}}})
+    }
 }
