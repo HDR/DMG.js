@@ -60,7 +60,6 @@ module.exports = {
         navigators.addComponents(new MessageButton().setCustomID('button_next').setLabel('Next').setStyle('SECONDARY').setEmoji('➡'));
 
         interaction.reply({ embeds: [buildEmbed(args[0].value, 0)], components: [navigators]})
-        //setTimeout(addNavigators, 2000)
     },
 
     previous: function (interaction) {
