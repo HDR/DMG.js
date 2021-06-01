@@ -22,6 +22,11 @@ for (const file of commands) {
         options: command.options
     };
 
+    registerCommands(data).then();
+
+}
+
+async function registerCommands(data){
     await client.application?.commands.create(data);
 }
 
@@ -33,16 +38,21 @@ for (const file of eventLoggers) {
     require(`./eventLoggers/${file}`);
 }
 
-client.on('interaction', interaction => {
+client.on('interaction', async interaction => {
     const guild = client.guilds.cache.get(interaction.guildID)
     const channel = guild.channels.cache.get(interaction.channelID);
-    const member = guild.members.cache.get(interaction.member.user.id)
-    const command = client.commands.get(interaction.data.name) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.data.name));
+    const member = guild.members.cache.get(interaction.user.id)
+    const command = client.commands.get(interaction.commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.commandName));
 
-    try{
-        command.execute(channel, interaction.data.options, member, interaction);
-    } catch (error) {
-        console.error(error);
+    if (interaction.isMessageComponent() && interaction.componentType === 'BUTTON'){
+        const buttonCommand = client.commands.get(interaction.message.interaction.commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.message.interaction.commandName));
+        buttonCommand[interaction.customID.substr(7, interaction.customID.length-7)](interaction);
+    } else {
+        try{
+            command.execute(channel, interaction.options, member, interaction);
+        } catch (error) {
+            console.error(error);
+        }
     }
 });
 

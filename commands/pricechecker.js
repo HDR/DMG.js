@@ -1,4 +1,4 @@
-const Discord = require("discord.js");
+const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
 const {client} = require("../constants");
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { pricechecker } = require('../config.json')
@@ -15,46 +15,12 @@ function getData(search) {
     }
 }
 
-function edit (msg, args, page) {
-    msg.edit(buildEmbed(args, page)).then()
-}
-
-client.on('messageReactionAdd', async (reaction, user) => {
-    if (reaction.partial) {
-        try {
-            await reaction.fetch();
-        } catch (error) {
-            console.log("Failed to fetch reaction")
-            return;
-        }
-    }
-
-    if(reaction.message.author.id !== user.id && reaction.message.author.id === client.user.id){
-        let page = reaction.message.embeds[0].fields[parseInt(reaction.message.embeds[0].fields.length)-2].value.split('/');
-        if(!page){return;}
-        let search = reaction.message.embeds[0].fields[reaction.message.embeds[0].fields.length-3].value;
-        if(reaction.emoji.name === '➡') {
-            await reaction.users.remove(user.id).then();
-            if(page[0] !== page[1]) {
-                edit(reaction.message, search, parseInt(page[0]))
-            }
-        }
-        if(reaction.emoji.name === '⬅'){
-            await reaction.users.remove(user.id).then();
-            if(parseInt(page[0]) !== 1){
-                edit(reaction.message, search, parseInt(page[0])-2)
-            }
-
-        }
-    }
-})
-
 function buildEmbed(gameSearch, page) {
     let getResult = getData(gameSearch)
     if(getResult ===  "error"){
         return `Could not find any results for ${gameSearch}`
     } else {
-        const Embed = new Discord.MessageEmbed();
+        const Embed = new MessageEmbed();
         Embed.setColor('#1ABC9C');
         Embed.setTitle(getResult["products"][page]["product-name"]);
         Embed.addField('Console', getResult["products"][page]["console-name"], false);
@@ -74,14 +40,6 @@ function buildEmbed(gameSearch, page) {
     }
 }
 
-function addNavigators(){
-    let msg = client.user.lastMessage
-    if(!msg.content.startsWith("Could not find any results for")){
-        msg.react('⬅').then();
-        msg.react('➡').then();
-    }
-}
-
 module.exports = {
     name: 'pricecheck',
     aliases: ['pricecheck', 'price', 'pc'],
@@ -96,28 +54,47 @@ module.exports = {
     ],
     choices: [],
     execute: function (channel, args, member, interaction) {
-        interaction.reply(embed=buildEmbed(args[0].value, 0), { ephemeral: true });
-        setTimeout(addNavigators, 2000)
+
+        const navigators = new MessageActionRow();
+        navigators.addComponents(new MessageButton().setCustomID('button_previous').setLabel('Previous').setStyle('SECONDARY').setEmoji('⬅').setDisabled(true));
+        navigators.addComponents(new MessageButton().setCustomID('button_next').setLabel('Next').setStyle('SECONDARY').setEmoji('➡'));
+
+        interaction.reply({ embeds: [buildEmbed(args[0].value, 0)], components: [navigators]})
+        //setTimeout(addNavigators, 2000)
     },
 
     previous: function (interaction) {
-        console.log("Previous Func")
         let msg = interaction.message
         let page = msg.embeds[0].fields[parseInt(msg.embeds[0].fields.length)-2].value.split('/');
         if(!page){return;}
         let search = msg.embeds[0].fields[msg.embeds[0].fields.length-3].value;
+        const navigators = new MessageActionRow();
 
-        if(parseInt(page[0]) !== 1){
-            page = parseInt(page[0])-2
+        if(parseInt(page[0]) !== 2){
+            navigators.addComponents(new MessageButton().setCustomID('button_previous').setLabel('Previous').setStyle('SECONDARY').setEmoji('⬅').setDisabled(false));
+        } else {
+            navigators.addComponents(new MessageButton().setCustomID('button_previous').setLabel('Previous').setStyle('SECONDARY').setEmoji('⬅').setDisabled(true));
         }
 
-        interaction.reply(embed=buildEmbed(search, page), { ephemeral: true });
+        navigators.addComponents(new MessageButton().setCustomID('button_next').setLabel('Next').setStyle('SECONDARY').setEmoji('➡'));
+
+        interaction.deferUpdate().then();
+        interaction.editReply({ embeds: [buildEmbed(search, parseInt(page[0])-2)], components: [navigators]}).then();
     },
 
     next: function (interaction) {
-        console.log("Next Func")
+        let page = interaction.message.embeds[0].fields[parseInt(interaction.message.embeds[0].fields.length)-2].value
+        if(!page){return;}
+        let search = interaction.message.embeds[0].fields[interaction.message.embeds[0].fields.length-3].value;
+        const navigators = new MessageActionRow();
+        navigators.addComponents(new MessageButton().setCustomID('button_previous').setLabel('Previous').setStyle('SECONDARY').setEmoji('⬅').setDisabled(false));
 
-        interaction.reply('Debug', { ephemeral: true });
-
+        if(page[0] === page[1]-1) {
+            navigators.addComponents(new MessageButton().setCustomID('button_next').setLabel('Next').setStyle('SECONDARY').setEmoji('➡').setDisabled(false));
+        } else {
+            navigators.addComponents(new MessageButton().setCustomID('button_next').setLabel('Next').setStyle('SECONDARY').setEmoji('➡').setDisabled(true));
+        }
+        interaction.deferUpdate().then();
+        interaction.editReply({ embeds: [buildEmbed(search, parseInt(page[0]))], components: [navigators]}).then();
     }
 }

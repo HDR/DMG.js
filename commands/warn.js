@@ -30,7 +30,7 @@ module.exports = {
                     if (err) {
                         return console.log(`Join ${err.message}`)
                     } else {
-                        interaction.reply('`<@!${user.id}> Was successfully warned with the following warning \\`${args[1].value}\\``', { ephemeral: true }).then(user.send(`You have been warned by the Game Boy Discord staff with the following warning \`${args[1].value}\``));
+                        interaction.reply(`<@!${user.id}> Was successfully warned with the following warning \`${args[1].value}\``, { ephemeral: true }).then(user.send(`You have been warned by the Game Boy Discord staff with the following warning \`${args[1].value}\``));
                     }
                 })
             }  else {

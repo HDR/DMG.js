@@ -1,5 +1,5 @@
-const Discord = require('discord.js')
+const { Client, Intents } = require('discord.js')
 
 module.exports = Object.freeze({
-    client: new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] })
+    client: new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS] })
 });

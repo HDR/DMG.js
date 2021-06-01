@@ -14,6 +14,6 @@ module.exports = {
     ],
     choices: [],
     execute: function (channel, args, member, interaction) {
-        interaction.reply(`https://letmegooglethat.com/?q=${args[0].value.split(' ').join('+')}`, { ephemeral: true });
+        interaction.reply(`https://letmegooglethat.com/?q=${args[0].value.split(' ').join('+')}`);
     }
 }

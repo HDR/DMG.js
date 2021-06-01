@@ -35,6 +35,6 @@ module.exports = {
         //console.log(image)
         //Embed.setImage("")
         //channel.send(image)
-        interaction.reply(`${getData(args[0].value)}`, { ephemeral: true });
+        interaction.reply(`${getData(args[0].value)}`);
     }
 }

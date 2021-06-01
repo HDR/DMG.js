@@ -41,6 +41,6 @@ function randomGame() {
                     break;
             }
         }
-        client.user.setActivity(game).then()
+        client.user.setPresence({ activities: [{ name: game}]});
     })
 }

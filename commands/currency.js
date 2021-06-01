@@ -1,7 +1,6 @@
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { currencyconverter } = require('../config.json')
-const Discord = require("discord.js");
-const {client} = require("../constants");
+const { MessageEmbed } = require("discord.js");
 
 function getData(from, to) {
     const xmlHttp = new XMLHttpRequest();
@@ -57,7 +56,7 @@ module.exports = {
         } else {
             let amount = Object.values(getData(args[1].value, args[2].value))[0]
             let currencies = Object.keys(getData(args[1].value, args[2].value))[0].split('_')
-            const Embed = new Discord.MessageEmbed();
+            const Embed = new MessageEmbed();
             let conversion = args[0].value * amount
             Embed.setColor('#2EB2C9');
             Embed.setTitle("Currency Conversion");
@@ -67,7 +66,7 @@ module.exports = {
             Embed.addField("Base Amount", `${args[0].value} ${args[1].value.toUpperCase()}`, true)
             Embed.addField("Converted Amount", `${conversion.toFixed(2)} ${currencies[1]}`, true)
             Embed.addField("‎", "‎", true)
-            await interaction.reply(Embed);
+            interaction.reply({ embeds: [Embed]});
         }
     }
 }

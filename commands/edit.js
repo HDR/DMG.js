@@ -1,4 +1,4 @@
-const {client} = require("../constants");
+const { Permissions } = require("discord.js")
 module.exports = {
     name: 'edit',
     aliases: ['edit'],
@@ -19,7 +19,7 @@ module.exports = {
     ],
     choices: [],
     execute: function (channel, args, member, interaction) {
-        if(member.hasPermission("MANAGE_GUILD")) {
+        if(member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
             let splitstr = args[0].value.split('/')
             let chnl = channel.client.channels.cache.get(splitstr[5])
             chnl.messages.fetch(splitstr[6]).then(msg => {

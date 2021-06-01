@@ -1,4 +1,4 @@
-const {client} = require("../constants");
+const { Permissions } = require("discord.js")
 
 module.exports = {
     name: 'slowmode',
@@ -20,7 +20,7 @@ module.exports = {
     ],
     choices: [],
     execute: function (channel, args, member, interaction) {
-        if(member.hasPermission("MANAGE_GUILD")) {
+        if(member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
             let channelid = args[0].value.replace(/[#<>]/g, '')
             let chnl = channel.client.channels.cache.get(channelid)
             chnl.setRateLimitPerUser(args[1].value, "Slow mode set by bot").then()

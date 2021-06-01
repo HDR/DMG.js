@@ -1,6 +1,5 @@
 const sqlite3 = require('sqlite3');
-const Discord = require("discord.js");
-const {client} = require("../constants");
+const { MessageEmbed } = require("discord.js");
 
 module.exports = {
     name: 'warnings',
@@ -37,13 +36,13 @@ module.exports = {
                             if(data[1] !== undefined) {wWarnee2 = channel.guild.members.cache.get(data[1].warnedBy.replace(/\D+/g, ''));}
                             if(data[2] !== undefined) {wWarnee3 = channel.guild.members.cache.get(data[2].warnedBy.replace(/\D+/g, ''));}
                             if (wMember) {
-                                const Embed = new Discord.MessageEmbed();
+                                const Embed = new MessageEmbed();
                                 Embed.setColor('#9E7AC9');
                                 Embed.setTitle(wMember.user.tag + "'s 3 Last Warnings");
                                 if(data[0] && wWarnee1) {Embed.addField("Warning Message", data[0].warningMessage, true); Embed.addField("Warned By", wWarnee1.user.tag, true); Embed.addField("Date", new Date(Math.trunc(data[0].date)).toDateString(), true)}
                                 if(data[1] && wWarnee2) {Embed.addField("Warning Message", data[1].warningMessage, true); Embed.addField("Warned By", wWarnee2.user.tag, true); Embed.addField("Date", new Date(Math.trunc(data[1].date)).toDateString(), true)}
                                 if(data[2] && wWarnee3) {Embed.addField("Warning Message", data[2].warningMessage, true); Embed.addField("Warned By", wWarnee3.user.tag, true); Embed.addField("Date", new Date(Math.trunc(data[2].date)).toDateString(), true)}
-                                interaction.reply(Embed, { ephemeral: true });
+                                interaction.reply({ embeds: [Embed], ephemeral: true });
 
                             }
                         } else {
