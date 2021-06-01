@@ -14,7 +14,6 @@
     "@google-cloud/speech": "^3.6.0",
     "discord-tts": "^1.0.1",
     "discord.js": "^12.5.1",
-    "discord.js-v13": "^13.0.1",
     "fetch": "^1.1.0",
     "ffmpeg": "0.0.4",
     "image-hash": "^4.0.1",
