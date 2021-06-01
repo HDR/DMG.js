@@ -1,15 +1,30 @@
+const {client} = require("../constants");
 module.exports = {
     name: 'edit',
     aliases: ['edit'],
-    description: 'Edit a message as the bot',
-    execute: function (msg, args) {
-        let message;
-        if(msg.member.hasPermission("MANAGE_GUILD")) {
-            let splitstr = args[0].toString().split('/')
-            let channel = msg.client.channels.cache.get(splitstr[5])
-            message = args.splice(1, args.length - 1).join(' ')
-            channel.messages.fetch(splitstr[6]).then(msg => {
-                msg.edit(message)
+    description: 'Edit a message posted by the bot',
+    options: [
+        {
+            "name": "url",
+            "description": "Link to message you want to edit",
+            "type": 3 ,
+            "required": true
+        },
+        {
+            "name": "contents",
+            "description": "New message contents",
+            "type": 3 ,
+            "required": true
+        }
+    ],
+    choices: [],
+    execute: function (channel, args, member, interaction) {
+        if(member.hasPermission("MANAGE_GUILD")) {
+            let splitstr = args[0].value.split('/')
+            let chnl = channel.client.channels.cache.get(splitstr[5])
+            chnl.messages.fetch(splitstr[6]).then(msg => {
+                msg.edit(args[1].value).then()
+                client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4,data: {content: `Edited message in ${chnl.name}`}}})
             })
         }
     }

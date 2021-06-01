@@ -1,8 +1,8 @@
-const constants = require('../constants')
+const {client} = require("../constants");
 const cron = require("node-cron");
 const scraper = require('table-scraper')
 
-constants.client.on('ready', msg => {
+client.on('ready', msg => {
     randomGame()
     cron.schedule('0 0 0 * * *', () => {
         randomGame()
@@ -41,6 +41,6 @@ function randomGame() {
                     break;
             }
         }
-        constants.client.user.setActivity(game).then()
+        client.user.setActivity(game).then()
     })
 }

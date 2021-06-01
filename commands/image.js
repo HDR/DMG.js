@@ -1,3 +1,4 @@
+const {client} = require("../constants");
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { cse_api_key, cse_cx } = require('../config.json')
 
@@ -14,15 +15,26 @@ function getData(search) {
 }
 
 module.exports = {
-    name: 'showimage',
+    name: 'image',
     aliases: ['image', 'i', 'simage'],
     description: 'Pulls the first image search result from google',
-    execute: function (msg, args) {
-        const image = getData(args.join(' '))
-        if(msg["content"].includes("simage" )) {
-            msg.channel.send(`||${image}||`)
-        } else {
-            msg.channel.send(image)
+    options: [
+        {
+            "name": "query",
+            "description": "Image you want to search for",
+            "type": 3 ,
+            "required": true
         }
+    ],
+    execute: function (channel, args, member, interaction) {
+        //const Embed = new Discord.MessageEmbed();
+        //Embed.setColor('#41F097');
+        //Embed.setTitle("Image Search");
+        //Embed.setAuthor(`${member.user.name}#${member.user.discriminator}`)
+        //Embed.setTimestamp()
+        //console.log(image)
+        //Embed.setImage("")
+        //channel.send(image)
+        client.api.interactions(interaction.id, interaction.token).callback.post({data: {type: 4, data: {content: getData(args[0].value)}}})
     }
 }
