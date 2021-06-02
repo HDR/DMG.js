@@ -1,4 +1,5 @@
 const { Permissions, MessageEmbed } = require("discord.js");
+const {client} = require("../constants");
 
 module.exports = {
     name: 'stats',
@@ -13,10 +14,11 @@ module.exports = {
         }
     ],
     choices: [],
-    execute: function (channel, args, member, interaction) {
+    execute: function (interaction) {
         const Embed = new MessageEmbed();
         Embed.setColor('#FCBA03');
         Embed.setTitle("User Statistics");
+        const member = client.guilds.cache.get(interaction.guildID).members.cache.get(interaction.user.id)
         if (interaction.options.length === 0) {
             Embed.addField('User', `${member.user.username}#${member.user.discriminator}`, true);
             Embed.addField('ID', member.user.id);
@@ -27,7 +29,7 @@ module.exports = {
             interaction.reply({ embeds: [Embed], ephemeral: true });
 
         } else {
-            let user = channel.guild.members.cache.get(interaction.options[0].value)
+            let user = client.guilds.cache.get(interaction.guildID).members.cache.get(interaction.user.id)
             if (member.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)) {
                 if(user) {
                     Embed.addField('User', user.user.username + "#" + user.user.discriminator, true);

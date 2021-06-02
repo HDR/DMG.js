@@ -1,6 +1,7 @@
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { currencyconverter } = require('../config.json')
 const { MessageEmbed } = require("discord.js");
+const {client} = require("../constants");
 
 function getData(from, to) {
     const xmlHttp = new XMLHttpRequest();
@@ -41,29 +42,30 @@ module.exports = {
         }
     ],
     choices: [],
-    execute: async function (channel, args, member, interaction) {
-        if (!(args[1].value.toUpperCase() in getCurrencies())) {
+    execute: async function (interaction) {
+        const channel = client.guilds.cache.get(interaction.guildID).channels.cache.get(interaction.channelID);
+        if (!(interaction.options[1].value.toUpperCase() in getCurrencies())) {
             channel.send("⚠️ Please specify a valid base currency, you can find a list of valid Currencies at https://free.currconv.com/api/v7/currencies?apiKey=do-not-use-this-key")
             return
         }
-        if (!(args[2].value.toUpperCase() in getCurrencies())) {
+        if (!(interaction.options[2].value.toUpperCase() in getCurrencies())) {
             channel.send("⚠️ Please specify a valid target currency, you can find a list of valid Currencies at https://free.currconv.com/api/v7/currencies?apiKey=do-not-use-this-key")
             return
         }
-        let data = getData(args[1].value, args[2].value);
+        let data = getData(interaction.options[1].value, interaction.options[2].value);
         if (Object.keys(data).length === 0 && data.constructor === Object) {
             channel.send('⚠ Something went wrong attempting to fetch data, please try again.')
         } else {
-            let amount = Object.values(getData(args[1].value, args[2].value))[0]
-            let currencies = Object.keys(getData(args[1].value, args[2].value))[0].split('_')
+            let amount = Object.values(getData(interaction.options[1].value, interaction.options[2].value))[0]
+            let currencies = Object.keys(getData(interaction.options[1].value, interaction.options[2].value))[0].split('_')
             const Embed = new MessageEmbed();
-            let conversion = args[0].value * amount
+            let conversion = interaction.options[0].value * amount
             Embed.setColor('#2EB2C9');
             Embed.setTitle("Currency Conversion");
-            Embed.addField("Base Currency", args[1].value.toUpperCase(), true)
-            Embed.addField("Target Currency", args[2].value.toUpperCase(), true)
+            Embed.addField("Base Currency", interaction.options[1].value.toUpperCase(), true)
+            Embed.addField("Target Currency", interaction.options[2].value.toUpperCase(), true)
             Embed.addField("‎", "‎", true)
-            Embed.addField("Base Amount", `${args[0].value} ${args[1].value.toUpperCase()}`, true)
+            Embed.addField("Base Amount", `${interaction.options[0].value} ${interaction.options[1].value.toUpperCase()}`, true)
             Embed.addField("Converted Amount", `${conversion.toFixed(2)} ${currencies[1]}`, true)
             Embed.addField("‎", "‎", true)
             interaction.reply({ embeds: [Embed]});

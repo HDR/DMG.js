@@ -53,20 +53,19 @@ module.exports = {
         }
     ],
     choices: [],
-    execute: function (channel, args, member, interaction) {
+    execute: function (interaction) {
 
         const navigators = new MessageActionRow();
         navigators.addComponents(new MessageButton().setCustomID('button_previous').setLabel('Previous').setStyle('SECONDARY').setEmoji('⬅').setDisabled(true));
         navigators.addComponents(new MessageButton().setCustomID('button_next').setLabel('Next').setStyle('SECONDARY').setEmoji('➡'));
 
-        interaction.reply({ embeds: [buildEmbed(args[0].value, 0)], components: [navigators]})
+        interaction.reply({ embeds: [buildEmbed(interaction.options[0].value, 0)], components: [navigators]})
     },
 
     previous: function (interaction) {
-        let msg = interaction.message
-        let page = msg.embeds[0].fields[parseInt(msg.embeds[0].fields.length)-2].value.split('/');
+        let page = interaction.message.embeds[0].fields[parseInt(interaction.message.embeds[0].fields.length)-2].value.split('/');
         if(!page){return;}
-        let search = msg.embeds[0].fields[msg.embeds[0].fields.length-3].value;
+        let search = interaction.message.embeds[0].fields[interaction.message.embeds[0].fields.length-3].value;
         const navigators = new MessageActionRow();
 
         if(parseInt(page[0]) !== 2){
@@ -82,16 +81,16 @@ module.exports = {
     },
 
     next: function (interaction) {
-        let page = interaction.message.embeds[0].fields[parseInt(interaction.message.embeds[0].fields.length)-2].value
+        let page = interaction.message.embeds[0].fields[parseInt(interaction.message.embeds[0].fields.length)-2].value.split('/');
         if(!page){return;}
         let search = interaction.message.embeds[0].fields[interaction.message.embeds[0].fields.length-3].value;
         const navigators = new MessageActionRow();
         navigators.addComponents(new MessageButton().setCustomID('button_previous').setLabel('Previous').setStyle('SECONDARY').setEmoji('⬅').setDisabled(false));
 
-        if(page[0] === page[1]-1) {
-            navigators.addComponents(new MessageButton().setCustomID('button_next').setLabel('Next').setStyle('SECONDARY').setEmoji('➡').setDisabled(false));
-        } else {
+        if(parseInt(page[0]) === parseInt(page[1]-1)) {
             navigators.addComponents(new MessageButton().setCustomID('button_next').setLabel('Next').setStyle('SECONDARY').setEmoji('➡').setDisabled(true));
+        } else {
+            navigators.addComponents(new MessageButton().setCustomID('button_next').setLabel('Next').setStyle('SECONDARY').setEmoji('➡').setDisabled(false));
         }
         interaction.deferUpdate().then();
         interaction.editReply({ embeds: [buildEmbed(search, parseInt(page[0]))], components: [navigators]}).then();

@@ -13,7 +13,7 @@ module.exports = {
         }
     ],
     choices: [],
-    execute: function (channel, args, member, interaction) {
-        interaction.reply(`https://letmegooglethat.com/?q=${args[0].value.split(' ').join('+')}`);
+    execute: function (interaction) {
+        interaction.reply(`https://letmegooglethat.com/?q=${interaction.options[0].value.split(' ').join('+')}`);
     }
 }

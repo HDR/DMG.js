@@ -26,15 +26,7 @@ module.exports = {
             "required": true
         }
     ],
-    execute: function (channel, args, member, interaction) {
-        //const Embed = new Discord.MessageEmbed();
-        //Embed.setColor('#41F097');
-        //Embed.setTitle("Image Search");
-        //Embed.setAuthor(`${member.user.name}#${member.user.discriminator}`)
-        //Embed.setTimestamp()
-        //console.log(image)
-        //Embed.setImage("")
-        //channel.send(image)
-        interaction.reply(`${getData(args[0].value)}`);
+    execute: function (interaction) {
+        interaction.reply(`${getData(interaction.options[0].value)}`);
     }
 }

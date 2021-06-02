@@ -20,7 +20,9 @@ module.exports = {
         }
     ],
     choices: [],
-    execute: function (channel, args, member, interaction) {
+    execute: function (interaction) {
+        const member = client.guilds.cache.get(interaction.guildID).members.cache.get(interaction.user.id)
+        const channel = client.guilds.cache.get(interaction.guildID).channels.cache.get(interaction.channelID);
         let db = new sqlite3.Database('./dmg.db', (err) => {if (err) {console.log(err.message);} console.log("Loaded Warning Database")});
         db.serialize(() => {db.prepare(`CREATE TABLE IF NOT EXISTS warnings (User text, WarningMessage text, WarnedBy text, Date text)`).run().finalize();});
         if (member.roles.cache.find(r => r.name === "Yokoi Watch" || r.name === "MGB")) {
@@ -30,7 +32,7 @@ module.exports = {
                     if (err) {
                         return console.log(`Join ${err.message}`)
                     } else {
-                        interaction.reply(`<@!${user.id}> Was successfully warned with the following warning \`${args[1].value}\``, { ephemeral: true }).then(user.send(`You have been warned by the Game Boy Discord staff with the following warning \`${args[1].value}\``));
+                        interaction.reply(`<@!${user.id}> Was successfully warned with the following warning \`${args[1].value}\``, { ephemeral: true }).then(user.send(`You have been warned by the Game Boy Discord staff with the following warning \`${interaction.options[1].value}\``));
                     }
                 })
             }  else {

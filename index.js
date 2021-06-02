@@ -21,13 +21,21 @@ for (const file of commands) {
         description: command.description,
         options: command.options
     };
-
-    registerCommands(data).then();
-
 }
 
-async function registerCommands(data){
-    await client.application?.commands.create(data);
+async function registerCommands(){
+    for (const file of commands) {
+        if (!client.application?.owner) await client.application?.fetch();
+        const command = require(`./commands/${file}`);
+        client.commands.set(command.name, command)
+        const data = {
+            name: command.name,
+            description: command.description,
+            options: command.options
+        };
+
+        await client.application?.commands.create(data);
+    }
 }
 
 for (const file of handlers) {
@@ -39,21 +47,15 @@ for (const file of eventLoggers) {
 }
 
 client.on('interaction', async interaction => {
-    const guild = client.guilds.cache.get(interaction.guildID)
-    const channel = guild.channels.cache.get(interaction.channelID);
-    const member = guild.members.cache.get(interaction.user.id)
-    const command = client.commands.get(interaction.commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.commandName));
-
     if (interaction.isMessageComponent() && interaction.componentType === 'BUTTON'){
-        const buttonCommand = client.commands.get(interaction.message.interaction.commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.message.interaction.commandName));
-        buttonCommand[interaction.customID.substr(7, interaction.customID.length-7)](interaction);
+        client.commands.get(interaction.message.interaction.commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.message.interaction.commandName))[interaction.customID.substr(7, interaction.customID.length-7)](interaction);
     } else {
         try{
-            command.execute(channel, interaction.options, member, interaction);
+            client.commands.get(interaction.commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.commandName)).execute(interaction)
         } catch (error) {
             console.error(error);
         }
     }
 });
 
-client.login(token).then();
+client.login(token).then(registerCommands).then();

@@ -6,8 +6,9 @@ module.exports = {
     description: 'Join or leave the #discord-plays channel',
     options: [],
     choices: [],
-    execute: function (channel, args, member, interaction) {
-        let guild = client.guilds.cache.get('246604458744610816');
+    execute: function (interaction) {
+        const guild = client.guilds.cache.get(interaction.guildID)
+        const member = client.guilds.cache.get(interaction.guildID).members.cache.get(interaction.user.id)
         if(!member.roles.cache.has('836221224584871968')){
             if(!member.roles.cache.has('837715471599927316')) {
                 member.roles.add(guild.roles.cache.find(role => role.id === "836221224584871968")).then();

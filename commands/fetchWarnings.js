@@ -1,5 +1,6 @@
 const sqlite3 = require('sqlite3');
 const { MessageEmbed } = require("discord.js");
+const {client} = require("../constants");
 
 module.exports = {
     name: 'warnings',
@@ -14,7 +15,9 @@ module.exports = {
         }
     ],
     choices: [],
-    execute: function (channel, args, member, interaction) {
+    execute: function (interaction) {
+        const member = client.guilds.cache.get(interaction.guildID).members.cache.get(interaction.user.id)
+        const channel = client.guilds.cache.get(interaction.guildID).channels.cache.get(interaction.channelID);
         if (member.roles.cache.find(r => r.name === "Yokoi Watch" || r.name === "MGB")) {
             let db = new sqlite3.Database('./dmg.db', (err) => {if (err) {console.log(err.message);} console.log("Loaded Warning Database")});
             let user = channel.guild.members.cache.get(args[0].value)
