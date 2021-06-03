@@ -59,7 +59,7 @@ module.exports = {
         navigators.addComponents(new MessageButton().setCustomID('button_previous').setLabel('Previous').setStyle('SECONDARY').setEmoji('⬅').setDisabled(true));
         navigators.addComponents(new MessageButton().setCustomID('button_next').setLabel('Next').setStyle('SECONDARY').setEmoji('➡'));
 
-        interaction.reply({ embeds: [buildEmbed(interaction.options[0].value, 0)], components: [navigators]})
+        interaction.reply({ embeds: [buildEmbed(interaction.options[0].value, 0)], components: [navigators]}).then()
     },
 
     previous: function (interaction) {

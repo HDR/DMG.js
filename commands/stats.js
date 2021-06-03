@@ -36,7 +36,6 @@ module.exports = {
                     Embed.addField('ID', user.id);
                     Embed.addField('Join Date', new Date(user.joinedAt).toDateString(), true);
                     Embed.addField('Account Age', (new Date(Math.abs(user.user.createdAt - Date.now()))/1000/60/60/24|0) + " Days", true)
-                    Embed.setFooter(`Requested by ${member.user.username}#${member.user.discriminator}`)
                     interaction.reply({ embeds: [Embed], ephemeral: true });
                 } else {interaction.reply('I could not find that user, please try again', { ephemeral: true });}
             } else {

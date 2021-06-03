@@ -24,18 +24,19 @@ for (const file of commands) {
 }
 
 async function registerCommands(){
+    const data = []
     for (const file of commands) {
         if (!client.application?.owner) await client.application?.fetch();
         const command = require(`./commands/${file}`);
         client.commands.set(command.name, command)
-        const data = {
+        data.push({
             name: command.name,
             description: command.description,
             options: command.options
-        };
+        },);
 
-        await client.application?.commands.create(data);
     }
+    await client.application?.commands.set(data).then();
 }
 
 for (const file of handlers) {
@@ -48,10 +49,12 @@ for (const file of eventLoggers) {
 
 client.on('interaction', async interaction => {
     if (interaction.isMessageComponent() && interaction.componentType === 'BUTTON'){
-        client.commands.get(interaction.message.interaction.commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.message.interaction.commandName))[interaction.customID.substr(7, interaction.customID.length-7)](interaction);
+        const buttonCommand = client.commands.get(interaction.message.interaction.commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.message.interaction.commandName));
+        buttonCommand[interaction.customID.substr(7, interaction.customID.length-7)](interaction);
     } else {
         try{
-            client.commands.get(interaction.commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.commandName)).execute(interaction)
+            const command = client.commands.get(interaction.commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.commandName));
+            command.execute(interaction);
         } catch (error) {
             console.error(error);
         }
