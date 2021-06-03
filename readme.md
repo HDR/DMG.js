@@ -1,6 +1,6 @@
 # DMG.js
 
-DMG.js is a JavaScript port of DMG-Bot(Python) for the /r/Gameboy [Discord server](https://discord.gg/gameboy)
+DMG.js is a JavaScript bot for the /r/Gameboy [Discord server](https://discord.gg/gameboy)
 
 ## Usage
 
