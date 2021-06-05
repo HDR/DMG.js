@@ -27,6 +27,6 @@ module.exports = {
         }
     ],
     execute: function (interaction) {
-        interaction.reply(`${getData(interaction.options[0].value)}`);
+        interaction.reply(`${getData(interaction.options.get('query').value)}`);
     }
 }

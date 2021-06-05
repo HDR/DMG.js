@@ -26,13 +26,13 @@ module.exports = {
         let db = new sqlite3.Database('./dmg.db', (err) => {if (err) {console.log(err.message);} console.log("Loaded Warning Database")});
         db.serialize(() => {db.prepare(`CREATE TABLE IF NOT EXISTS warnings (User text, WarningMessage text, WarnedBy text, Date text)`).run().finalize();});
         if (member.roles.cache.find(r => r.name === "Yokoi Watch" || r.name === "MGB")) {
-            let user = channel.guild.members.cache.get(args[0].value)
+            let user = channel.guild.members.cache.get(interaction.options.get('user').value)
             if (user) {
-                db.run('INSERT INTO "warnings"(User, WarningMessage, WarnedBy, Date) VALUES($User, $WarningMessage, $WarnedBy, $Date)', [user.id, args[1].value, member.user.id, Date.now()], function (err) {
+                db.run('INSERT INTO "warnings"(User, WarningMessage, WarnedBy, Date) VALUES($User, $WarningMessage, $WarnedBy, $Date)', [user.id, interaction.options.get('warning').value, member.user.id, Date.now()], function (err) {
                     if (err) {
                         return console.log(`Join ${err.message}`)
                     } else {
-                        interaction.reply(`<@!${user.id}> Was successfully warned with the following warning \`${args[1].value}\``, { ephemeral: true }).then(user.send(`You have been warned by the Game Boy Discord staff with the following warning \`${interaction.options[1].value}\``));
+                        interaction.reply(`<@!${user.id}> Was successfully warned with the following warning \`${interaction.options.get('warning').value}\``, { ephemeral: true }).then(user.send(`You have been warned by the Game Boy Discord staff with the following warning \`${interaction.options.get('warning').value}\``));
                     }
                 })
             }  else {

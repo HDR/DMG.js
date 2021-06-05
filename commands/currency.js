@@ -44,28 +44,28 @@ module.exports = {
     choices: [],
     execute: async function (interaction) {
         const channel = client.guilds.cache.get(interaction.guildID).channels.cache.get(interaction.channelID);
-        if (!(interaction.options[1].value.toUpperCase() in getCurrencies())) {
+        if (!(interaction.options.get('base').value.toUpperCase() in getCurrencies())) {
             channel.send("⚠️ Please specify a valid base currency, you can find a list of valid Currencies at https://free.currconv.com/api/v7/currencies?apiKey=do-not-use-this-key")
             return
         }
-        if (!(interaction.options[2].value.toUpperCase() in getCurrencies())) {
+        if (!(interaction.options.get('target').value.toUpperCase() in getCurrencies())) {
             channel.send("⚠️ Please specify a valid target currency, you can find a list of valid Currencies at https://free.currconv.com/api/v7/currencies?apiKey=do-not-use-this-key")
             return
         }
-        let data = getData(interaction.options[1].value, interaction.options[2].value);
+        let data = getData(interaction.options.get('base').value, interaction.options.get('target').value);
         if (Object.keys(data).length === 0 && data.constructor === Object) {
             channel.send('⚠ Something went wrong attempting to fetch data, please try again.')
         } else {
-            let amount = Object.values(getData(interaction.options[1].value, interaction.options[2].value))[0]
-            let currencies = Object.keys(getData(interaction.options[1].value, interaction.options[2].value))[0].split('_')
+            let amount = Object.values(getData(interaction.options.get('base').value, interaction.options.get('target').value))[0]
+            let currencies = Object.keys(getData(interaction.options.get('base').value, interaction.options.get('target').value))[0].split('_')
             const Embed = new MessageEmbed();
-            let conversion = interaction.options[0].value * amount
+            let conversion = interaction.options.get('amount').value * amount
             Embed.setColor('#2EB2C9');
             Embed.setTitle("Currency Conversion");
-            Embed.addField("Base Currency", interaction.options[1].value.toUpperCase(), true)
-            Embed.addField("Target Currency", interaction.options[2].value.toUpperCase(), true)
+            Embed.addField("Base Currency", interaction.options.get('base').value.toUpperCase(), true)
+            Embed.addField("Target Currency", interaction.options.get('target').value.toUpperCase(), true)
             Embed.addField("‎", "‎", true)
-            Embed.addField("Base Amount", `${interaction.options[0].value} ${interaction.options[1].value.toUpperCase()}`, true)
+            Embed.addField("Base Amount", `${interaction.options.get('amount').value} ${interaction.options.get('base').value.toUpperCase()}`, true)
             Embed.addField("Converted Amount", `${conversion.toFixed(2)} ${currencies[1]}`, true)
             Embed.addField("‎", "‎", true)
             interaction.reply({ embeds: [Embed]});

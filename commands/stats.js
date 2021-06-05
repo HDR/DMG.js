@@ -19,7 +19,7 @@ module.exports = {
         Embed.setColor('#FCBA03');
         Embed.setTitle("User Statistics");
         const member = client.guilds.cache.get(interaction.guildID).members.cache.get(interaction.user.id)
-        if (interaction.options.length === 0) {
+        if (interaction.options.size === 0) {
             Embed.addField('User', `${member.user.username}#${member.user.discriminator}`, true);
             Embed.addField('ID', member.user.id);
             Embed.addField('Join Date', new Date(member.joinedAt).toDateString(), true);
@@ -29,8 +29,8 @@ module.exports = {
             interaction.reply({ embeds: [Embed], ephemeral: true });
 
         } else {
-            let user = client.guilds.cache.get(interaction.guildID).members.cache.get(interaction.user.id)
             if (member.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)) {
+                let user = client.guilds.cache.get(interaction.guildID).members.cache.get(interaction.options.get('user').value)
                 if(user) {
                     Embed.addField('User', user.user.username + "#" + user.user.discriminator, true);
                     Embed.addField('ID', user.id);

@@ -24,10 +24,10 @@ module.exports = {
         const channel = client.guilds.cache.get(interaction.guildID).channels.cache.get(interaction.channelID);
         const member = client.guilds.cache.get(interaction.guildID).members.cache.get(interaction.user.id)
         if(member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
-            let splitstr = interaction.options[0].value.split('/')
+            let splitstr = interaction.options.get('url').value.split('/')
             let chnl = channel.client.channels.cache.get(splitstr[5])
             chnl.messages.fetch(splitstr[6]).then(msg => {
-                msg.edit(interaction.options[1].value).then()
+                msg.edit(interaction.options.get('contents').value).then()
                 interaction.reply(`Edited message in ${chnl.name}`, { ephemeral: true });
             })
         }

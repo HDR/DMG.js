@@ -1,4 +1,6 @@
 const { Permissions } = require("discord.js")
+const {client} = require("../constants");
+
 module.exports = {
     name: 'echo',
     aliases: ['echo'],
@@ -13,7 +15,7 @@ module.exports = {
         {
             "name": "message",
             "description": "Message Content",
-            "type": 'INTEGER',
+            "type": 'STRING',
             "required": true
         }
     ],
@@ -22,9 +24,9 @@ module.exports = {
         const member = client.guilds.cache.get(interaction.guildID).members.cache.get(interaction.user.id)
         const channel = client.guilds.cache.get(interaction.guildID).channels.cache.get(interaction.channelID);
         if(member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
-            let channelid = interaction.options[0].value.replace(/[#<>]/g, '')
+            let channelid = interaction.options.get('channel').value.replace(/[#<>]/g, '')
             let chnl = channel.client.channels.cache.get(channelid)
-            chnl.send(interaction.options[1].value)
+            chnl.send(interaction.options.get('message').value)
             interaction.reply(`Echoed message to ${chnl.name}`, { ephemeral: true });
         }
     }

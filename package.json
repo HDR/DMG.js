@@ -13,7 +13,7 @@
     "@discordjs/opus": "github:discordjs/opus",
     "@google-cloud/speech": "^4.5.1",
     "discord-tts": "^1.0.1",
-    "discord.js": "github:monbrey/discord.js#message-components",
+    "discord.js": "^13.0.0-dev.f7e420bf290f5404e8b99b8896c63e178f77bbfc",
     "fetch": "^1.1.0",
     "ffmpeg": "0.0.4",
     "image-hash": "^4.0.1",

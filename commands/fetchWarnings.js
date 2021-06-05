@@ -20,7 +20,7 @@ module.exports = {
         const channel = client.guilds.cache.get(interaction.guildID).channels.cache.get(interaction.channelID);
         if (member.roles.cache.find(r => r.name === "Yokoi Watch" || r.name === "MGB")) {
             let db = new sqlite3.Database('./dmg.db', (err) => {if (err) {console.log(err.message);} console.log("Loaded Warning Database")});
-            let user = channel.guild.members.cache.get(args[0].value)
+            let user = channel.guild.members.cache.get(interaction.options.get('user').value)
             if (user) {
                 let data = [];
                 db.serialize(() => {

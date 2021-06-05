@@ -24,10 +24,10 @@ module.exports = {
         const member = client.guilds.cache.get(interaction.guildID).members.cache.get(interaction.user.id)
         const channel = client.guilds.cache.get(interaction.guildID).channels.cache.get(interaction.channelID);
         if(member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
-            let channelid = interaction.options[0].value.replace(/[#<>]/g, '')
+            let channelid = interaction.options.get('channel').value.replace(/[#<>]/g, '')
             let chnl = channel.client.channels.cache.get(channelid)
-            chnl.setRateLimitPerUser(interaction.options[1].value, "Slow mode set by bot").then()
-            interaction.reply(`Set ${chnl.name} slow mode to ${interaction.options[1].value} seconds`, { ephemeral: true });
+            chnl.setRateLimitPerUser(interaction.options.get('delay').value, "Slow mode set by bot").then()
+            interaction.reply(`Set ${chnl.name} slow mode to ${interaction.options.get('delay').value} seconds`, { ephemeral: true });
         }
     }
 }
