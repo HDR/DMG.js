@@ -24,18 +24,10 @@ function buildEmbed(gameSearch, page) {
         Embed.setColor('#1ABC9C');
         Embed.setTitle(getResult["products"][page]["product-name"]);
         Embed.addField('Console', getResult["products"][page]["console-name"], false);
-        if (getResult["products"][page]["loose-price"]) {
-            Embed.addField('Loose Price:', `$${getResult["products"][page]["loose-price"] / 100}`, true);
-        }
-        if (getResult["products"][page]["cib-price"]) {
-            Embed.addField('CIB Price:', `$${getResult["products"][page]["cib-price"] / 100}`, true);
-        }
-        if (getResult["products"][page]["new-price"]) {
-            Embed.addField('NEW Price:', `$${getResult["products"][page]["new-price"] / 100}`, true);
-        }
-        Embed.addField('Search Query', gameSearch, true);
-        Embed.addField('Result', `${page + 1}/${Object.keys(getResult.products).length}`, true);
-        Embed.addField('Get more info about this game', `https://www.pricecharting.com/game/${getResult["products"][page]["id"]}`);
+        if (getResult["products"][page]["loose-price"]) {Embed.addField('Loose Price:', `$${getResult["products"][page]["loose-price"] / 100}`, true);}
+        if (getResult["products"][page]["cib-price"]) {Embed.addField('CIB Price:', `$${getResult["products"][page]["cib-price"] / 100}`, true);}
+        if (getResult["products"][page]["new-price"]) {Embed.addField('NEW Price:', `$${getResult["products"][page]["new-price"] / 100}`, true);}
+        Embed.addFields({name: 'Search Query', value: gameSearch, inline: true}, {name: 'Result', value: `${page + 1}/${Object.keys(getResult.products).length}`, inline: true}, {name: 'Get more info about this game', value: `https://www.pricecharting.com/game/${getResult["products"][page]["id"]}`})
         return Embed;
     }
 }
