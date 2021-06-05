@@ -19,7 +19,6 @@ module.exports = {
             "required": true
         }
     ],
-    choices: [],
     execute: function (interaction) {
         const member = client.guilds.cache.get(interaction.guildID).members.cache.get(interaction.user.id)
         const channel = client.guilds.cache.get(interaction.guildID).channels.cache.get(interaction.channelID);

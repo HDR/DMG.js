@@ -13,7 +13,6 @@ module.exports = {
             "required": false
         }
     ],
-    choices: [],
     execute: function (interaction) {
         const Embed = new MessageEmbed();
         Embed.setColor('#FCBA03');

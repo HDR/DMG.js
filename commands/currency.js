@@ -41,7 +41,6 @@ module.exports = {
             "required": true
         }
     ],
-    choices: [],
     execute: async function (interaction) {
         const channel = client.guilds.cache.get(interaction.guildID).channels.cache.get(interaction.channelID);
         if (!(interaction.options.get('base').value.toUpperCase() in getCurrencies())) {
@@ -58,8 +57,8 @@ module.exports = {
         } else {
             let amount = Object.values(getData(interaction.options.get('base').value, interaction.options.get('target').value))[0]
             let currencies = Object.keys(getData(interaction.options.get('base').value, interaction.options.get('target').value))[0].split('_')
-            const Embed = new MessageEmbed();
             let conversion = interaction.options.get('amount').value * amount
+            const Embed = new MessageEmbed();
             Embed.setColor('#2EB2C9');
             Embed.setTitle("Currency Conversion");
             Embed.addFields({ name: 'Base Currency', value: interaction.options.get('base').value.toUpperCase(), inline: true }, {name: 'Target Currency', value: interaction.options.get('target').value.toUpperCase(), inline: true }, {name: '‎', value: '‎', inline: true}, {name: 'Base Amount', value: `${interaction.options.get('amount').value} ${interaction.options.get('base').value.toUpperCase()}`, inline: true}, {name: 'Converted Amount', value: `${conversion.toFixed(2)} ${currencies[1]}`, inline: true}, {name: '‎', value: '‎', inline: true})

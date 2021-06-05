@@ -52,7 +52,6 @@ module.exports = {
             "required": true
         }
     ],
-    choices: [],
     execute: function (interaction) {
 
         const navigators = new MessageActionRow();

@@ -12,7 +12,6 @@ module.exports = {
             "required": true
         }
     ],
-    choices: [],
     execute: function (interaction) {
         interaction.reply(`https://letmegooglethat.com/?q=${interaction.options.get('search').value.split(' ').join('+')}`);
     }

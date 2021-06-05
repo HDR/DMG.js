@@ -6,7 +6,6 @@ module.exports = {
     aliases: ['wiki'],
     description: 'Links to the official Game Boy Discord wiki',
     options: [],
-    choices: [],
     execute: function (interaction) {
         const Embed = new Discord.MessageEmbed();
         Embed.setColor('#00aaaa');

@@ -5,7 +5,6 @@ module.exports = {
     aliases: ['discordplays'],
     description: 'Join or leave the #discord-plays channel',
     options: [],
-    choices: [],
     execute: function (interaction) {
         const guild = client.guilds.cache.get(interaction.guildID)
         const member = client.guilds.cache.get(interaction.guildID).members.cache.get(interaction.user.id)
