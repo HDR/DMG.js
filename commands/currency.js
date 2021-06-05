@@ -62,12 +62,7 @@ module.exports = {
             let conversion = interaction.options.get('amount').value * amount
             Embed.setColor('#2EB2C9');
             Embed.setTitle("Currency Conversion");
-            Embed.addField("Base Currency", interaction.options.get('base').value.toUpperCase(), true)
-            Embed.addField("Target Currency", interaction.options.get('target').value.toUpperCase(), true)
-            Embed.addField("‎", "‎", true)
-            Embed.addField("Base Amount", `${interaction.options.get('amount').value} ${interaction.options.get('base').value.toUpperCase()}`, true)
-            Embed.addField("Converted Amount", `${conversion.toFixed(2)} ${currencies[1]}`, true)
-            Embed.addField("‎", "‎", true)
+            Embed.addFields({ name: 'Base Currency', value: interaction.options.get('base').value.toUpperCase(), inline: true }, {name: 'Target Currency', value: interaction.options.get('target').value.toUpperCase(), inline: true }, {name: '‎', value: '‎', inline: true}, {name: 'Base Amount', value: `${interaction.options.get('amount').value} ${interaction.options.get('base').value.toUpperCase()}`, inline: true}, {name: 'Converted Amount', value: `${conversion.toFixed(2)} ${currencies[1]}`, inline: true}, {name: '‎', value: '‎', inline: true})
             interaction.reply({ embeds: [Embed]});
         }
     }
