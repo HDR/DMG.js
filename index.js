@@ -63,14 +63,12 @@ client.on('interactionCreate', async interaction => {
             buttonCommand[interaction.customId](interaction);
         }
 
-        //Check if the interaction is a menu selection
         if (interaction.isMessageComponent() && interaction.componentType === 'SELECT_MENU'){
             const menuCommand = client.commands.get(interaction.message.interaction.commandName);
             menuCommand[interaction.values[0]](interaction);
         }
     }
     else {
-        //If it's not we execute the command
         try{
             const command = client.commands.get(interaction.commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.commandName));
             command.execute(interaction);
