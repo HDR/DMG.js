@@ -4,8 +4,8 @@ const {client} = require("../constants");
 
 module.exports = {
     name: 'warnings',
-    aliases: ['wget'],
     description: 'Get user warnings',
+    defaultPermission: false,
     options: [
         {
             "name": "user",
@@ -15,8 +15,8 @@ module.exports = {
         }
     ],
     execute: function (interaction) {
-        const member = client.guilds.cache.get(interaction.guildID).members.cache.get(interaction.user.id)
-        const channel = client.guilds.cache.get(interaction.guildID).channels.cache.get(interaction.channelID);
+        const member = client.guilds.cache.get(interaction.guildId).members.cache.get(interaction.user.id)
+        const channel = client.guilds.cache.get(interaction.guildId).channels.cache.get(interaction.channelId);
         if (member.roles.cache.find(r => r.name === "Yokoi Watch" || r.name === "MGB")) {
             let db = new sqlite3.Database('./dmg.db', (err) => {if (err) {console.log(err.message);} console.log("Loaded Warning Database")});
             let user = channel.guild.members.cache.get(interaction.options.get('user').value)
@@ -48,12 +48,12 @@ module.exports = {
 
                             }
                         } else {
-                            interaction.reply('User has no warnings', { ephemeral: true });
+                            interaction.reply({ content: 'User has no warnings', ephemeral: true});
                         }
                     });
                 });
             } else {
-                interaction.reply('Could not find that user in this guild', { ephemeral: true });
+                interaction.reply({ content: 'Could not find that user in this guild', ephemeral: true});
             }
             db.close()
         }

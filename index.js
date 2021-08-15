@@ -18,6 +18,7 @@ for (const file of commands) {
     client.commands.set(command.name, command)
     const data = {
         name: command.name,
+        type: command.type,
         description: command.description,
         options: command.options
     };
@@ -29,14 +30,22 @@ async function registerCommands(){
         if (!client.application?.owner) await client.application?.fetch();
         const command = require(`./commands/${file}`);
         client.commands.set(command.name, command)
+        console.log(file)
         data.push({
             name: command.name,
+            type: command.type,
+            defaultPermission: command.defaultPermission,
             description: command.description,
             options: command.options
         },);
 
     }
     await client.application?.commands.set(data).then();
+    await registerPermissions()
+}
+
+async function registerPermissions() {
+    await client.guilds.cache.get('246604458744610816')?.commands.permissions.set({ fullPermissions:  [{id:"876458008824135680",permissions:[{id:"247002823089192971",type:"ROLE",permission:!0},{id:"789292170141368341",type:"ROLE",permission:!0}]},{id:"815166595424583700",permissions:[{id:"247002823089192971",type:"ROLE",permission:!0}]},{id:"815166596192403497",permissions:[{id:"247002823089192971",type:"ROLE",permission:!0}]},{id:"815166597060755486",permissions:[{id:"247002823089192971",type:"ROLE",permission:!0},{id:"789292170141368341",type:"ROLE",permission:!0}]},{id:"815166685174562847",permissions:[{id:"247002823089192971",type:"ROLE",permission:!0},{id:"789292170141368341",type:"ROLE",permission:!0}]},{id:"836266640693002270",permissions:[{id:"247002823089192971",type:"ROLE",permission:!0}]},{id:"849568569179111461",permissions:[{id:"247002823089192971",type:"ROLE",permission:!0}]}]})
 }
 
 for (const file of handlers) {
@@ -47,11 +56,21 @@ for (const file of eventLoggers) {
     require(`./eventLoggers/${file}`);
 }
 
-client.on('interaction', async interaction => {
-    if (interaction.isMessageComponent() && interaction.componentType === 'BUTTON'){
-        const buttonCommand = client.commands.get(interaction.message.interaction.commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.message.interaction.commandName));
-        buttonCommand[interaction.customID.substr(7, interaction.customID.length-7)](interaction);
-    } else {
+client.on('interactionCreate', async interaction => {
+    if (interaction.isMessageComponent()){
+        if (interaction.isMessageComponent() && interaction.componentType === 'BUTTON'){
+            const buttonCommand = client.commands.get(interaction.message.interaction.commandName);
+            buttonCommand[interaction.customId](interaction);
+        }
+
+        //Check if the interaction is a menu selection
+        if (interaction.isMessageComponent() && interaction.componentType === 'SELECT_MENU'){
+            const menuCommand = client.commands.get(interaction.message.interaction.commandName);
+            menuCommand[interaction.values[0]](interaction);
+        }
+    }
+    else {
+        //If it's not we execute the command
         try{
             const command = client.commands.get(interaction.commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.commandName));
             command.execute(interaction);

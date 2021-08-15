@@ -1,7 +1,7 @@
 const {client} = require("../constants");
 const { marketChannel } = require('../config.json')
 
-client.on('message', async msg => {
+client.on('messageCreate', async msg => {
     if (msg.channel === client.channels.cache.get(marketChannel)){
         let emojis = [':BUYING:', ':SELLING:', ':WTB:', ':WTS:', ':TRADING:', ':WTT:'];
         let timeSinceJoin = new Date(Math.abs(msg.member.joinedAt - Date.now()));

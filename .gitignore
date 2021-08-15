@@ -18,3 +18,9 @@ warnings.db
 commands/playsound.js
 commands/test.js
 handlers/redditHandler.js
+/chatbot/
+/dataset/
+commands/logger.js.dis
+discordlog.db
+dmg.db
+commands/admin.js

@@ -2,7 +2,6 @@ const { MessageEmbed } = require("discord.js");
 
 module.exports = {
     name: '8ball',
-    aliases: ['8ball'],
     description: 'Ask the magic 8-Ball',
     options: [],
     execute: async function (interaction) {

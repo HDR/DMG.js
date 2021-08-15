@@ -3,8 +3,8 @@ const sqlite3 = require('sqlite3');
 
 module.exports = {
     name: 'warn',
-    aliases: ['w', 'warning'],
     description: 'Give a warning to a user',
+    defaultPermission: false,
     options: [
         {
             "name": "user",
@@ -20,8 +20,8 @@ module.exports = {
         }
     ],
     execute: function (interaction) {
-        const member = client.guilds.cache.get(interaction.guildID).members.cache.get(interaction.user.id)
-        const channel = client.guilds.cache.get(interaction.guildID).channels.cache.get(interaction.channelID);
+        const member = client.guilds.cache.get(interaction.guildId).members.cache.get(interaction.user.id)
+        const channel = client.guilds.cache.get(interaction.guildId).channels.cache.get(interaction.channelId);
         let db = new sqlite3.Database('./dmg.db', (err) => {if (err) {console.log(err.message);} console.log("Loaded Warning Database")});
         db.serialize(() => {db.prepare(`CREATE TABLE IF NOT EXISTS warnings (User text, WarningMessage text, WarnedBy text, Date text)`).run().finalize();});
         if (member.roles.cache.find(r => r.name === "Yokoi Watch" || r.name === "MGB")) {
@@ -31,11 +31,11 @@ module.exports = {
                     if (err) {
                         return console.log(`Join ${err.message}`)
                     } else {
-                        interaction.reply(`<@!${user.id}> Was successfully warned with the following warning \`${interaction.options.get('warning').value}\``, { ephemeral: true }).then(user.send(`You have been warned by the Game Boy Discord staff with the following warning \`${interaction.options.get('warning').value}\``));
+                        interaction.reply({ content: `<@!${user.id}> Was successfully warned with the following warning \`${interaction.options.get('warning').value}\``,  ephemeral: true }).then(user.send({ content: `You have been warned by the Game Boy Discord staff with the following warning \`${interaction.options.get('warning').value}\``}));
                     }
                 })
             }  else {
-                interaction.reply('Could not find that user in this guild', { ephemeral: true });
+                interaction.reply({ content: 'Could not find that user in this guild', ephemeral: true });
             }
         }
         db.close()

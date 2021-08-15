@@ -16,7 +16,6 @@ function getData(search) {
 
 module.exports = {
     name: 'image',
-    aliases: ['image', 'i', 'simage'],
     description: 'Pulls the first image search result from google',
     options: [
         {

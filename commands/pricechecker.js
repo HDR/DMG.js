@@ -1,5 +1,4 @@
 const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
-const {client} = require("../constants");
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { pricechecker } = require('../config.json')
 
@@ -34,7 +33,6 @@ function buildEmbed(gameSearch, page) {
 
 module.exports = {
     name: 'pricecheck',
-    aliases: ['pricecheck', 'price', 'pc'],
     description: 'GB,GBC & GBA Price Checker',
     options: [
         {
@@ -44,45 +42,45 @@ module.exports = {
             "required": true
         }
     ],
-    execute: function (interaction) {
+    execute: async function (interaction) {
 
         const navigators = new MessageActionRow();
-        navigators.addComponents(new MessageButton().setCustomID('button_previous').setLabel('Previous').setStyle('SECONDARY').setEmoji('⬅').setDisabled(true));
-        navigators.addComponents(new MessageButton().setCustomID('button_next').setLabel('Next').setStyle('SECONDARY').setEmoji('➡'));
-        interaction.reply({ embeds: [buildEmbed(interaction.options.get('game').value, 0)], components: [navigators]}).then()
+        navigators.addComponents(new MessageButton().setCustomId('previous').setLabel('Previous').setStyle('SECONDARY').setEmoji('⬅').setDisabled(true));
+        navigators.addComponents(new MessageButton().setCustomId('next').setLabel('Next').setStyle('SECONDARY').setEmoji('➡'));
+        await interaction.reply({ embeds: [buildEmbed(interaction.options.get('game').value, 0)], components: [navigators]}).then()
     },
 
-    previous: function (interaction) {
+    previous: async function (interaction) {
         let page = interaction.message.embeds[0].fields[parseInt(interaction.message.embeds[0].fields.length)-2].value.split('/');
         if(!page){return;}
         let search = interaction.message.embeds[0].fields[interaction.message.embeds[0].fields.length-3].value;
         const navigators = new MessageActionRow();
 
         if(parseInt(page[0]) !== 2){
-            navigators.addComponents(new MessageButton().setCustomID('button_previous').setLabel('Previous').setStyle('SECONDARY').setEmoji('⬅').setDisabled(false));
+            navigators.addComponents(new MessageButton().setCustomId('previous').setLabel('Previous').setStyle('SECONDARY').setEmoji('⬅').setDisabled(false));
         } else {
-            navigators.addComponents(new MessageButton().setCustomID('button_previous').setLabel('Previous').setStyle('SECONDARY').setEmoji('⬅').setDisabled(true));
+            navigators.addComponents(new MessageButton().setCustomId('previous').setLabel('Previous').setStyle('SECONDARY').setEmoji('⬅').setDisabled(true));
         }
 
-        navigators.addComponents(new MessageButton().setCustomID('button_next').setLabel('Next').setStyle('SECONDARY').setEmoji('➡'));
+        navigators.addComponents(new MessageButton().setCustomId('next').setLabel('Next').setStyle('SECONDARY').setEmoji('➡'));
 
-        interaction.deferUpdate().then();
-        interaction.editReply({ embeds: [buildEmbed(search, parseInt(page[0])-2)], components: [navigators]}).then();
+        await interaction.deferUpdate().then();
+        await interaction.editReply({ embeds: [buildEmbed(search, parseInt(page[0])-2)], components: [navigators]}).then();
     },
 
-    next: function (interaction) {
+    next: async function (interaction) {
         let page = interaction.message.embeds[0].fields[parseInt(interaction.message.embeds[0].fields.length)-2].value.split('/');
         if(!page){return;}
         let search = interaction.message.embeds[0].fields[interaction.message.embeds[0].fields.length-3].value;
         const navigators = new MessageActionRow();
-        navigators.addComponents(new MessageButton().setCustomID('button_previous').setLabel('Previous').setStyle('SECONDARY').setEmoji('⬅').setDisabled(false));
+        navigators.addComponents(new MessageButton().setCustomId('previous').setLabel('Previous').setStyle('SECONDARY').setEmoji('⬅').setDisabled(false));
 
         if(parseInt(page[0]) === parseInt(page[1]-1)) {
-            navigators.addComponents(new MessageButton().setCustomID('button_next').setLabel('Next').setStyle('SECONDARY').setEmoji('➡').setDisabled(true));
+            navigators.addComponents(new MessageButton().setCustomId('next').setLabel('Next').setStyle('SECONDARY').setEmoji('➡').setDisabled(true));
         } else {
-            navigators.addComponents(new MessageButton().setCustomID('button_next').setLabel('Next').setStyle('SECONDARY').setEmoji('➡').setDisabled(false));
+            navigators.addComponents(new MessageButton().setCustomId('next').setLabel('Next').setStyle('SECONDARY').setEmoji('➡').setDisabled(false));
         }
-        interaction.deferUpdate().then();
-        interaction.editReply({ embeds: [buildEmbed(search, parseInt(page[0]))], components: [navigators]}).then();
+        await interaction.deferUpdate().then();
+        await interaction.editReply({ embeds: [buildEmbed(search, parseInt(page[0]))], components: [navigators]}).then();
     }
 }

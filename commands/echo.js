@@ -3,8 +3,8 @@ const {client} = require("../constants");
 
 module.exports = {
     name: 'echo',
-    aliases: ['echo'],
     description: '[Admin] Echo a message as the bot',
+    defaultPermission: false,
     options: [
         {
             "name": "channel",
@@ -20,8 +20,8 @@ module.exports = {
         }
     ],
     execute: function (interaction) {
-        const member = client.guilds.cache.get(interaction.guildID).members.cache.get(interaction.user.id)
-        const channel = client.guilds.cache.get(interaction.guildID).channels.cache.get(interaction.channelID);
+        const member = client.guilds.cache.get(interaction.guildId).members.cache.get(interaction.user.id)
+        const channel = client.guilds.cache.get(interaction.guildId).channels.cache.get(interaction.channelId);
         if(member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
             let channelid = interaction.options.get('channel').value.replace(/[#<>]/g, '')
             let chnl = channel.client.channels.cache.get(channelid)

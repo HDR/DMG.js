@@ -2,7 +2,6 @@ const {client} = require("../constants");
 
 module.exports = {
     name: 'letmegooglethat',
-    aliases: ['lmgt'],
     description: 'Let me google that link generator, for people that are unable to use gogole',
     options: [
         {

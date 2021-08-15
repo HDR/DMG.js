@@ -1,7 +1,6 @@
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { currencyconverter } = require('../config.json')
 const { MessageEmbed } = require("discord.js");
-const {client} = require("../constants");
 
 function getData(from, to) {
     const xmlHttp = new XMLHttpRequest();
@@ -19,7 +18,6 @@ function getCurrencies() {
 
 module.exports = {
     name: 'convert',
-    aliases: ['cc', 'convert', 'currency'],
     description: 'Currency Converter',
     options: [
         {
@@ -42,18 +40,17 @@ module.exports = {
         }
     ],
     execute: async function (interaction) {
-        const channel = client.guilds.cache.get(interaction.guildID).channels.cache.get(interaction.channelID);
         if (!(interaction.options.get('base').value.toUpperCase() in getCurrencies())) {
-            channel.send("⚠️ Please specify a valid base currency, you can find a list of valid Currencies at https://free.currconv.com/api/v7/currencies?apiKey=do-not-use-this-key")
+            interaction.reply({ content: '⚠️ Please specify a valid base currency, you can find a list of valid Currencies at https://free.currconv.com/api/v7/currencies?apiKey=do-not-use-this-key', ephemeral: true})
             return
         }
         if (!(interaction.options.get('target').value.toUpperCase() in getCurrencies())) {
-            channel.send("⚠️ Please specify a valid target currency, you can find a list of valid Currencies at https://free.currconv.com/api/v7/currencies?apiKey=do-not-use-this-key")
+            interaction.reply({ content: '⚠️ Please specify a valid target currency, you can find a list of valid Currencies at https://free.currconv.com/api/v7/currencies?apiKey=do-not-use-this-key', ephemeral: true})
             return
         }
         let data = getData(interaction.options.get('base').value, interaction.options.get('target').value);
         if (Object.keys(data).length === 0 && data.constructor === Object) {
-            channel.send('⚠ Something went wrong attempting to fetch data, please try again.')
+            interaction.reply({ content: '⚠ Something went wrong attempting to fetch data, please try again.', ephemeral: true})
         } else {
             let amount = Object.values(getData(interaction.options.get('base').value, interaction.options.get('target').value))[0]
             let currencies = Object.keys(getData(interaction.options.get('base').value, interaction.options.get('target').value))[0].split('_')
