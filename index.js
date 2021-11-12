@@ -8,11 +8,6 @@ const eventLoggers = fs.readdirSync('./eventLoggers').filter(file => file.endsWi
 
 client.commands = new Discord.Collection();
 
-//Docs -
-// Slash commands: https://deploy-preview-638--discordjs-guide.netlify.app/interactions/registering-slash-commands.html
-// Buttons: https://deploy-preview-674--discordjs-guide.netlify.app/interactions/buttons.html
-// v12 to V13: https://deploy-preview-551--discordjs-guide.netlify.app/additional-info/changes-in-v13.html#rolemanager
-
 for (const file of commands) {
     const command = require(`./commands/${file}`);
     client.commands.set(command.name, command)
@@ -45,7 +40,85 @@ async function registerCommands(){
 }
 
 async function registerPermissions() {
-    await client.guilds.cache.get('246604458744610816')?.commands.permissions.set({ fullPermissions:  [{id:"876458008824135680",permissions:[{id:"247002823089192971",type:"ROLE",permission:!0},{id:"789292170141368341",type:"ROLE",permission:!0}]},{id:"815166595424583700",permissions:[{id:"247002823089192971",type:"ROLE",permission:!0}]},{id:"815166596192403497",permissions:[{id:"247002823089192971",type:"ROLE",permission:!0}]},{id:"815166597060755486",permissions:[{id:"247002823089192971",type:"ROLE",permission:!0},{id:"789292170141368341",type:"ROLE",permission:!0}]},{id:"815166685174562847",permissions:[{id:"247002823089192971",type:"ROLE",permission:!0},{id:"789292170141368341",type:"ROLE",permission:!0}]},{id:"836266640693002270",permissions:[{id:"247002823089192971",type:"ROLE",permission:!0}]},{id:"849568569179111461",permissions:[{id:"247002823089192971",type:"ROLE",permission:!0}]}]})
+    //This should be a separate json file, but for now it's part of the code.
+    await client.guilds.cache.get('246604458744610816')?.commands.permissions.set({
+        fullPermissions: [{
+            id: "876458008824135680",
+            permissions: [{
+                id: "247002823089192971",
+                type: "ROLE",
+                permission: !0
+            }, {
+                id: "789292170141368341",
+                type: "ROLE",
+                permission: !0
+            }]
+        }, {
+            id: "815166595424583700",
+            permissions: [{
+                id: "247002823089192971",
+                type: "ROLE",
+                permission: !0
+            }]
+        }, {
+            id: "815166596192403497",
+            permissions: [{
+                id: "247002823089192971",
+                type: "ROLE",
+                permission: !0
+            }]
+        }, {
+            id: "815166597060755486",
+            permissions: [{
+                id: "247002823089192971",
+                type: "ROLE",
+                permission: !0
+            }, {
+                id: "789292170141368341",
+                type: "ROLE",
+                permission: !0
+            }]
+        }, {
+            id: "815166685174562847",
+            permissions: [{
+                id: "247002823089192971",
+                type: "ROLE",
+                permission: !0
+            }, {
+                id: "789292170141368341",
+                type: "ROLE",
+                permission: !0
+            }]
+        }, {
+            id: "836266640693002270",
+            permissions: [{
+                id: "247002823089192971",
+                type: "ROLE",
+                permission: !0
+            }]
+        }, {
+            id: "849568569179111461",
+            permissions: [{
+                id: "247002823089192971",
+                type: "ROLE",
+                permission: !0
+            }]
+        }, {
+            id: "901264295285911604",
+            permissions: [{
+                id: "177012181416542209",
+                type: "USER",
+                permission: !0
+            }]
+        },{
+            id: "905466732502720563",
+            permissions: [{
+                id: "247002823089192971",
+                type: "ROLE",
+                permission: !0
+            }]
+        }]
+    })
 }
 
 for (const file of handlers) {

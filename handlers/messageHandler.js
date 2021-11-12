@@ -11,19 +11,20 @@ client.on('messageCreate', async msg => {
         Embed.setColor('#0D22CC');
         if(msg.author.bot){
             Embed.setTitle('DMG Sent Message to User')
+            if(msg.interaction) {
+                Embed.addField('User:', `${msg.interaction.user.username}#${msg.interaction.user.discriminator}`)
+            }
         } else {
             Embed.setTitle('User Sent Message to DMG')
             Embed.addField('User:', msg.author.username + "#" + msg.author.discriminator, false)
         }
-        Embed.addField('Message:', msg.content);
-        console.log(msg)
+        Embed.addField('Message:', `${msg.content}`);
         await guild.channels.cache.get('477166711536091136').send({embeds: [Embed]});
     }
 
     //Automatically warn users abusing the reply feature without unchecking the mention button.
     if(msg.mentions.users !== null){
         let user = msg.mentions.users.first()
-        //console.log(user)
     }
 
     //LinkSanitizer
