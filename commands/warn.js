@@ -39,5 +39,18 @@ module.exports = {
             }
         }
         db.close()
+    },
+
+    warn: function (member, warning) {
+        let db = new sqlite3.Database('./dmg.db', (err) => {if (err) {console.log(err.message);} console.log("Loaded Warning Database")});
+        db.serialize(() => {db.prepare(`CREATE TABLE IF NOT EXISTS warnings (User text, WarningMessage text, WarnedBy text, Date text)`).run().finalize();});
+        db.run('INSERT INTO "warnings"(User, WarningMessage, WarnedBy, Date) VALUES($User, $WarningMessage, $WarnedBy, $Date)', [member.id, warning, "419539233850785792", Date.now()], function (err) {
+            if (err) {
+                return console.log(`Join ${err.message}`)
+            } else {
+                member.send({content: `You have been Automatically warned by the Game Boy Discord Bot with the following warning \`${warning}\``});
+            }
+        })
+        db.close()
     }
 }
