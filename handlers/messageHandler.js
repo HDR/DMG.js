@@ -2,6 +2,7 @@ const {client} = require("../constants");
 const Discord = require("discord.js");
 const url = require("url");
 const querystring = require('querystring');
+const warn = require("../commands/warn.js");
 
 client.on('messageCreate', async msg => {
     //Handle DM notifications for logging purposes
@@ -13,6 +14,8 @@ client.on('messageCreate', async msg => {
             Embed.setTitle('DMG Sent Message to User')
             if(msg.interaction) {
                 Embed.addField('User:', `${msg.interaction.user.username}#${msg.interaction.user.discriminator}`)
+            } else {
+                Embed.addField('User:', `${msg.channel.recipient.tag}`)
             }
         } else {
             Embed.setTitle('User Sent Message to DMG')
@@ -23,8 +26,16 @@ client.on('messageCreate', async msg => {
     }
 
     //Automatically warn users abusing the reply feature without unchecking the mention button.
-    if(msg.mentions.users !== null){
-        let user = msg.mentions.users.first()
+    if(msg.mentions.users.first() !== undefined){
+        let mentioned = msg.mentions.users.first();
+        msg.channel.messages.fetch( {limit: 1, before: msg.id} ).then(messages => {
+            let lastMessage = messages.first();
+            let dateDiff = new Date(Math.abs(lastMessage.createdAt - msg.createdAt));
+            if(lastMessage.author.id === mentioned.id && dateDiff.getTime() / 1000 < 900){
+                warn.warn(msg.author, "[Automated Warning] Please avoid mentioning users that are currently active (Replied to the latest message in channel with the mention option enabled)")
+                msg.author.send({content: "Please uncheck this option when replying if the message you're replying to was just posted. https://i.imgur.com/oTorezr.png"})
+            }
+        });
     }
 
     //LinkSanitizer

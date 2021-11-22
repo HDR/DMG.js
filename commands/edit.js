@@ -27,7 +27,7 @@ module.exports = {
             let chnl = channel.client.channels.cache.get(splitstr[5])
             chnl.messages.fetch(splitstr[6]).then(msg => {
                 msg.edit(interaction.options.get('contents').value).then()
-                interaction.reply(`Edited message in ${chnl.name}`, { ephemeral: true });
+                interaction.reply({content: `Edited message in ${chnl.name}`, ephemeral: true });
             })
         }
     }

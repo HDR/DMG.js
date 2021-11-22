@@ -20,7 +20,19 @@ client.on('messageReactionAdd', (reaction, member) => {
         if (reaction.emoji.name === "👍") {
             member.send("Thank you for confirming that you've not actually read the rules, if you want to get access to the rest of the server, please read the rules properly.")
         }
+
         if (reaction.emoji.name === "pokeball") {
+            reaction.message.guild.members.fetch(member.id).then((discordUser) => {
+                const Embed = new Discord.MessageEmbed();
+                Embed.setColor('#fc1303');
+                Embed.setTitle('User attempted to cheat to get past rules!')
+                Embed.addField('User:', member.username + "#" + member.discriminator, false)
+                Embed.addField('Emoji Used:', reaction._emoji.name)
+                discordUser.guild.channels.cache.get('477166711536091136').send({ embeds: [Embed]});
+            })
+        }
+
+        if (reaction.emoji.name === "Squirtle") {
             reaction.message.guild.members.fetch(member.id).then((discordUser) => {
                 if (discordUser.roles.cache.has("786733810897125407")){
                     const Embed = new Discord.MessageEmbed();
@@ -38,14 +50,16 @@ client.on('messageReactionAdd', (reaction, member) => {
                 }
             })
         } else {
-            reaction.message.guild.members.fetch(member.id).then((discordUser) => {
-                const Embed = new Discord.MessageEmbed();
-                Embed.setColor('#fc1303');
-                Embed.setTitle('User used wrong emoji in #rules')
-                Embed.addField('User:', member.username + "#" + member.discriminator, false)
-                Embed.addField('Emoji Used:', reaction._emoji.name)
-                discordUser.guild.channels.cache.get('477166711536091136').send({ embeds: [Embed]});
-            })
+            if (reaction.emoji.name !== "pokeball") {
+                reaction.message.guild.members.fetch(member.id).then((discordUser) => {
+                    const Embed = new Discord.MessageEmbed();
+                    Embed.setColor('#fc1303');
+                    Embed.setTitle('User used wrong emoji in #rules')
+                    Embed.addField('User:', member.username + "#" + member.discriminator, false)
+                    Embed.addField('Emoji Used:', reaction._emoji.name)
+                    discordUser.guild.channels.cache.get('477166711536091136').send({embeds: [Embed]});
+                })
+            }
         }
         if(!member.bot) {
             reaction.remove().then();

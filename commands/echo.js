@@ -26,7 +26,7 @@ module.exports = {
             let channelid = interaction.options.get('channel').value.replace(/[#<>]/g, '')
             let chnl = channel.client.channels.cache.get(channelid)
             chnl.send(interaction.options.get('message').value)
-            interaction.reply(`Echoed message to ${chnl.name}`, { ephemeral: true });
+            interaction.reply({content: `Echoed message to ${chnl.name}`, ephemeral: true });
         }
     }
 }
