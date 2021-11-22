@@ -21,7 +21,11 @@ client.on('messageCreate', async msg => {
             Embed.setTitle('User Sent Message to DMG')
             Embed.addField('User:', msg.author.username + "#" + msg.author.discriminator, false)
         }
-        Embed.addField('Message:', `${msg.content}`);
+        if(msg.content > 0) {
+            Embed.addField('Message:', `${msg.content}`);
+        } else {
+            Embed.addField('Message:', `Message is an embed (command reply)`);
+        }
         await guild.channels.cache.get('477166711536091136').send({embeds: [Embed]});
     }
 
