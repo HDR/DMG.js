@@ -21,7 +21,7 @@ client.on('messageCreate', async msg => {
             Embed.setTitle('User Sent Message to DMG')
             Embed.addField('User:', msg.author.username + "#" + msg.author.discriminator, false)
         }
-        if(msg.content > 0) {
+        if(msg.content.length > 0) {
             Embed.addField('Message:', `${msg.content}`);
         } else {
             Embed.addField('Message:', `Message is an embed (command reply)`);
@@ -36,8 +36,8 @@ client.on('messageCreate', async msg => {
             let lastMessage = messages.first();
             let dateDiff = new Date(Math.abs(lastMessage.createdAt - msg.createdAt));
             if(lastMessage.author.id === mentioned.id && dateDiff.getTime() / 1000 < 900){
-                warn.warn(msg.author, "[Automated Warning] Please avoid mentioning users that are currently active (Replied to the latest message in channel with the mention option enabled)")
-                msg.author.send({content: "Please uncheck this option when replying if the message you're replying to was just posted. https://i.imgur.com/oTorezr.png"})
+                warn.warn(msg.author, "[Automated Warning] Please avoid mentioning users that are currently active (Replied to the latest message in channel with the mention option enabled)", true)
+                msg.author.send({content: "Please remember to switch this option from **on** to **off** if you're replying to an active user. https://i.imgur.com/oTorezr.png"})
             }
         });
     }
@@ -45,7 +45,7 @@ client.on('messageCreate', async msg => {
     //LinkSanitizer
     let urlRE = new RegExp("([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_]+@)?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?([^ ])+");
     if(msg.content.match(urlRE) && !msg.author.bot) {
-        if(msg.content.match(urlRE)[0].includes("aliexpress")) {
+        if(msg.content.match(urlRE)[0].includes("aliexpress") && !msg.content.match(urlRE)[0].includes("a.aliexpress")) {
             let AliID = url.parse(msg.content.match(urlRE)[0]).pathname
             let crURL = [`https://www.aliexpress.com${AliID}`, `https://aliexpress.com${AliID}`]
             if (crURL.indexOf(msg.content.match(urlRE)[0]) === -1) {

@@ -9,9 +9,8 @@ client.on('messageCreate', async msg => {
         for (i = 0; i < content.length; i++){
             if(msg.attachments.size > 0){break;}
             if (!urlRE.test(content[i]) && !msg.author.bot){
-                console.log("Invalid URL: " + content[i]);
                 if(i === content.length - 1){
-                    warn.warn(msg.author, "[Automated Warning] Only images are allowed in gallery, please avoid chatting in this channel.")
+                    warn.warn(msg.author, "[Automated Warning] Only images are allowed in gallery, please avoid chatting in this channel.", false)
                     await msg.delete();
                 }
             } else { break; }
