@@ -9,7 +9,7 @@ function warn(user, reason, warned_by, silent){
             return console.log(`Join ${err.message}`)
         } else {
             if(!silent) {
-                user.send({content: `You have been Automatically warned by the Game Boy Discord Bot with the following warning \`${reason}\``});
+                user.send({content: `You have been warned in the Game Boy Discord with the following warning: \`${reason}\``});
             }
         }
     })
@@ -35,7 +35,8 @@ module.exports = {
         }
     ],
     execute: function (interaction) {
-        warn(client.guilds.cache.get(interaction.guildId).channels.cache.get(interaction.channelId).guild.members.cache.get(interaction.options.get('user').value).id, interaction.options.get('warning').value, client.guilds.cache.get(interaction.guildId).members.cache.get(interaction.user.id).user.id, false);
+        warn(client.guilds.cache.get(interaction.guildId).channels.cache.get(interaction.channelId).guild.members.cache.get(interaction.options.get('user').value), interaction.options.get('warning').value, client.guilds.cache.get(interaction.guildId).members.cache.get(interaction.user.id).user.id, false);
+        interaction.reply({content: `${client.guilds.cache.get(interaction.guildId).channels.cache.get(interaction.channelId).guild.members.cache.get(interaction.options.get('user').value).user.tag} Was successfully warned.`, ephemeral: true});
     },
 
     warn: function (member, reason, silent) {
