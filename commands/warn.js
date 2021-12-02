@@ -9,7 +9,7 @@ function warn(user, reason, warned_by, silent){
             return console.log(`Join ${err.message}`)
         } else {
             if(!silent) {
-                user.send({content: `You have been warned in the Game Boy Discord with the following warning: \`${reason}\``});
+                user.send({content: `You have been warned in the Game Boy Discord with the following warning: \`${reason}\``}).catch();
             }
         }
     })

@@ -42,7 +42,7 @@ client.on('messageReactionAdd', (reaction, member) => {
                     let dateDiff = new Date(Math.abs(discordUser.joinedAt - Date.now()))
                     Embed.addField('Time:', dateDiff.getHours() - 1 + " Hours " + dateDiff.getMinutes() + " Minutes " + dateDiff.getSeconds() + " Seconds");
                     if (dateDiff.getTime() / 1000 < 60){
-                        member.send("Woah there, looks like you're in a hurry, please make sure you have read the rules properly.").then();
+                        member.send("Woah there, looks like you're in a hurry, please make sure you have read the rules properly.").catch();
                     } else {
                         discordUser.roles.remove(discordUser.guild.roles.cache.find(role => role.id === "786733810897125407")).then();
                         discordUser.guild.channels.cache.get('477166711536091136').send({ embeds: [Embed]});
