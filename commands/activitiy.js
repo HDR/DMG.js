@@ -59,7 +59,7 @@ module.exports = {
 
         let user = await interaction.member.fetch();
         if (user.voice.channel) {
-            interaction.member.voice.channel.createInvite({maxAge: 0, targetType: 2, targetApplication: "878067389634314250"}).then(reply => {
+            interaction.member.voice.channel.createInvite({maxAge: 0, targetType: 2, targetApplication: interaction.options.get('activity').value}).then(reply => {
                 interaction.reply({content: `[Click to open ${reply.targetApplication.name} in ${reply.channel.name}](<https://discord.gg/${reply.code}>)`});
             });
         } else {
