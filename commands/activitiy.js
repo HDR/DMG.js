@@ -41,12 +41,20 @@ module.exports = {
                     "value": "755827207812677713"
                 },
                 {
+                    "name": "Sketchy Artist",
+                    "value": "879864070101172255"
+                },
+                {
                     "name": "Spellcast",
                     "value": "852509694341283871"
                 },
                 {
                     "name": "Watch together",
                     "value": "880218394199220334"
+                },
+                {
+                    "name": "Watch together (Old)",
+                    "value": "755600276941176913"
                 },
                 {
                     "name": "Word Snacks",
