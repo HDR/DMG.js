@@ -1,0 +1,93 @@
+{
+  "fullPermissions": [{
+    "id": "876458008824135680",
+    "permissions": [{
+      "id": "247002823089192971",
+      "type": "ROLE",
+      "permission": true
+    },
+      {
+        "id": "789292170141368341",
+        "type": "ROLE",
+        "permission": true
+      }
+    ]
+  },
+    {
+      "id": "815166595424583700",
+      "permissions": [{
+        "id": "247002823089192971",
+        "type": "ROLE",
+        "permission": true
+      }]
+    },
+    {
+      "id": "815166596192403497",
+      "permissions": [{
+        "id": "247002823089192971",
+        "type": "ROLE",
+        "permission": true
+      }]
+    },
+    {
+      "id": "815166597060755486",
+      "permissions": [{
+        "id": "247002823089192971",
+        "type": "ROLE",
+        "permission": true
+      },
+        {
+          "id": "789292170141368341",
+          "type": "ROLE",
+          "permission": true
+        }
+      ]
+    },
+    {
+      "id": "815166685174562847",
+      "permissions": [{
+        "id": "247002823089192971",
+        "type": "ROLE",
+        "permission": true
+      },
+        {
+          "id": "789292170141368341",
+          "type": "ROLE",
+          "permission": true
+        }
+      ]
+    },
+    {
+      "id": "836266640693002270",
+      "permissions": [{
+        "id": "247002823089192971",
+        "type": "ROLE",
+        "permission": true
+      }]
+    },
+    {
+      "id": "849568569179111461",
+      "permissions": [{
+        "id": "247002823089192971",
+        "type": "ROLE",
+        "permission": true
+      }]
+    },
+    {
+      "id": "901264295285911604",
+      "permissions": [{
+        "id": "177012181416542209",
+        "type": "USER",
+        "permission": true
+      }]
+    },
+    {
+      "id": "905466732502720563",
+      "permissions": [{
+        "id": "247002823089192971",
+        "type": "ROLE",
+        "permission": true
+      }]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 module.exports = {
     name: 'activity',
-    description: 'Start an activity',
+    description: 'Start an embedded activity',
     options: [
         {
             "name": "activity",
