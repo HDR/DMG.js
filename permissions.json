@@ -1,11 +1,12 @@
 {
-  "fullPermissions": [{
-    "id": "876458008824135680",
-    "permissions": [{
-      "id": "247002823089192971",
-      "type": "ROLE",
-      "permission": true
-    },
+  "fullPermissions": [
+    {
+      "id": "876458008824135680",
+      "permissions": [{
+        "id": "247002823089192971",
+        "type": "ROLE",
+        "permission": true
+      },
       {
         "id": "789292170141368341",
         "type": "ROLE",
@@ -28,20 +29,6 @@
         "type": "ROLE",
         "permission": true
       }]
-    },
-    {
-      "id": "815166597060755486",
-      "permissions": [{
-        "id": "247002823089192971",
-        "type": "ROLE",
-        "permission": true
-      },
-        {
-          "id": "789292170141368341",
-          "type": "ROLE",
-          "permission": true
-        }
-      ]
     },
     {
       "id": "815166685174562847",
@@ -85,6 +72,19 @@
       "id": "905466732502720563",
       "permissions": [{
         "id": "247002823089192971",
+        "type": "ROLE",
+        "permission": true
+      }]
+    },
+    {
+      "id": "919978121296482364",
+      "permissions": [{
+        "id": "247002823089192971",
+        "type": "ROLE",
+        "permission": true
+      },
+      {
+        "id": "789292170141368341",
         "type": "ROLE",
         "permission": true
       }]

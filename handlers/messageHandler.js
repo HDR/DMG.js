@@ -3,6 +3,7 @@ const Discord = require("discord.js");
 const url = require("url");
 const querystring = require('querystring');
 const warn = require("../commands/warn.js");
+const {DiscordAPIError} = require("discord.js");
 
 client.on('messageCreate', async msg => {
     //Handle DM notifications for logging purposes
@@ -59,5 +60,15 @@ client.on('messageCreate', async msg => {
                 msg.reply({ content: `I've attempted to sanitize your url: https://2.taobao.com/item.htm?id=${TaoID}`, allowedMentions: { repliedUser: false }}).then()
             }
         }
+    }
+
+    let analogueStrings = ['ANALOGUE POCKET', 'ANALOGUE.CO', 'ANALOG POCKET', 'ANALOGPOCKET', 'ANALOGUE', 'ANALOG', 'ANAL POCKET', 'ANALPOCKET'];
+    if(msg.channelId === '246604458744610816' || msg.channelId === '744938437693407393' || msg.channelId === '332487777986019337' || msg.channelId === '332487991383687169' || msg.channelId === '717097354209001653'){
+        if(!msg.author.bot && analogueStrings.some(string => msg.content.toUpperCase().includes(string))) {
+            msg.author.send({content: "It seems like you posted something related to the Analogue Pocket, please keep non-game boy content to #off-topic"}).catch(DiscordAPIError =>{
+                msg.reply({content: 'It seems like you posted something related to the Analogue Pocket, please keep non-game boy content to #off-topic'})
+            })
+        }
+        //msg.delete().catch(err => console.log(err))
     }
 });

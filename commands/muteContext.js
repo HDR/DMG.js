@@ -1,5 +1,4 @@
 const {client} = require("../constants");
-const schedule = require('node-schedule');
 
 module.exports = {
     name: 'Mute',

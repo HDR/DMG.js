@@ -10,8 +10,12 @@
   "author": "HDR",
   "license": "GPLv3",
   "dependencies": {
+    "@discordjs/voice": "^0.7.5",
+    "discord-speech-recognition": "^2.2.0",
     "discord.js": "^13.3.1",
     "fs-extra": "^10.0.0",
+    "libsodium-wrappers": "^0.7.9",
+    "node-cron": "^2.0.3",
     "node-gyp": "^8.1.0",
     "node-schedule": "^2.0.0",
     "pcb-stackup": "^4.2.5",
@@ -21,8 +25,7 @@
     "sqlite3": "^5.0.0",
     "table-scraper": "^1.0.3",
     "unzipper": "^0.10.11",
-    "xmlhttprequest": "^1.8.0",
-    "node-cron": "^2.0.3"
+    "xmlhttprequest": "^1.8.0"
   },
   "description": "A port of DMG-Bot from python to JavaScript"
 }
