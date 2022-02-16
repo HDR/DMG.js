@@ -4,6 +4,7 @@ const url = require("url");
 const querystring = require('querystring');
 const warn = require("../commands/warn.js");
 const {DiscordAPIError} = require("discord.js");
+const {DMGsendPM} = require("../commonFunctions");
 
 client.on('messageCreate', async msg => {
     //Handle DM notifications for logging purposes
@@ -34,11 +35,14 @@ client.on('messageCreate', async msg => {
     if(msg.mentions.users.first() !== undefined){
         let mentioned = msg.mentions.users.first();
         msg.channel.messages.fetch( {limit: 1, before: msg.id} ).then(messages => {
-            let lastMessage = messages.first();
-            let dateDiff = new Date(Math.abs(lastMessage.createdAt - msg.createdAt));
-            if(lastMessage.author.id === mentioned.id && dateDiff.getTime() / 1000 < 900){
-                warn.warn(msg.author, "[Automated Warning] Please avoid mentioning users that are currently active (Replied to the latest message in channel with the mention option enabled)", true)
-                msg.author.send({content: "Please remember to switch this option from **on** to **off** if you're replying to an active user. https://i.imgur.com/oTorezr.png"}).catch()
+            if(!msg.author.bot && mentioned !== msg.author) {
+                let lastMessage = messages.first();
+                let dateDiff = new Date(Math.abs(lastMessage.createdAt - msg.createdAt));
+                if(lastMessage.author.id === mentioned.id && dateDiff.getTime() / 1000 < 900){
+                    warn.warn(msg.author, "[Automated Warning] Please avoid mentioning users that are currently active (Replied to the latest message in channel with the mention option enabled)", true)
+                    DMGsendPM(msg.author, "Please remember to switch this option from **on** to **off** if you're replying to an active user. https://i.imgur.com/oTorezr.png")
+                    //msg.author.send({content: "Please remember to switch this option from **on** to **off** if you're replying to an active user. https://i.imgur.com/oTorezr.png"}).catch()
+                }
             }
         });
     }
@@ -65,9 +69,7 @@ client.on('messageCreate', async msg => {
     let analogueStrings = ['ANALOGUE POCKET', 'ANALOGUE.CO', 'ANALOG POCKET', 'ANALOGPOCKET', 'ANALOGUE', 'ANALOG', 'ANAL POCKET', 'ANALPOCKET'];
     if(msg.channelId === '246604458744610816' || msg.channelId === '744938437693407393' || msg.channelId === '332487777986019337' || msg.channelId === '332487991383687169' || msg.channelId === '717097354209001653'){
         if(!msg.author.bot && analogueStrings.some(string => msg.content.toUpperCase().includes(string))) {
-            msg.author.send({content: "It seems like you posted something related to the Analogue Pocket, please keep non-game boy content to #off-topic"}).catch(DiscordAPIError =>{
-                msg.reply({content: 'It seems like you posted something related to the Analogue Pocket, please keep non-game boy content to #off-topic'})
-            })
+            DMGsendPM(msg.author, "It seems like you posted something related to the Analogue Pocket, please keep non-game boy content to #off-topic");
         }
         //msg.delete().catch(err => console.log(err))
     }

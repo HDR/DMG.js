@@ -43,18 +43,27 @@ for (const file of eventLoggers) {
 }
 
 client.on('interactionCreate', async interaction => {
-    if (interaction.isMessageComponent()){
-        if (interaction.isMessageComponent() && interaction.componentType === 'BUTTON'){
+
+
+    if (interaction.isMessageComponent()) {
+        if (interaction.isMessageComponent() && interaction.componentType === 'BUTTON') {
             const buttonCommand = client.commands.get(interaction.message.interaction.commandName);
             buttonCommand[interaction.customId](interaction);
         }
 
-        if (interaction.isMessageComponent() && interaction.componentType === 'SELECT_MENU'){
+        if (interaction.isMessageComponent() && interaction.componentType === 'SELECT_MENU') {
             const menuCommand = client.commands.get(interaction.message.interaction.commandName);
             menuCommand[interaction.values[0]](interaction);
         }
     }
-    else {
+
+    if (interaction.isModalSubmit && interaction.type === 'MODAL_SUBMIT'){
+        let commandSplit = interaction.customId.split('.')
+        const modalCommand = client.commands.get(commandSplit[0]);
+        modalCommand[commandSplit[1]](interaction);
+    }
+
+    if (interaction.isCommand()) {
         try{
             const command = client.commands.get(interaction.commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.commandName));
             command.execute(interaction);
