@@ -44,7 +44,6 @@ for (const file of eventLoggers) {
 
 client.on('interactionCreate', async interaction => {
 
-
     if (interaction.isMessageComponent()) {
         if (interaction.isMessageComponent() && interaction.componentType === 'BUTTON') {
             const buttonCommand = client.commands.get(interaction.message.interaction.commandName);
@@ -57,7 +56,7 @@ client.on('interactionCreate', async interaction => {
         }
     }
 
-    if (interaction.isModalSubmit && interaction.type === 'MODAL_SUBMIT'){
+    if (interaction.type === 'MODAL_SUBMIT'){
         let commandSplit = interaction.customId.split('.')
         const modalCommand = client.commands.get(commandSplit[0]);
         modalCommand[commandSplit[1]](interaction);

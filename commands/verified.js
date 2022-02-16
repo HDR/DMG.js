@@ -27,7 +27,7 @@ module.exports = {
 
         const modal = {
             title: "Verified Modder Application",
-            custom_id: "debug.submit_modal",
+            custom_id: "verified.submit_modal",
             components: [
                 {
                     type: 1,
