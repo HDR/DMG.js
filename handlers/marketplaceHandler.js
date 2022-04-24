@@ -14,15 +14,15 @@ client.on('messageCreate', async msg => {
         } else {
             if (emojis.some(v => msg.content.toUpperCase().includes(v))) {
 
-                msg.pin().catch(error => {
+                await msg.pin().catch(async error => {
                     if (error.message.toString().includes("Maximum number of pins reached")) {
-                        msg.channel.send("This channel has reached the max amount of pinned messages, performing some cleanup.")
-                        msg.channel.messages.fetchPinned().then(messages => messages.each(message => {
+                        await msg.channel.send("This channel has reached the max amount of pinned messages, performing some cleanup.")
+                        await msg.channel.messages.fetchPinned().then(messages => messages.each(message => {
                             if (Date.now() - message.createdAt > 1000 * 60 * 60 * 24 * 14) {
                                 message.unpin();
                             }
                         }));
-                        msg.pin();
+                        await msg.pin();
 
                     }
                 })

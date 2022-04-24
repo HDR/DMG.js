@@ -61,8 +61,9 @@ module.exports = {
                         style: 2,
                         custom_id: "verified_mod_application_images",
                         label: 'Please provide some images of your work',
-                        placeholder: 'Paste image links here',
+                        placeholder: 'Use Imgur & include pictures of internals',
                         min_length: 8,
+                        max_length: 1024,
                         required: true
                     }]
                 }
@@ -81,12 +82,20 @@ module.exports = {
         StaffEmbed.setColor('#90EE90')
         StaffEmbed.setTitle('A new verified modder application has been submitted')
         StaffEmbed.addField('User', `${interaction.user.username}#${interaction.user.discriminator} (${interaction.user.id})`)
-        StaffEmbed.addField('Why do you want to be a verified modder?', interaction.components[0].components[0].value)
+        let StrLength = interaction.components[0].components[0].value.length
+        if(StrLength <= 1024) {
+            StaffEmbed.addField('Why do you want to be a verified modder?', interaction.components[0].components[0].value)
+        } else {
+            StaffEmbed.addField('Why do you want to be a verified modder? #1', interaction.components[0].components[0].value.substr(0, 1024))
+            if(StrLength > 1024){StaffEmbed.addField('Why do you want to be a verified modder? #2', interaction.components[0].components[0].value.substr(1024, 1024))}
+            if(StrLength > 2048){StaffEmbed.addField('Why do you want to be a verified modder? #3', interaction.components[0].components[0].value.substr(2048, 1024))}
+            if(StrLength > 3072){StaffEmbed.addField('Why do you want to be a verified modder? #4', interaction.components[0].components[0].value.substr(3072, 1024))}
+        }
         StaffEmbed.addField('How long have you been modding Game Boys?', interaction.components[1].components[0].value)
         StaffEmbed.addField('Please provide some images of your work', interaction.components[2].components[0].value)
 
         let guild = client.guilds.cache.get('246604458744610816');
 
-        interaction.reply({embeds: [ResponseEmbed], ephemeral: true}).then(await guild.channels.cache.get('793348250526154783').send({embeds: [StaffEmbed]}));
+        interaction.reply({embeds: [ResponseEmbed], ephemeral: true}).then(await guild.channels.cache.get('793348250526154783').send({embeds: [StaffEmbed]})).then(await guild.channels.cache.get('793348250526154783').lastMessage.pin())
     }
 }

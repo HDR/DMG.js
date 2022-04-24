@@ -82,5 +82,9 @@ module.exports = {
         }
         await interaction.deferUpdate().then();
         await interaction.editReply({ embeds: [buildEmbed(search, parseInt(page[0]))], components: [navigators]}).then();
+    },
+
+    voiceCheck: async function (query, msg){
+        await msg.author.send({ embeds: [buildEmbed(query, 0)]}).then()
     }
 }
