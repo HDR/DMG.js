@@ -65,7 +65,7 @@ client.on('messageCreate', async msg => {
         }
     }
 
-    let analogueStrings = ['ANALOGUE POCKET', 'ANALOGUE.CO', 'ANALOG POCKET', 'ANALOGPOCKET', 'ANALOGUE', 'ANALOG', 'ANAL POCKET', 'ANALPOCKET'];
+    let analogueStrings = ['ANALOGUE POCKET', 'ANALOGUE.CO', 'ANALOG POCKET', 'ANALOGPOCKET', 'ANALOGUE', 'ANAL POCKET', 'ANALPOCKET'];
     if(msg.channelId === '246604458744610816' || msg.channelId === '744938437693407393' || msg.channelId === '332487777986019337' || msg.channelId === '332487991383687169' || msg.channelId === '717097354209001653'){
         if(!msg.author.bot && analogueStrings.some(string => msg.content.toUpperCase().includes(string))) {
             DMGsendPM(msg.author, "It seems like you posted something related to the Analogue Pocket, please keep non-game boy content to #off-topic");

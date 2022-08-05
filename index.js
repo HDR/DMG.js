@@ -31,7 +31,6 @@ async function registerCommands(){
 
     }
     await client.application?.commands.set(data).then();
-    await client.guilds.cache.get('246604458744610816')?.commands.permissions.set(permissions)
 }
 
 for (const file of handlers) {
