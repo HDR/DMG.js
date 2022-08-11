@@ -2,7 +2,7 @@ const {client} = require("../constants");
 const Discord = require("discord.js");
 const url = require("url");
 const querystring = require('querystring');
-const warn = require("../commands/warn.js");
+const warn = require("../commands-old/warn.js");
 const {DiscordAPIError} = require("discord.js");
 const {DMGsendPM} = require("../commonFunctions");
 

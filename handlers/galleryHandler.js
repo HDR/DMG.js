@@ -1,6 +1,6 @@
 const {client} = require("../constants");
 const { galleryChannel } = require('../config.json')
-const warn = require('../commands/warn.js')
+const warn = require('../commands-old/warn.js')
 
 client.on('messageCreate', async msg => {
     if (msg.channel === client.channels.cache.get(galleryChannel)){
