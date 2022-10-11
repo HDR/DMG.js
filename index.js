@@ -1,7 +1,6 @@
 const {client} = require("./constants");
 const Discord = require('discord.js')
 const { token } = require('./config.json')
-const permissions = require('./permissions.json')
 const fs = require('fs')
 const commands = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const handlers = fs.readdirSync('./handlers').filter(file => file.endsWith('.js'));
