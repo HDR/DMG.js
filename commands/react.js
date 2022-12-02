@@ -1,23 +1,21 @@
+const { SlashCommandBuilder, PermissionFlagsBits} = require('discord.js')
 const {client} = require("../constants");
 
 module.exports = {
-    name: 'react',
-    description: 'React to a message',
-    defaultPermission: false,
-    options: [
-        {
-            "name": "url",
-            "description": "Link to message you want to react to",
-            "type": 'STRING',
-            "required": true
-        },
-        {
-            "name": "contents",
-            "description": "Emoji",
-            "type": 'STRING',
-            "required": true
-        }
-    ],
+
+    data: new SlashCommandBuilder()
+        .setName('react')
+        .setDescription('React to a message as the bot')
+        .addStringOption(option =>
+            option.setName('url')
+                .setDescription('Link to target message')
+                .setRequired(true))
+        .addStringOption(option =>
+            option.setName('contents')
+                .setDescription('Emoji')
+                .setRequired(true))
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
+
     execute: function (interaction) {
         const channel = client.guilds.cache.get(interaction.guildId).channels.cache.get(interaction.channelId);
         let splitstr = interaction.options.get('url').value.split('/')

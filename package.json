@@ -1,24 +1,17 @@
 {
   "name": "DMGjs",
   "version": "1.4.0",
+  "description": "",
   "main": "index.js",
-  "keywords": [
-    "Bot",
-    "Discord",
-    "JetBrains"
-  ],
+  "keywords": [],
   "author": "HDR",
   "license": "GPLv3",
   "dependencies": {
-    "@discordjs/rest": "^1.0.1",
-    "discord.js": "^14.2.0",
-    "sqlite3": "^5.0.11",
+    "discord.js": "^14.7.1",
+    "money": "^0.2.0",
+    "node-cron": "^3.0.2",
+    "open-exchange-rates": "^0.3.0",
     "table-scraper": "^1.0.3",
-    "uuid": "^8.3.2",
     "xmlhttprequest": "^1.8.0"
-  },
-  "description": "A port of DMG-Bot from python to JavaScript",
-  "devDependencies": {
-    "node-cron": "^3.0.1"
   }
 }

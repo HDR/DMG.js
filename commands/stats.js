@@ -1,9 +1,9 @@
-const { Permissions, MessageEmbed } = require("discord.js");
+const { Permissions, EmbedBuilder, SlashCommandBuilder } = require("discord.js");
 const {client} = require("../constants");
 
 
 async function stats (interaction, context) {
-    const Embed = new MessageEmbed();
+    const Embed = new EmbedBuilder();
     Embed.setColor('#FCBA03');
     Embed.setTitle("User Statistics");
     let member = client.guilds.cache.get(interaction.guildId).members.cache.get(interaction.user.id)
@@ -37,17 +37,16 @@ async function stats (interaction, context) {
     }
 }
 
+
 module.exports = {
-    name: 'stats',
-    description: 'Displays user statistics',
-    options: [
-        {
-            "name": "user",
-            "description": "Get another user's stats",
-            "type": 'USER',
-            "required": false
-        }
-    ],
+
+    data: new SlashCommandBuilder()
+        .setName('stats')
+        .setDescription('Displays user statistics')
+        .addUserOption(option =>
+            option.setName('target')
+                .setDescription('Username')),
+
     execute: async function (interaction) {
         await stats(interaction, false);
     },

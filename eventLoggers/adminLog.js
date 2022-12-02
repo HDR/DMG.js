@@ -1,19 +1,7 @@
+const { guildId, channelId } = require('./config/adminLog.json')
 const {client} = require("../constants");
 const {MessageEmbed} = require("discord.js");
 
-//Ban Event
-//client.on('guildBanAdd', async(guild, user) => {
-//});
-
-//Unban Event
-//client.on('guildBanRemove', async(guild, user) => {
-//});
-
-//Kick Event
-//client.on('guildMemberRemove', async(guild, user) => {
-//});
-
-//Member Timeout Event
 client.on('guildMemberUpdate', async(oldMember, newMember) => {
     if(newMember.isCommunicationDisabled()) {
         const audit = await newMember.guild.fetchAuditLogs({limit: 1, type: 'MEMBER_UPDATE'});
@@ -31,6 +19,6 @@ client.on('guildMemberUpdate', async(oldMember, newMember) => {
 
 
 async function log(embed) {
-    let guild = client.guilds.cache.get('246604458744610816');
-    await guild.channels.cache.get('793348250526154783').send({embeds: [embed]});
+    let guild = client.guilds.cache.get(guildId);
+    await guild.channels.cache.get(channelId).send({embeds: [embed]});
 }

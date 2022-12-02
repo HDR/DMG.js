@@ -1,78 +1,87 @@
 const {client} = require("./constants");
-const { Collection, Routes } = require('discord.js')
-const { REST } = require('@discordjs/rest');
+const { Collection, REST, Routes, Events } = require('discord.js');
 const { token, guild } = require('./config.json')
 const fs = require('fs')
+const commands = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const handlers = fs.readdirSync('./handlers').filter(file => file.endsWith('.js'));
+const eventLoggers = fs.readdirSync('./eventLoggers').filter(file => file.endsWith('.js'));
 
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-const handlerFiles = fs.readdirSync('./handlers').filter(file => file.endsWith('.js'));
-const eventLoggerFiles = fs.readdirSync('./eventLoggers').filter(file => file.endsWith('.js'));
+client.commands = new Collection;
 
-client.commands = new Collection();
-
-for (const file of commandFiles) {
+for (const file of commands) {
     const command = require(`./commands/${file}`);
-    client.commands.set(command.name, command)
-}
-
-
-for (const file of handlerFiles) {
-    require(`./handlers/${file}`);
-}
-
-for (const file of eventLoggerFiles) {
-    require(`./eventLoggers/${file}`);
+    client.commands.set(command.data.name, command)
 }
 
 async function registerCommands(){
-    const data = []
-    for (const file of commandFiles) {
+    const commandData = []
+    for (const file of commands) {
         if (!client.application?.owner) await client.application?.fetch();
         const command = require(`./commands/${file}`);
-        client.commands.set(command.name, command)
-        console.log(file)
-        data.push({
-            name: command.name,
-            type: command.type,
-            defaultPermission: command.defaultPermission,
-            description: command.description,
-            options: command.options
-        },);
+        commandData.push(command.data.toJSON());
 
     }
-    await client.guilds.cache.get(guild).commands.set(data).then();
-}
+    const rest = new REST({ version: '10' }).setToken(token);
 
-client.on('interactionCreate', async interaction => {
+    (async () => {
+        try {
+            console.log(`Started refreshing ${commandData.length} application (/) commands.`);
 
-    //console.log(interaction)
+            const data = await rest.put(
+                Routes.applicationGuildCommands(client.application.id, guild),
+                {body: commandData},
+            );
 
-    //if (interaction.isMessageComponent()) {
-    //    if (interaction.isMessageComponent() && interaction.componentType === 'BUTTON') {
-    //        const buttonCommand = client.commands.get(interaction.message.interaction.commandName);
-    //        buttonCommand[interaction.customId](interaction);
-    //    }
-//
-    //    if (interaction.isMessageComponent() && interaction.componentType === 'SELECT_MENU') {
-    //        const menuCommand = client.commands.get(interaction.message.interaction.commandName);
-    //        menuCommand[interaction.values[0]](interaction);
-    //    }
-    //}
-//
-    //if (interaction.type === 'MODAL_SUBMIT'){
-    //    let commandSplit = interaction.customId.split('.')
-    //    const modalCommand = client.commands.get(commandSplit[0]);
-    //    modalCommand[commandSplit[1]](interaction);
-    //}
-//
-    if (interaction.isCommand()) {
-        try{
-            const command = client.commands.get(interaction.commandName) || client.commands.find(cmd => cmd.includes(interaction.commandName));
-            command.execute(interaction);
+            console.log(`Successfully reloaded ${data.length} application (/) commands.`);
         } catch (error) {
             console.error(error);
         }
+    })().then();
+}
+
+for (const file of handlers) {
+    require(`./handlers/${file}`);
+}
+
+for (const file of eventLoggers) {
+    require(`./eventLoggers/${file}`);
+}
+
+client.on(Events.InteractionCreate, async interaction => {
+
+    if (interaction.isChatInputCommand()) {
+        const command = interaction.client.commands.get(interaction.commandName);
+
+        if (!command) {
+            console.error(`No command matching ${interaction.commandName} was found.`);
+            return;
+        }
+
+        try {
+            await command.execute(interaction);
+        } catch (error) {
+            console.error(`Error executing ${interaction.commandName}`);
+            console.error(error);
+        }
     }
+
+    if(interaction.isButton()) {
+        const command = interaction.client.commands.get(interaction.message.interaction.commandName);
+
+        if (!command) {
+            console.error(`No command matching ${interaction.message.interaction.commandName} was found.`);
+            return;
+        }
+
+        try {
+            await command[interaction.customId](interaction);
+        } catch (error) {
+            console.error(`Error executing ${interaction.message.interaction.commandName}`);
+            console.error(error);
+        }
+    }
+
+
 });
 
 client.login(token).then(registerCommands).then();

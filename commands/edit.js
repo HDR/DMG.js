@@ -1,34 +1,28 @@
-const { Permissions } = require("discord.js")
+const { PermissionFlagsBits, SlashCommandBuilder } = require("discord.js")
 const {client} = require("../constants");
 
 module.exports = {
-    name: 'edit',
-    description: 'Edit a message posted by the bot',
-    defaultPermission: false,
-    options: [
-        {
-            "name": "url",
-            "description": "Link to message you want to edit",
-            "type": 'STRING',
-            "required": true
-        },
-        {
-            "name": "contents",
-            "description": "New message contents",
-            "type": 'STRING',
-            "required": true
-        }
-    ],
+
+    data: new SlashCommandBuilder()
+        .setName('edit')
+        .setDescription('Echo a message to a channel as the bot')
+        .addStringOption(option =>
+            option.setName('url')
+                .setDescription('Link to target message')
+                .setRequired(true))
+        .addStringOption(option =>
+            option.setName('contents')
+                .setDescription('New message contents')
+                .setRequired(true))
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
+
     execute: function (interaction) {
         const channel = client.guilds.cache.get(interaction.guildId).channels.cache.get(interaction.channelId);
-        const member = client.guilds.cache.get(interaction.guildId).members.cache.get(interaction.user.id)
-        if(member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
-            let splitstr = interaction.options.get('url').value.split('/')
-            let chnl = channel.client.channels.cache.get(splitstr[5])
-            chnl.messages.fetch(splitstr[6]).then(msg => {
-                msg.edit(interaction.options.get('contents').value).then()
-                interaction.reply({content: `Edited message in ${chnl.name}`, ephemeral: true });
-            })
-        }
+        let splitstr = interaction.options.get('url').value.split('/')
+        let chnl = channel.client.channels.cache.get(splitstr[5])
+        chnl.messages.fetch(splitstr[6]).then(msg => {
+            msg.edit(interaction.options.get('contents').value).then()
+            interaction.reply({content: `Edited message in ${chnl.name}`, ephemeral: true });
+        })
     }
 }

@@ -1,32 +1,26 @@
-const { Permissions } = require("discord.js")
+const { PermissionFlagsBits, SlashCommandBuilder } = require("discord.js")
 const {client} = require("../constants");
 
 module.exports = {
-    name: 'echo',
-    description: '[Admin] Echo a message as the bot',
-    defaultPermission: false,
-    options: [
-        {
-            "name": "channel",
-            "description": "Target channel",
-            "type": 'CHANNEL',
-            "required": true
-        },
-        {
-            "name": "message",
-            "description": "Message Content",
-            "type": 'STRING',
-            "required": true
-        }
-    ],
+
+    data: new SlashCommandBuilder()
+        .setName('echo')
+        .setDescription('Echo a message to a channel as the bot')
+        .addChannelOption(option =>
+            option.setName('channel')
+                .setDescription('target channel')
+                .setRequired(true))
+        .addStringOption(option =>
+            option.setName('contents')
+                .setDescription('message contents')
+                .setRequired(true))
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
+
     execute: function (interaction) {
-        const member = client.guilds.cache.get(interaction.guildId).members.cache.get(interaction.user.id)
         const channel = client.guilds.cache.get(interaction.guildId).channels.cache.get(interaction.channelId);
-        if(member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
-            let channelid = interaction.options.get('channel').value.replace(/[#<>]/g, '')
-            let chnl = channel.client.channels.cache.get(channelid)
-            chnl.send(interaction.options.get('message').value)
-            interaction.reply({content: `Echoed message to ${chnl.name}`, ephemeral: true });
-        }
+        let channelid = interaction.options.get('channel').value.replace(/[#<>]/g, '')
+        let chnl = channel.client.channels.cache.get(channelid)
+        chnl.send(interaction.options.get('contents').value)
+        interaction.reply({content: `Echoed message to ${chnl.name}`, ephemeral: true });
     }
 }
