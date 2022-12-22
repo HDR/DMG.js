@@ -1,16 +1,14 @@
 const { guildId, channelId } = require('./config/adminLog.json')
 const {client} = require("../constants");
-const {MessageEmbed} = require("discord.js");
+const { EmbedBuilder, Events } = require("discord.js");
 
-client.on('guildMemberUpdate', async(oldMember, newMember) => {
+client.on(Events.GuildMemberUpdate, async(oldMember, newMember) => {
     if(newMember.isCommunicationDisabled()) {
-        const audit = await newMember.guild.fetchAuditLogs({limit: 1, type: 'MEMBER_UPDATE'});
-        const Embed = new MessageEmbed()
+        const audit = await newMember.guild.fetchAuditLogs({limit: 1, type: 24});
+        const Embed = new EmbedBuilder()
         Embed.setColor('#ff0000')
         Embed.setTitle(`${newMember.user.tag} has been timed out.`)
-        Embed.addField('Reason', `${audit.entries.first().reason}`)
-        Embed.addField('Executor', `${audit.entries.first().executor.tag}`)
-        Embed.addField('Until', `<t:${Math.floor(newMember.communicationDisabledUntilTimestamp/1000)}:F>`)
+        Embed.addFields({name:'Reason', value: `${audit.entries.first().reason}`}, {name:'Executor', value: `${audit.entries.first().executor.tag}`}, {name: 'Until', value: `<t:${Math.floor(newMember.communicationDisabledUntilTimestamp/1000)}:F>`})
         await log(Embed)
     }
 

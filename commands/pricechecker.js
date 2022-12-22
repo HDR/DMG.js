@@ -33,7 +33,6 @@ function buildEmbed(gameSearch, page) {
 }
 
 module.exports = {
-
     data: new SlashCommandBuilder()
         .setName('pricecheck')
         .setDescription('Check the price of GB,GBC & GBA Games')
@@ -43,11 +42,11 @@ module.exports = {
             .setRequired(true)),
 
     execute: async function (interaction) {
-
         const navigators = new ActionRowBuilder()
         .addComponents(new ButtonBuilder().setCustomId('previous').setLabel('Previous').setStyle('Secondary').setEmoji('⬅').setDisabled(true))
         .addComponents(new ButtonBuilder().setCustomId('next').setLabel('Next').setStyle('Secondary').setEmoji('➡'))
-        await interaction.reply({ embeds: [buildEmbed(interaction.options.get('game').value, 0)], components: [navigators]}).then()
+        await interaction.deferReply()
+        await interaction.editReply({ embeds: [buildEmbed(interaction.options.getString('game'), 0)], components: [navigators]}).then()
     },
 
     previous: async function (interaction) {
@@ -63,7 +62,6 @@ module.exports = {
         }
 
         navigators.addComponents(new ButtonBuilder().setCustomId('next').setLabel('Next').setStyle('Secondary').setEmoji('➡'));
-
         await interaction.deferUpdate().then();
         await interaction.editReply({ embeds: [buildEmbed(search, parseInt(page[0])-2)], components: [navigators]}).then();
     },
@@ -80,7 +78,7 @@ module.exports = {
         } else {
             navigators.addComponents(new ButtonBuilder().setCustomId('next').setLabel('Next').setStyle('Secondary').setEmoji('➡').setDisabled(false));
         }
-        await interaction.deferUpdate().then();
+        await interaction.deferUpdate()
         await interaction.editReply({ embeds: [buildEmbed(search, parseInt(page[0]))], components: [navigators]}).then();
     }
 }

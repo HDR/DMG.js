@@ -10,6 +10,6 @@ module.exports = {
             .setRequired(true)),
 
     execute: function (interaction) {
-        interaction.reply(`https://letmegooglethat.com/?q=${interaction.options.get('search').value.split(' ').join('+')}`);
+        interaction.reply(`https://letmegooglethat.com/?q=${interaction.options.getString('search').split(' ').join('+')}`);
     }
 }

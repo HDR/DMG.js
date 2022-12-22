@@ -1,5 +1,5 @@
 {
-  "name": "DMGjs",
+  "name": "dmgjs",
   "version": "1.4.0",
   "description": "",
   "main": "index.js",
@@ -7,11 +7,15 @@
   "author": "HDR",
   "license": "GPLv3",
   "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
     "discord.js": "^14.7.1",
+    "moment": "^2.29.4",
     "money": "^0.2.0",
     "node-cron": "^3.0.2",
     "open-exchange-rates": "^0.3.0",
+    "sqlite3": "^5.1.2",
     "table-scraper": "^1.0.3",
-    "xmlhttprequest": "^1.8.0"
+    "xmlhttprequest": "^1.8.0",
+    "request": "^2.88.2"
   }
 }

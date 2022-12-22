@@ -15,7 +15,6 @@ function getData(search) {
 }
 
 module.exports = {
-
     data: new SlashCommandBuilder()
         .setName('image')
         .setDescription('Pull the first image search result from google')
@@ -25,6 +24,6 @@ module.exports = {
             .setRequired(true)),
 
     execute: function (interaction) {
-        interaction.reply(`${getData(interaction.options.get('search').value)}`);
+        interaction.reply(`${getData(interaction.options.getString('search'))}`);
     }
 }

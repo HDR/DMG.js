@@ -1,4 +1,5 @@
 {
   "token" : "",
-  "guild" : ""
+  "guild" : "",
+  "dm_channel": ""
 }

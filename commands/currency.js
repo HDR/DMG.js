@@ -2,12 +2,9 @@ const { key } = require('./config/currency.json')
 const { EmbedBuilder, SlashCommandBuilder } = require("discord.js");
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const oxr = require('open-exchange-rates'), fx = require("money")
-oxr.set({ app_id: key })
 
-oxr.latest(function() {
-    fx.rates = oxr.rates;
-    fx.base = oxr.base;
-})
+oxr.set({ app_id: key })
+oxr.latest(function() {fx.rates = oxr.rates; fx.base = oxr.base;})
 
 function getCurrencies() {
     const xmlHttp = new XMLHttpRequest();
@@ -17,7 +14,6 @@ function getCurrencies() {
 }
 
 module.exports = {
-
     data: new SlashCommandBuilder()
         .setName('convert')
         .setDescription('Currency Converter')
@@ -35,9 +31,6 @@ module.exports = {
                 .setRequired(true)),
 
     execute: async function (interaction) {
-
-        console.log(interaction.options.get('amount').value)
-
         if (!(interaction.options.get('base').value.toUpperCase() in getCurrencies())) {
             interaction.reply({ content: '⚠️ Please specify a valid base currency, you can find a list of valid Currencies at https://openexchangerates.org/api/currencies.json', ephemeral: true})
             return
@@ -46,11 +39,12 @@ module.exports = {
             interaction.reply({ content: '⚠️ Please specify a valid target currency, you can find a list of valid Currencies at https://openexchangerates.org/api/currencies.json', ephemeral: true})
             return
         }
-        let conversion = fx(interaction.options.get('amount').value).from(interaction.options.get('base').value.toUpperCase()).to(interaction.options.get('target').value.toUpperCase())
+
+        let conversion = fx(interaction.options.getInteger('amount')).from(interaction.options.getString('base').toUpperCase()).to(interaction.options.getString('target').toUpperCase())
         const Embed = new EmbedBuilder();
-        Embed.setColor('#2EB2C9');
-        Embed.setTitle("Currency Conversion");
-        Embed.addFields({ name: 'Base Currency', value: interaction.options.get('base').value.toUpperCase(), inline: true }, {name: 'Target Currency', value: interaction.options.get('target').value.toUpperCase(), inline: true }, {name: '‎', value: '‎', inline: true}, {name: 'Base Amount', value: `${interaction.options.get('amount').value} ${interaction.options.get('base').value.toUpperCase()}`, inline: true}, {name: 'Converted Amount', value: `${conversion.toFixed(2)} ${interaction.options.get('target').value.toUpperCase()}`, inline: true}, {name: '‎', value: '‎', inline: true})
+        Embed.setColor('#2EB2C9')
+            .setTitle("Currency Conversion")
+            .addFields({ name: 'Base Currency', value: interaction.options.getString('base').toUpperCase(), inline: true }, {name: 'Target Currency', value: interaction.options.getString('target').toUpperCase(), inline: true }, {name: '‎', value: '‎', inline: true}, {name: 'Base Amount', value: `${interaction.options.getInteger('amount')} ${interaction.options.getString('base').toUpperCase()}`, inline: true}, {name: 'Converted Amount', value: `${conversion.toFixed(2)} ${interaction.options.getString('target').toUpperCase()}`, inline: true}, {name: '‎', value: '‎', inline: true})
         interaction.reply({ embeds: [Embed]});
     }
 }
