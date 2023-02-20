@@ -8,7 +8,8 @@ module.exports = {
         .setDescription('Displays user statistics')
         .addUserOption(option =>
             option.setName('user')
-                .setDescription('Target User Mod/Admin Only')),
+                .setDescription('Target User Mod/Admin Only'))
+        .setDMPermission(false),
 
     execute: async function (interaction) {
         const Embed = new EmbedBuilder();

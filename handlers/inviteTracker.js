@@ -28,7 +28,7 @@ client.on(Events.ClientReady, () => {
 client.on(Events.GuildMemberAdd, async member => {
 
     const newInvites = await member.guild.invites.fetch();
-    const oldInvites = guildInvites.get(member.guild.id)
+    const oldInvites = guildInvites.get(member.guild.id);
     const invite = newInvites.find(i => i.uses > oldInvites.get(i.code));
 
     const Embed = new EmbedBuilder();

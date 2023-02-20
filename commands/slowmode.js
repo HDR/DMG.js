@@ -12,7 +12,8 @@ module.exports = {
             option.setName('delay')
             .setDescription('Slow Mode delay in seconds')
             .setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
+        .setDMPermission(false),
 
     execute: function (interaction) {
         interaction.options.getChannel('channel').setRateLimitPerUser(interaction.options.getInteger('delay')).then(

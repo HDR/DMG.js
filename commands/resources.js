@@ -32,7 +32,8 @@ module.exports = {
                         option.setName('delete_url')
                         .setDescription('Link to the resource embed you want to delete')
                         .setRequired(true)))
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
+        .setDMPermission(false),
 
     execute: function (interaction) {
         const channel = client.guilds.cache.get(interaction.guildId).channels.cache.get(interaction.channelId);

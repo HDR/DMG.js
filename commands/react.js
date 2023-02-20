@@ -13,7 +13,8 @@ module.exports = {
             option.setName('contents')
                 .setDescription('Emoji')
                 .setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
+        .setDMPermission(false),
 
     execute: function (interaction) {
         let url = interaction.options.getString('url').split('/')

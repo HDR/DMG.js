@@ -46,7 +46,8 @@ module.exports = {
         .setDescription('Check your warnings')
         .addUserOption(option =>
             option.setName('user')
-                .setDescription('Target user')),
+                .setDescription('Target user'))
+        .setDMPermission(false),
 
     execute: function (interaction) {
         if (interaction.member.permissions.has(PermissionFlagsBits.KickMembers)) {

@@ -39,7 +39,7 @@ client.on(Events.MessageCreate, async msg => {
                 let lastMessage = messages.first();
                 let dateDiff = new Date(Math.abs(lastMessage.createdAt - msg.createdAt));
                 if(lastMessage.author.id === mentioned.id && dateDiff.getTime() / 1000 < 300){
-                    warn.warn(msg.author, "[Automated Warning] Please avoid mentioning users that are currently active (Replied to the latest message in channel with the mention option enabled)", true)
+                    warn.warn(msg.author, "[Automated Warning] Please avoid mentioning users that are currently active (Replied to the latest message in channel with the mention option enabled)", client.user.id, true)
                     sendPM(msg.author, "Please remember to switch this option from **on** to **off** if you're replying to an active user. https://i.imgur.com/oTorezr.png")
                 }
             }

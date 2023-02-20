@@ -93,7 +93,8 @@ module.exports = {
             option.setName('reason')
             .setDescription('Mute Reason')
             .setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
+        .setDMPermission(false),
 
     name: 'mute',
     description: 'Mute a user, this will automatically increase based on previous mutes.',

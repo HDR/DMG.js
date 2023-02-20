@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits  } = require('discord.js')
+const { Client, GatewayIntentBits, Partials  } = require('discord.js')
 
 module.exports = Object.freeze({
     client: new Client({
@@ -16,6 +16,11 @@ module.exports = Object.freeze({
             GatewayIntentBits.GuildMessageTyping,
             GatewayIntentBits.DirectMessages,
             GatewayIntentBits.DirectMessageReactions,
-            GatewayIntentBits.DirectMessageTyping
-        ], partials: ['MESSAGE', 'CHANNEL', 'REACTION'] })
+            GatewayIntentBits.DirectMessageTyping,
+            GatewayIntentBits.MessageContent
+        ], partials: [
+            Partials.Channel,
+            Partials.Message,
+            Partials.Reaction
+        ] })
 });

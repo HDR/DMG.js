@@ -5,7 +5,8 @@ module.exports = {
 
     data: new SlashCommandBuilder()
         .setName('verified')
-        .setDescription('Apply to be a verified modder'),
+        .setDescription('Apply to be a verified modder')
+        .setDMPermission(false),
 
     execute: async function (interaction) {
         const modalButton = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId('open_modal').setLabel('Continue').setStyle("Success"))

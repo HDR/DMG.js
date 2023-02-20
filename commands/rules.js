@@ -10,7 +10,8 @@ module.exports = {
         option.setName('target')
             .setDescription('target channel')
             .setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
+        .setDMPermission(false),
 
     execute: async function (interaction) {
         const modalButton = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId('setrules.open_modal').setLabel('I have read the rules').setStyle("Success"))
@@ -42,7 +43,7 @@ module.exports = {
         if(interaction.components[0].components[0].value === `${interaction.member.name}` || `${interaction.member.nickname}` || `${interaction.user.username}#${interaction.user.discriminator}` || `${interaction.member.id}` ) {
             RuleEmbed.setColor('#90EE90')
                 .setTitle(`${interaction.user.username}#${interaction.user.discriminator} has cleared the rules`)
-                .addFields({name: 'Time Taken:', value: moment.duration(moment(interaction.member.joinedAt).diff(moment().now)).humanize()})
+                .addFields({name: 'Time Taken:', value: moment.duration(moment(moment().now).diff(interaction.member.joinedAt)).humanize()})
             await interaction.member.roles.add(role)
         } else {
             await interaction.member.timeout(120000, 'Automated Timeout, please read the rules')

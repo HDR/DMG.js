@@ -28,7 +28,8 @@ module.exports = {
                 .setDescription('The message you want to send or an url to a code block containing a formatted message.')
                 .setRequired(true))
         )
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
+        .setDMPermission(false),
     execute: function (interaction) {
         switch (interaction.options._subcommand) {
             case 'send':
