@@ -10,7 +10,6 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
         Routes.channelMessage(reaction.message.channelId, reaction.message.id)
     )
     if(data.reactions[Object.keys(data.reactions).length-1].count_details.burst >= 1) {
-        console.log(data.reactions[Object.keys(data.reactions).length-1])
         reaction.remove()
     }
 })
