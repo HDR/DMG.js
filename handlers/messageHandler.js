@@ -46,22 +46,31 @@ client.on(Events.MessageCreate, async msg => {
         });
     }
 
-    //LinkSanitizer
-    let urlRE = new RegExp("([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_]+@)?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?([^ ])+");
-    if(msg.content.match(urlRE) && !msg.author.bot) {
-        if(msg.content.match(urlRE)[0].includes("aliexpress") && !msg.content.match(urlRE)[0].includes("a.aliexpress")) {
-            let AliID = url.parse(msg.content.match(urlRE)[0]).pathname
-            let crURL = [`https://www.aliexpress.com${AliID}`, `https://aliexpress.com${AliID}`]
-            if (crURL.indexOf(msg.content.match(urlRE)[0]) === -1) {
-                msg.reply({ content: `I've attempted to sanitize your url: https://www.aliexpress.com${AliID}`, allowedMentions: { repliedUser: false }}).then()
-            }
-        }
+    //LinkSanitizer2
+    const rgxURL = /(https?:\/\/[^\s]+)/g;
+    const fHosts = ["aliexpress", "taobao", "ebay", "amazon"];
+    const aParams = ["SearchText", "SortType", "page", "CatId", "id", "itm", "dp"];
 
-        if(msg.content.match(urlRE)[0].includes("taobao")) {
-            let TaoID = querystring.parse(url.parse(msg.content).query).id
-            if(msg.content.match(urlRE)[0] !== `https://2.taobao.com/item.htm?id=${TaoID}`) {
-                msg.reply({ content: `I've attempted to sanitize your url: https://2.taobao.com/item.htm?id=${TaoID}`, allowedMentions: { repliedUser: false }}).then()
+    const FilterUrls = (link) => {
+        const url = new URL(link);
+        const isMatch = fHosts.some(host => url.hostname.includes(host));
+        if (!isMatch) return false;
+        const filteredParams = new URLSearchParams(url.search);
+        url.searchParams.forEach((_, key) => {
+            if (!aParams.includes(key)) {
+                filteredParams.delete(key);
             }
+        });
+        let response = `${url.origin}${url.pathname}`;
+        if (Array.from(filteredParams).length) {
+            response += `?${filteredParams.toString()}`;
+        }
+        return response;
+    }
+
+    if(msg.content.match(rgxURL) && !msg.author.bot) {
+        if(msg.content.match(rgxURL).toString() !== msg.content.match(rgxURL).map(link => FilterUrls(link)).toString() && FilterUrls(msg.content.match(rgxURL)) !== false){
+            msg.reply({ content: `I've attempted to sanitize your url: ${msg.content.match(rgxURL).map(link => FilterUrls(link))}`, allowedMentions: { repliedUser: false }}).then()
         }
     }
 
