@@ -10,10 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@androz2091/discord-invites-tracker": "^1.2.3",
     "@discordjs/rest": "^1.5.0",
     "cheerio": "^1.0.0-rc.12",
     "discord-api-types": "^0.37.32",
-    "discord.js": "^14.7.1",
+    "discord.js": "^14.8.0",
     "moment": "^2.29.4",
     "money": "^0.2.0",
     "node-cron": "^3.0.2",

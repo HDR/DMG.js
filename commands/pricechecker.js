@@ -1,6 +1,7 @@
 const { EmbedBuilder, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder } = require("discord.js");
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { key } = require('./config/pricechecker.json')
+const {client} = require("../constants");
 
 function getData(search) {
     const xmlHttp = new XMLHttpRequest();
@@ -28,6 +29,7 @@ function buildEmbed(gameSearch, page) {
         if (getResult["products"][page]["cib-price"]) {Embed.addFields({name: `CIB Price:`, value: `$${getResult["products"][page]["cib-price"] / 100}`, inline: true})}
         if (getResult["products"][page]["new-price"]) {Embed.addFields({name: `NEW Price:`, value: `$${getResult["products"][page]["new-price"] / 100}`, inline: true})}
         Embed.addFields({name: 'Search Query', value: gameSearch, inline: true}, {name: 'Result', value: `${page + 1}/${Object.keys(getResult.products).length}`, inline: true}, {name: 'Get more info about this game', value: `https://www.pricecharting.com/game/${getResult["products"][page]["id"]}`})
+        Embed.setURL(`https://www.pricecharting.com/game/${getResult["products"][page]["id"]}`)
         return Embed;
     }
 }

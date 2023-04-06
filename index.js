@@ -4,7 +4,7 @@ const { token, guild } = require('./config.json')
 const fs = require('fs')
 const commands = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const handlers = fs.readdirSync('./handlers').filter(file => file.endsWith('.js'));
-const eventLoggers = fs.readdirSync('./eventLoggers').filter(file => file.endsWith('.js'));
+const events = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
 
 client.commands = new Collection;
 
@@ -43,8 +43,8 @@ for (const file of handlers) {
     require(`./handlers/${file}`);
 }
 
-for (const file of eventLoggers) {
-    require(`./eventLoggers/${file}`);
+for (const file of events) {
+    require(`./events/${file}`);
 }
 
 client.on(Events.InteractionCreate, async interaction => {
