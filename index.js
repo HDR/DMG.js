@@ -88,19 +88,34 @@ client.on(Events.InteractionCreate, async interaction => {
                 console.error(error);
             }
         } else {
-            const command = interaction.client.commands.get(interaction.message.interaction.commandName);
+            const command = interaction.client.commands.get(interaction.commandName);
 
             if (!command) {
-                console.error(`No command matching ${interaction.message.interaction.commandName} was found.`);
+                console.error(`No command matching ${interaction.commandName} was found.`);
                 return;
             }
 
             try {
                 await command[interaction.customId](interaction);
             } catch (error) {
-                console.error(`Error executing ${interaction.message.interaction.commandName}`);
+                console.error(`Error executing ${interaction.commandName}`);
                 console.error(error);
             }
+        }
+    }
+
+    if(interaction.isAutocomplete()) {
+        const command = interaction.client.commands.get(interaction.commandName)
+
+        if (!command) {
+            console.error(`No command matching ${interaction.commandName} was found.`);
+            return;
+        }
+        try {
+            await command.autocomplete(interaction);
+        } catch (error) {
+            console.error(`Error executing ${interaction.commandName}`);
+            console.error(error);
         }
     }
 
