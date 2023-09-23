@@ -35,9 +35,16 @@ module.exports = {
             case 'send':
                 if(interaction.options.get('message').value.startsWith('https://discord.com/channels/')){
                     let messageUrl = interaction.options.get('message').value.split('/')
-                    interaction.guild.channels.cache.get(messageUrl[5]).messages.fetch(messageUrl[6]).then(message =>
-                        interaction.options.getChannel('target').send({content: `${message.content.replaceAll('```', '')}`})
-                    )
+                    interaction.guild.channels.cache.get(messageUrl[5]).messages.fetch(messageUrl[6]).then(message => {
+                        try {
+                            interaction.options.getChannel('target').send({
+                                content: `${message.content.replaceAll('```', '')}`,
+                                files: [message.attachments.first()]
+                            })
+                        } catch (e) {
+                            interaction.options.getChannel('target').send({content: `${message.content.replaceAll('```', '')}`})
+                        }
+                    })
                 } else {
                     interaction.options.getChannel('target').send({content: `${interaction.options.getString('message')}`})
                 }
@@ -48,9 +55,13 @@ module.exports = {
                 let urlSplit = interaction.options.get('url').value.split('/')
                 if(interaction.options.get('message').value.startsWith('https://discord.com/channels/')){
                     let messageUrl = interaction.options.get('message').value.split('/')
-                    interaction.guild.channels.cache.get(messageUrl[5]).messages.fetch(messageUrl[6]).then(message =>
-                        interaction.guild.channels.cache.get(urlSplit[5]).messages.fetch(urlSplit[6]).then(msg => (msg.edit({content: `${message.content.replaceAll('```', '')}`})))
-                    )
+                    interaction.guild.channels.cache.get(messageUrl[5]).messages.fetch(messageUrl[6]).then(message => {
+                        try {
+                            interaction.guild.channels.cache.get(urlSplit[5]).messages.fetch(urlSplit[6]).then(msg => (msg.edit({content: `${message.content.replaceAll('```', '')}`, files: [message.attachments.first()]})))
+                        } catch (e) {
+                            interaction.guild.channels.cache.get(urlSplit[5]).messages.fetch(urlSplit[6]).then(msg => (msg.edit({content: `${message.content.replaceAll('```', '')}`})))
+                        }
+                    })
                 } else {
                     interaction.guild.channels.cache.get(urlSplit[5]).messages.fetch(urlSplit[6]).then(msg => (msg.edit({content: `${interaction.options.getString('message')}`})))
                 }

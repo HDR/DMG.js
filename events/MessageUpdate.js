@@ -4,7 +4,7 @@ const { log_channel } = require("./config/events.json")
 
 
 client.on(Events.MessageUpdate, async(oldMessage, newMessage) => {
-    if(oldMessage.author.id !== client.user.id){
+    if(oldMessage.author.id !== client.user.id && oldMessage.guild){
         let Embed = new EmbedBuilder()
         Embed.setColor('#ae3ffd')
         Embed.setAuthor({name: `${oldMessage.author.tag}`, iconURL: `${oldMessage.author.displayAvatarURL()}`})

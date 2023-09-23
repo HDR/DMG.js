@@ -35,29 +35,25 @@ function Strike(interaction) {
 
             switch (strikes) {
                 case 0:
-                    //Mute for 1 Hour
-                    user.timeout(3600000, reason + ` - ${strikes + 1}/5 Strikes`).then(addStrike(interaction, 1, reason))
+                    //Mute for 2 Hours
+                    user.timeout(7200000, reason + ` - ${strikes + 1}/4 Strikes`).then(addStrike(interaction, 1, reason))
                     break;
                 case 1:
                     //Mute for 24 Hours
-                    user.timeout(24 * 60 * 60 * 1000, reason + ` - ${strikes + 1}/5 Strikes`).then(addStrike(interaction, 2, reason))
+                    user.timeout(24 * 60 * 60 * 1000, reason + ` - ${strikes + 1}/4 Strikes`).then(addStrike(interaction, 2, reason))
                     break;
                 case 2:
                     //Mute for 1 Week
-                    user.timeout(7 * 24 * 60 * 60 * 1000, reason + ` - ${strikes + 1}/5 Strikes`).then(addStrike(interaction, 3, reason))
+                    user.timeout(7 * 24 * 60 * 60 * 1000, reason + ` - ${strikes + 1}/4 Strikes`).then(addStrike(interaction, 3, reason))
                     break;
                 case 3:
-                    //Mute for 28 Days
-                    user.timeout(28 * 24 * 60 * 60 * 1000 - 1000, reason + ` - ${strikes + 1}/5 Strikes`).then(addStrike(interaction, 4, reason))
-                    break;
-                case 4:
                     //Ban
-                    sendPM(user, `You have been banned from the Game boy discord for reaching 5 strikes`)
-                    user.ban({reason: "Automatic Ban, user reached 5/5 strikes"}).then()
+                    sendPM(user, `You have been banned from the Game boy discord for reaching 4 strikes`)
+                    user.ban({reason: "Automatic Ban, user reached 4/4 strikes"}).then()
 
             }
 
-            interaction.reply({content: `Muted ${user.user.username}#${user.user.discriminator}, this user now has ${strikes + 1}/5 Strikes`, ephemeral: true})
+            interaction.reply({content: `Muted ${user.user.username}#${user.user.discriminator}, this user now has ${strikes + 1}/4 Strikes`, ephemeral: true})
 
         });
     });
@@ -74,7 +70,7 @@ function addStrike(interaction, strike, reason){
         if (err) {
             return console.log(`Join ${err.message}`)
         } else {
-            sendPM(user, `You have been Muted in the Game Boy Discord with the following Reason: \`${reason}\`, strike ${strike}/5`);
+            sendPM(user, `You have been Muted in the Game Boy Discord with the following Reason: \`${reason}\`, strike ${strike}/4`);
         }
     })
     db.close()

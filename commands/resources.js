@@ -1,6 +1,5 @@
 const { SlashCommandBuilder, PermissionFlagsBits} = require("discord.js")
 const { client } = require("../constants");
-const { channel_id } = require("./config/resources.json")
 
 module.exports = {
 
@@ -9,27 +8,31 @@ module.exports = {
         .setDescription('Resources Management Command')
         .addSubcommand(command =>
             command.setName('add')
-            .setDescription('Add a new resource embed')
-            .addStringOption(option =>
-                option.setName('add_url')
-                .setDescription('Link to the message you want added to resources as an embed')
-                .setRequired(true)))
+                .setDescription('Add a new resource embed')
+                .addChannelOption(option =>
+                    option.setName('channel')
+                        .setDescription('Target Channel')
+                        .setRequired(true))
+                .addStringOption(option =>
+                    option.setName('add_url')
+                        .setDescription('Link to the message you want added to resources as an embed')
+                        .setRequired(true)))
         .addSubcommand(command =>
-                command.setName('edit')
+            command.setName('edit')
                 .setDescription('Edit an existing resource embed')
                 .addStringOption(option =>
-                        option.setName('edit_url')
+                    option.setName('edit_url')
                         .setDescription('Link to the message you want to edit')
                         .setRequired(true))
                 .addStringOption(option =>
-                        option.setName('new_url')
+                    option.setName('new_url')
                         .setDescription('Link to the message you want to replace the old embed with')
                         .setRequired(true)))
         .addSubcommand(command =>
-                command.setName('delete')
+            command.setName('delete')
                 .setDescription('Delete an existing resource embed')
                 .addStringOption(option =>
-                        option.setName('delete_url')
+                    option.setName('delete_url')
                         .setDescription('Link to the resource embed you want to delete')
                         .setRequired(true)))
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
@@ -37,7 +40,7 @@ module.exports = {
 
     execute: function (interaction) {
         const channel = client.guilds.cache.get(interaction.guildId).channels.cache.get(interaction.channelId);
-        let resource_channel = client.guilds.cache.get(interaction.guildId).channels.cache.get(channel_id);
+        let resource_channel = interaction.options.getChannel('channel')
         switch(interaction.options._subcommand.toString()){
             case 'add':
                 let add_url = interaction.options.get('add_url').value.split('/');
@@ -55,29 +58,21 @@ module.exports = {
                 let new_url = interaction.options.get('new_url').value.split('/')
                 let edit_channel = channel.client.channels.cache.get(edit_url[5])
                 let new_channel = channel.client.channels.cache.get(new_url[5])
-                if(edit_channel === resource_channel) {
-                    edit_channel.messages.fetch(edit_url[6]).then(msg => {
-                        new_channel.messages.fetch(new_url[6]).then(nmsg => {
-                            msg.edit(JSON.parse(nmsg.content.replaceAll('```', ''))).then()
-                            interaction.reply({content: `Edited resource embed in ${resource_channel}`, ephemeral: true });
-                        })
+                edit_channel.messages.fetch(edit_url[6]).then(msg => {
+                    new_channel.messages.fetch(new_url[6]).then(nmsg => {
+                        msg.edit(JSON.parse(nmsg.content.replaceAll('```', ''))).then()
+                        interaction.reply({content: `Edited resource embed in ${resource_channel}`, ephemeral: true });
                     })
-                } else {
-                    interaction.reply({content: `Only embeds in ${resource_channel} can be edited`, ephemeral: true });
-                }
+                })
                 break;
 
             case 'delete':
                 let delete_url = interaction.options.get('delete_url').value.split('/');
                 let delete_channel = channel.client.channels.cache.get(delete_url[5])
-                if(delete_channel === resource_channel) {
-                    delete_channel.messages.fetch(delete_url[6]).then(msg => {
-                        msg.delete().then()
-                        interaction.reply({content: `Deleted resource embed in ${resource_channel}`, ephemeral: true });
-                    })
-                } else {
-                    interaction.reply({content: `Only embeds in ${resource_channel} can be deleted`, ephemeral: true });
-                }
+                delete_channel.messages.fetch(delete_url[6]).then(msg => {
+                    msg.delete().then()
+                    interaction.reply({content: `Deleted resource embed in ${resource_channel}`, ephemeral: true });
+                })
         }
     }
 }

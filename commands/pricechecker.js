@@ -20,7 +20,7 @@ function getData(search) {
                     resolve(JSON.parse(data[0].Result))
                 } else {
                     const xmlHttp = new XMLHttpRequest();
-                    xmlHttp.open("GET", `https://www.pricecharting.com/api/products?t=${key}&q=${search}`, false)
+                    xmlHttp.open("GET", `https://www.pricecharting.com/api/products?t=${key}&q=` + encodeURIComponent(`${search}`), false)
                     xmlHttp.send(null);
                     let result = JSON.parse(xmlHttp.responseText)
                     if(result["products"].length === 0) {
@@ -45,7 +45,7 @@ function getData(search) {
 async function buildEmbed(gameSearch, page) {
     const getResult = await getData(gameSearch)
     if (getResult === "error") {
-        return `Could not find any results for ${gameSearch}`
+        return null;
     } else {
         const Embed = new EmbedBuilder();
         Embed.setColor('#1ABC9C');
@@ -74,7 +74,12 @@ module.exports = {
         .addComponents(new ButtonBuilder().setCustomId('previous').setLabel('Previous').setStyle('Secondary').setEmoji('⬅').setDisabled(true))
         .addComponents(new ButtonBuilder().setCustomId('next').setLabel('Next').setStyle('Secondary').setEmoji('➡'))
         await interaction.deferReply()
-        await interaction.editReply({ embeds: [await buildEmbed(interaction.options.getString('game'), 0)], components: [navigators]}).then()
+        let embed = await buildEmbed(interaction.options.getString('game'), 0)
+        if(!embed) {
+            await interaction.editReply({ content: `Could not find any results for ${interaction.options.getString('game')}`}).then()
+        } else {
+            await interaction.editReply({ embeds: [embed], components: [navigators]}).then()
+        }
     },
 
     previous: async function (interaction) {

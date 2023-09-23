@@ -4,7 +4,7 @@ const { log_channel } = require("./config/events.json")
 
 
 client.on(Events.MessageDelete, async(message) => {
-    if(message.content.length > 0) {
+    if(message.content) {
         let Embed = new EmbedBuilder()
         Embed.setColor('#ae3ffd')
         Embed.setAuthor({name: `${message.author.username}#${message.author.discriminator}`, iconURL: `${message.author.displayAvatarURL()}`})
