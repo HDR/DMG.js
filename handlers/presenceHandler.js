@@ -16,8 +16,8 @@ function randomGame() {
         if(random !== null) {
             let game = Object.values(tableData[2][random])[0]
             // Add handling for Pokemon Gold/Silver, this is needed because the wiki used to obtain the games list groups these
-            if (game === "Pokémon Gold and Silver") {
-                let tmpr = Math.round(Math.random() * (2 - 1) + 1);
+            if (game === "Pokémon Gold / Silver / Crystal") {
+                let tmpr = Math.round(Math.random() * (3 - 1) + 1);
                 switch(tmpr){
                     case 1:
                         game = 'Pokémon Gold'
@@ -25,11 +25,14 @@ function randomGame() {
                     case 2:
                         game = 'Pokémon Silver'
                         break;
+                    case 3:
+                        game = 'Pokémon Crystal'
+                        break;
                 }
             }
             // Add handling for Pokemon Red/Green/Blue, this is needed because the wiki used to obtain the games list groups these
-            if (game === 'Pokémon Red, Green and Blue') {
-                let tmpr = Math.round(Math.random() * (3 - 1) + 1);
+            if (game === 'Pokémon Red / Green / Blue / Yellow') {
+                let tmpr = Math.round(Math.random() * (4 - 1) + 1);
                 switch(tmpr){
                     case 1:
                         game = 'Pokémon Red'
@@ -39,6 +42,9 @@ function randomGame() {
                         break;
                     case 3:
                         game = 'Pokémon Blue'
+                        break;
+                    case 4:
+                        game = 'Pokémon Yellow'
                         break;
                 }
             }

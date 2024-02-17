@@ -26,7 +26,7 @@ client.on(Events.MessageCreate, async msg => {
         if(msg.content.length > 0) {
             Embed.addFields({name: 'Message', value: `${msg.content}`})
         } else {
-            Embed.addFields({name: 'Message', value: `Message is an embed (command reply)`})
+            Embed.addFields({name: 'Message', value: `Message is a slash command response (${msg.interaction.commandName})`})
         }
         await guild.channels.cache.get(log_channel).send({embeds: [Embed]});
     }
@@ -38,7 +38,7 @@ client.on(Events.MessageCreate, async msg => {
             if(!msg.author.bot && mentioned !== msg.author) {
                 let lastMessage = messages.first();
                 let dateDiff = new Date(Math.abs(lastMessage.createdAt - msg.createdAt));
-                if(lastMessage.author.id === mentioned.id && dateDiff.getTime() / 1000 < 300){
+                if(lastMessage.author.id === mentioned.id && dateDiff.getTime() / 1000 < 150){
                     warn.warn(msg.author, "[Automated Warning] Please avoid mentioning users that are currently active (Replied to the latest message in channel with the mention option enabled)", client.user.id, true)
                     sendPM(msg.author, "Please remember to switch this option from **on** to **off** if you're replying to an active user. https://i.imgur.com/oTorezr.png")
                 }
@@ -79,5 +79,25 @@ client.on(Events.MessageCreate, async msg => {
         if(!msg.author.bot && analogueStrings.some(string => msg.content.toUpperCase().includes(string))) {
             sendPM(msg.author, "It seems like you posted something related to the Analogue Pocket, please keep non-game boy content to #off-topic");
         }
+    }
+
+    //Temporary .webp restriction
+    if(msg.attachments.size > 0) {
+        msg.attachments.forEach(function(attachment) {
+            if(attachment.contentType === 'image/webp') {
+                sendPM(msg.author, 'Sorry .webp files are currently not allowed due to a security vulnerability (CVE-2023-4863)')
+                msg.delete()
+            }
+        })
+    }
+
+    //Draw Kicad Boards
+    if(msg.attachments.size > 0) {
+        msg.attachments.forEach(function(attachment) {
+            console.log(attachment)
+            if(attachment.name.includes('.kicad_pcb')) {
+
+            }
+        })
     }
 });
