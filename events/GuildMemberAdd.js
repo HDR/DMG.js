@@ -87,6 +87,8 @@ tracker.on('guildMemberAdd', async (member, type, invite) => {
             value: `\`\`\`ansi\n[0;33mMember = ${member.user.id}\n[0;34mGuild = ${member.guild.id}\`\`\``
         })
 
+        Embed.setTimestamp()
+        Embed.setFooter({text: `${client.user.tag}`, iconURL: `${client.user.displayAvatarURL()}`})
         await member.guild.channels.cache.get(log_channel).send({embeds: [Embed]});
     }
 });
