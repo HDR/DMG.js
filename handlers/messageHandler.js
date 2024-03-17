@@ -80,24 +80,4 @@ client.on(Events.MessageCreate, async msg => {
             sendPM(msg.author, "It seems like you posted something related to the Analogue Pocket, please keep non-game boy content to #off-topic");
         }
     }
-
-    //Temporary .webp restriction
-    if(msg.attachments.size > 0) {
-        msg.attachments.forEach(function(attachment) {
-            if(attachment.contentType === 'image/webp') {
-                sendPM(msg.author, 'Sorry .webp files are currently not allowed due to a security vulnerability (CVE-2023-4863)')
-                msg.delete()
-            }
-        })
-    }
-
-    //Draw Kicad Boards
-    if(msg.attachments.size > 0) {
-        msg.attachments.forEach(function(attachment) {
-            console.log(attachment)
-            if(attachment.name.includes('.kicad_pcb')) {
-
-            }
-        })
-    }
 });

@@ -91,24 +91,6 @@ module.exports = {
             .setRequired(true))
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
         .setDMPermission(false),
-
-    name: 'mute',
-    description: 'Mute a user, this will automatically increase based on previous mutes.',
-    defaultPermission: false,
-    options: [
-        {
-            "name": "user",
-            "description": "Target User",
-            "type": 'USER',
-            "required": true
-        },
-        {
-            "name": "reason",
-            "description": "Reason for muting",
-            "type": 'STRING',
-            "required": true
-        }
-    ],
     execute: async function (interaction) {
         Strike(interaction);
     }
