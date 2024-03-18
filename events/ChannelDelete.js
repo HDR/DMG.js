@@ -38,6 +38,6 @@ client.on(Events.ChannelDelete, async(GuildChannel) => {
             }
         )
 
-        await channel.guild.channels.cache.get(log_channel).send({embeds: [Embed]});
+        await GuildChannel.guild.channels.cache.get(log_channel).send({embeds: [Embed]});
     }
 });
