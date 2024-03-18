@@ -5,7 +5,7 @@ const { log_channel } = require("./config/events.json")
 client.on(Events.GuildEmojiDelete, async (GuildEmoji ) => {
 
     const audit = await GuildEmoji.guild.fetchAuditLogs({
-        type: AuditLogEvent.EmojiUpdate,
+        type: AuditLogEvent.EmojiDelete,
         limit: 1,
     });
 
