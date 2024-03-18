@@ -2,15 +2,14 @@ const {client} = require("../constants");
 const {Events, EmbedBuilder, AuditLogEvent, ChannelType} = require("discord.js");
 const { log_channel } = require("./config/events.json")
 
-client.on(Events.ChannelDelete, async(channel) => {
+client.on(Events.ChannelDelete, async(GuildChannel) => {
 
-    const auditLog = await channel.guild.fetchAuditLogs({
+    const auditLog = await GuildChannel.guild.fetchAuditLogs({
         limit: 1,
         type: AuditLogEvent.ChannelDelete,
     });
 
     const auditEntry = auditLog.entries.first();
-
     const { executor } = auditEntry;
 
     if(auditEntry) {
@@ -21,20 +20,20 @@ client.on(Events.ChannelDelete, async(channel) => {
         Embed.addFields(
             {
                 name: 'Name',
-                value: `${channel.name} (${channel.id})`
+                value: `${GuildChannel.name} (${GuildChannel.id})`
             },
             {
                 name: 'Created At',
-                value: `<t:${Math.trunc(channel.createdTimestamp/1000)}:F>`
+                value: `<t:${Math.trunc(GuildChannel.createdTimestamp/1000)}:F>`
             },
             {
                 name: 'Type',
-                value:  `${ChannelType[channel.type]}`,
+                value:  `${ChannelType[GuildChannel.type]}`,
                 inline: false
             },
             {
                 name: 'ID',
-                value: `\`\`\`ansi\n[0;33mMember = ${executor.id}\n[0;35mChannel = ${channel.id}\`\`\``,
+                value: `\`\`\`ansi\n[0;33mMember = ${executor.id}\n[0;35mChannel = ${GuildChannel.id}\`\`\``,
                 inline: false
             }
         )

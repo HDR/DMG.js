@@ -1,26 +1,21 @@
 const {client} = require("../constants");
-const {AuditLogEvent, EmbedBuilder, Events} = require('discord.js');
+const {Events, EmbedBuilder, AuditLogEvent} = require("discord.js");
 const { log_channel } = require("./config/events.json")
 
-
-client.on(Events.GuildBanAdd, async (GuildBan) => {
+client.on(Events.GuildBanRemove, async (GuildBan) => {
 
     const audit = await GuildBan.guild.fetchAuditLogs({
-        type: AuditLogEvent.MemberBanAdd,
+        type: AuditLogEvent.MemberBanRemove,
         limit: 1,
     });
 
     let Embed = new EmbedBuilder()
     Embed.setAuthor({name: `${GuildBan.user.tag}`, iconURL: `${GuildBan.user.displayAvatarURL()}`})
-    Embed.setDescription(`**${GuildBan.user.tag}** was banned`)
+    Embed.setDescription(`**${GuildBan.user.tag}** was unbanned`)
     Embed.addFields(
         {
             name: 'User Information',
             value: `${GuildBan.user.tag} (${GuildBan.user.id}) <@${GuildBan.user.id}>`
-        },
-        {
-            name: 'Reason',
-            value: `${audit.entries.first().reason}`
         },
         {
             name: 'ID',
