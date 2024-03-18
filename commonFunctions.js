@@ -1,10 +1,13 @@
 const { dm_channel } = require('./config.json')
 const sqlite3 = require("sqlite3");
+const _ = require("lodash");
 
 module.exports = {
     sendPM: function (user, message){
         user.send({content: `${message}`}).catch(error => {
-            user.guild.channels.cache.get(dm_channel).send({content: `<@${user.id}> ${message} (This message was posted in public chat as i could not pm you)`});
+            if(user.guild) {
+                user.guild.channels.cache.get(dm_channel).send({content: `<@${user.id}> ${message} (This message was posted in public chat as i could not pm you)`});
+            }
         });
     },
 
@@ -21,8 +24,24 @@ module.exports = {
         }
     })
     db.close()
-}
+    },
 
+    getObjectDiff: function (object1, object2, compareRef = false) {
+        return Object.keys(object1).reduce((result, key) => {
+            if(!object2.hasOwnProperty(key)) {
+                result.push(key);
+            } else if (_.isEqual(object1[key], object2[key])) {
+                const resultKeyIndex = result.indexOf(key);
+
+                if(compareRef && object1[key] !== object2[key]) {
+                    result[resultKeyIndex] = `${key} (ref)`;
+                } else {
+                    result.splice(resultKeyIndex, 1);
+                }
+            }
+            return result
+        }, Object.keys(object2));
+    }
 }
 
 

@@ -5,7 +5,7 @@ const { log_channel, voice_role } = require("./config/events.json")
 
 client.on(Events.VoiceStateUpdate, async(oldState, newState) => {
 
-    if(newState.channelId !== null) {
+    if(newState.channelId !== null && !newState.member.user.bot) {
 
         let Embed = new EmbedBuilder()
         Embed.setColor('#676767')
@@ -28,7 +28,7 @@ client.on(Events.VoiceStateUpdate, async(oldState, newState) => {
         newState.member.roles.add(newState.guild.roles.cache.find(role => role.id === voice_role)).then();
     }
 
-    if(newState.channelId == null) {
+    if(newState.channelId == null && !newState.member.user.bot) {
 
         let Embed = new EmbedBuilder()
         Embed.setColor('#676767')

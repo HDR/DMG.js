@@ -2,30 +2,12 @@ const {client} = require("../constants");
 const {Events, EmbedBuilder, AuditLogEvent, PermissionsBitField } = require("discord.js");
 const {log_channel} = require("./config/events.json");
 const _ = require('lodash');
+const {getObjectDiff} = require("../commonFunctions");
 
 
 client.on(Events.GuildRoleUpdate, async (oldRole, newRole) => {
     let Embed = new EmbedBuilder()
     Embed.setColor(newRole.color)
-
-    const getObjectDiff = (oldRole, newRole, compareRef = false) => {
-        return Object.keys(oldRole).reduce((result, key) => {
-            if (!newRole.hasOwnProperty(key)) {
-                result.push(key);
-            } else if (_.isEqual(oldRole[key], newRole[key])) {
-                const resultKeyIndex = result.indexOf(key);
-
-                if (compareRef && oldRole[key] !== newRole[key]) {
-                    result[resultKeyIndex] = `${key} (ref)`;
-                } else {
-                    result.splice(resultKeyIndex, 1);
-                }
-            }
-            return result;
-        }, Object.keys(newRole));
-    }
-
-    let diff = getObjectDiff(oldRole, newRole)
 
     const audit = await oldRole.guild.fetchAuditLogs({
         limit: 1,
@@ -35,7 +17,7 @@ client.on(Events.GuildRoleUpdate, async (oldRole, newRole) => {
     let addedPerm= newRole.permissions.toArray().filter((e) => !oldRole.permissions.toArray().includes(e))
     let removedPerm = oldRole.permissions.toArray().filter((e) => !newRole.permissions.toArray().includes(e))
 
-    for (const [key, value] of Object.entries(diff)) {
+    for (const [key, value] of Object.entries(getObjectDiff(oldRole, newRole))) {
         switch(value) {
             case 'name':
                 Embed.addFields({

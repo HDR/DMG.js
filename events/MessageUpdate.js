@@ -5,7 +5,7 @@ const { log_channel } = require("./config/events.json")
 
 client.on(Events.MessageUpdate, async(oldMessage, newMessage) => {
     if(!oldMessage.thread) {
-        if(oldMessage.guild && oldMessage.author.id !== client.user.id && oldMessage.content !== '' && oldMessage.content !== newMessage.content){
+        if(oldMessage.guild && newMessage.author.id !== client.user.id && oldMessage.content !== '' && oldMessage.content !== newMessage.content){
             try {
                 let Embed = new EmbedBuilder()
                 Embed.setColor('#ae3ffd')
@@ -35,6 +35,7 @@ client.on(Events.MessageUpdate, async(oldMessage, newMessage) => {
 
                 await oldMessage.guild.channels.cache.get(log_channel).send({embeds: [Embed]});
             } catch (e) {
+                console.log(oldMessage)
                 console.log(e)
                 console.log('Something went wrong logging the message update event, fix this later')
             }

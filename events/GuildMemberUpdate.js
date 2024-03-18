@@ -11,7 +11,7 @@ client.on(Events.GuildMemberUpdate, async(oldMember, newMember) => {
     });
 
     let auditEntry = auditLog.entries.first();
-    let { executor, changes, extra } = auditEntry;
+    let { executor } = auditEntry;
 
     //Track people passing onboarding
     if(oldMember.pending && !newMember.pending) {
@@ -35,7 +35,7 @@ client.on(Events.GuildMemberUpdate, async(oldMember, newMember) => {
 
         } else {
             try {
-                await newMember.send({content: "[Game Boy Discord] You have been automatically kicked, Please make sure you've read the rules properly."})
+                await newMember.send({content: `[${oldMember.guild.name}] You have been automatically kicked, Please make sure you've read the rules properly.`})
             } catch(e) {
                 console.log(e)
             }
@@ -76,6 +76,15 @@ client.on(Events.GuildMemberUpdate, async(oldMember, newMember) => {
             Embed.setFooter({text: `${executor.username}#${executor.discriminator}`, iconURL: `${executor.avatarURL()}`})
             await oldMember.guild.channels.cache.get(log_channel).send({embeds: [Embed]});
         }
+    }
+
+    //Check if user was timed out
+    if(newMember.isCommunicationDisabled()) {
+        const audit = await newMember.guild.fetchAuditLogs({limit: 1, type: 24});
+        const Embed = new EmbedBuilder()
+        Embed.setColor('#ff0000')
+        Embed.setTitle(`${newMember.user.tag} has been timed out.`)
+        await oldMember.guild.channels.cache.get(log_channel).send({embeds: [Embed]})
     }
 
     //Track Role Changes
