@@ -65,8 +65,23 @@ client.on(Events.InteractionCreate, async interaction => {
         }
     }
 
-    if(interaction.isButton() || interaction.isModalSubmit()) {
+    if(interaction.isUserContextMenuCommand()) {
+        const command = interaction.client.commands.get(interaction.commandName);
 
+        if(!command) {
+            console.error(`No command matching ${interaction.commandName} was found.`);
+            return;
+        }
+
+        try {
+            await command.execute(interaction);
+        } catch (error) {
+            console.error(`Error executing ${interaction.commandName}`);
+            console.error(error);
+        }
+    }
+
+    if(interaction.isButton() || interaction.isModalSubmit()) {
         if(!interaction.message.interaction) {
             try {
                 let modalString = interaction.customId.split('.')
@@ -88,7 +103,7 @@ client.on(Events.InteractionCreate, async interaction => {
                 console.error(error);
             }
         } else {
-            const command = interaction.client.commands.get(interaction.commandName);
+            const command = interaction.client.commands.get(interaction.message.interaction.commandName);
 
             if (!command) {
                 console.error(`No command matching ${interaction.commandName} was found.`);

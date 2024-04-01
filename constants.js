@@ -17,10 +17,10 @@ module.exports = Object.freeze({
             GatewayIntentBits.DirectMessages,
             GatewayIntentBits.DirectMessageReactions,
             GatewayIntentBits.DirectMessageTyping,
-            GatewayIntentBits.MessageContent
+            GatewayIntentBits.MessageContent,
+            GatewayIntentBits.GuildModeration,
         ], partials: [
             Partials.Channel,
-            Partials.Message,
             Partials.Reaction
         ] })
 });
