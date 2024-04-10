@@ -3,6 +3,7 @@ const { Collection, REST, Routes, Events } = require('discord.js');
 const { token, guild } = require('./config.json')
 const fs = require('fs')
 const commands = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const context = fs.readdirSync('./context').filter(file => file.endsWith('.js'));
 const handlers = fs.readdirSync('./handlers').filter(file => file.endsWith('.js'));
 const events = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
 
@@ -10,6 +11,11 @@ client.commands = new Collection;
 
 for (const file of commands) {
     const command = require(`./commands/${file}`);
+    client.commands.set(command.data.name, command)
+}
+
+for (const file of context) {
+    const command = require(`./context/${file}`);
     client.commands.set(command.data.name, command)
 }
 
@@ -21,6 +27,14 @@ async function registerCommands(){
         commandData.push(command.data.toJSON());
 
     }
+
+    for (const file of context) {
+        if (!client.application?.owner) await client.application?.fetch();
+        const command = require(`./context/${file}`);
+        commandData.push(command.data.toJSON());
+
+    }
+
     const rest = new REST({ version: '10' }).setToken(token);
 
     (async () => {
@@ -65,7 +79,7 @@ client.on(Events.InteractionCreate, async interaction => {
         }
     }
 
-    if(interaction.isUserContextMenuCommand()) {
+    if(interaction.isContextMenuCommand()) {
         const command = interaction.client.commands.get(interaction.commandName);
 
         if(!command) {
@@ -81,8 +95,8 @@ client.on(Events.InteractionCreate, async interaction => {
         }
     }
 
-    if(interaction.isButton() || interaction.isModalSubmit()) {
-        if(!interaction.message.interaction) {
+    if(interaction.isButton() || interaction.isModalSubmit() || interaction.isAnySelectMenu()) {
+        if(!interaction.message.interaction || interaction.isAnySelectMenu()) {
             try {
                 let modalString = interaction.customId.split('.')
                 const command = interaction.client.commands.get(modalString[0]);
