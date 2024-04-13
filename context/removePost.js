@@ -54,7 +54,7 @@ module.exports = {
 
             //Thread in Marketplace channel
             case (channel.parentId === '1049401311101206649'):
-                Embed.setTitle(`Remove Marketplace Post`)
+                Embed.setTitle(`Remove Marketplace Post/Message`)
                     .addFields({
                         name: 'Message',
                         value: `[Link to message](${message.url})`
@@ -95,6 +95,41 @@ module.exports = {
                 await interaction.editReply({embeds: [Embed], components: [mrow], ephemeral: true})
                 break;
 
+            //Thread in Troubleshooting Channel
+            case (channel.parentId === '1006386432065155083'):
+                Embed.setTitle(`Remove Troubleshooting Post/Message`)
+                    .addFields({
+                        name: 'Message',
+                        value: `[Link to message](${message.url})`
+                    })
+                    .setDescription(`Posted By ${user} (${interaction.targetId})`)
+                    .setFooter({text: `${interaction.targetId}`})
+
+                const trouble_options = new StringSelectMenuBuilder()
+                    .setCustomId('Remove Post.remove')
+                    .setPlaceholder('Rule Broken')
+                    .addOptions(
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Rule 1')
+                            .setDescription('No jokes or memes')
+                            .setValue('1'),
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Rule 2')
+                            .setDescription('Avoid random chatter')
+                            .setValue('2'),
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Rule 3')
+                            .setDescription('Dangerous or misleading')
+                            .setValue('3'),
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Rule 4')
+                            .setDescription('Insufficient information')
+                            .setValue('4')
+                    );
+                const trow = new ActionRowBuilder().addComponents(trouble_options)
+                await interaction.editReply({embeds: [Embed], components: [trow], ephemeral: true})
+                break;
+
             //Else we say no
             default:
                 await interaction.editReply({content: 'This command can only be used in gallery or marketplace', ephemeral: true})
@@ -116,6 +151,11 @@ module.exports = {
             case (chnl.parentId === '1049401311101206649'):
                 chType = 'marketplace'
                 rule = ['Rule 1: New users are not able to use the marketplace, users that have been in the discord for less than 30 days or have an account that is younger than 90 days will have their posts removed.', 'Rule 2: Only users with the following roles - @Verified Modder & @Store/Retailer are allowed to offer modding services.', 'Rule 3: If selling, please include a price, country, and at least one photo.', 'Rule 4: Do not misrepresent your item! Communicate as much detail about the item before finalizing a sale/trade. Raffle-type promotions or sales are not allowed.', 'Rule 5: Once your listing is no longer needed, please delete your post!', 'Rule 6: Avoid random chatter, repeat offenses will result in restricted access to marketplace.']
+                break;
+
+            case (chnl.parentId === '1006386432065155083'):
+                chType = 'troubleshooting'
+                rule = ['Rule 1: troubleshooting is a serious channel, that means no jokes or memes in response to people asking for help', 'Rule 2: Avoid random chatter in troubleshooting', 'Rule 3: Please avoid suggestions that are dangerous or misleading.', 'Rule 4: Add as much information about your problem as possible, include pictures and a proper description of your issue. (Posts with insufficient details may be deleted)']
                 break;
         }
 
