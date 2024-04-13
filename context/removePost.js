@@ -132,7 +132,41 @@ module.exports = {
 
             //Else we say no
             default:
-                await interaction.editReply({content: 'This command can only be used in gallery or marketplace', ephemeral: true})
+                Embed.setTitle(`Remove Post/Message`)
+                    .addFields({
+                        name: 'Message',
+                        value: `[Link to message](${message.url})`
+                    })
+                    .setDescription(`Posted By ${user} (${interaction.targetId})`)
+                    .setFooter({text: `${interaction.targetId}`})
+
+                const default_options = new StringSelectMenuBuilder()
+                    .setCustomId('Remove Post.remove')
+                    .setPlaceholder('Rule Broken')
+                    .addOptions(
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Rule 1')
+                            .setDescription('Don\'t be an asshole')
+                            .setValue('1'),
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Rule 2')
+                            .setDescription('Use common sense')
+                            .setValue('2'),
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Rule 3')
+                            .setDescription('No Advertising')
+                            .setValue('3'),
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Rule 4')
+                            .setDescription('Piracy is not allowed')
+                            .setValue('4'),
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Rule 5')
+                            .setDescription('Keep topics in the correct channels')
+                            .setValue('5'),
+                    );
+                const drow = new ActionRowBuilder().addComponents(default_options)
+                await interaction.editReply({embeds: [Embed], components: [drow], ephemeral: true})
                 break;
         }
     },
@@ -144,18 +178,23 @@ module.exports = {
 
         switch(true) {
             case (interaction.channelId === '744938437693407393'):
-                chType = 'gallery'
+                chType = 'gallery '
                 rule = ['Rule 1: Images and videos only. Captions are allowed, but any chatter will be automatically removed', 'Rule 2: Low quality or low effort posts will be removed, ie blurry pictures, bootleg carts, screenshots etc. Gallery is CURATED, put your best foot forward when posting!', 'Rule 3: Game Boy related content only. Other Nintendo consoles will be removed.', 'Rule 4: No advertising in gallery without the approval of the admins. (This includes stealth advertising)']
                 break;
 
             case (chnl.parentId === '1049401311101206649'):
-                chType = 'marketplace'
+                chType = 'marketplace '
                 rule = ['Rule 1: New users are not able to use the marketplace, users that have been in the discord for less than 30 days or have an account that is younger than 90 days will have their posts removed.', 'Rule 2: Only users with the following roles - @Verified Modder & @Store/Retailer are allowed to offer modding services.', 'Rule 3: If selling, please include a price, country, and at least one photo.', 'Rule 4: Do not misrepresent your item! Communicate as much detail about the item before finalizing a sale/trade. Raffle-type promotions or sales are not allowed.', 'Rule 5: Once your listing is no longer needed, please delete your post!', 'Rule 6: Avoid random chatter, repeat offenses will result in restricted access to marketplace.']
                 break;
 
             case (chnl.parentId === '1006386432065155083'):
-                chType = 'troubleshooting'
+                chType = 'troubleshooting '
                 rule = ['Rule 1: troubleshooting is a serious channel, that means no jokes or memes in response to people asking for help', 'Rule 2: Avoid random chatter in troubleshooting', 'Rule 3: Please avoid suggestions that are dangerous or misleading.', 'Rule 4: Add as much information about your problem as possible, include pictures and a proper description of your issue. (Posts with insufficient details may be deleted)']
+                break;
+
+            default:
+                chType = ''
+                rule = ['Rule 1: Don\'t be an asshole, we expect a minimum level of maturity and conduct in the server', 'Rule 2: Use common sense, avoid obviously adult topics, slurs, politics, etc', 'Rule 3: Advertising (products/giveaways/self promotion) must be run past @Yokoi Watch via private message', 'Rule 4: Piracy is not allowed, this includes ROM files and or links to websites containing rom files', 'Rule 5: Keep topics in the correct channels, Channel specific rules can be found in the respective channel\'s description']
                 break;
         }
 
@@ -165,7 +204,7 @@ module.exports = {
         let user = await client.users.fetch(message.first().author.id);
         await message.first().delete()
         sendPM(user, `Your post in ${chType} has been removed: \`${reason}\``)
-        await interaction.update({content: `Removed ${user.tag}'s ${chType} post: \`${reason}\``, embeds: [], components: [], ephemeral: true})
+        await interaction.update({content: `Removed ${user.tag}'s ${chType}post: \`${reason}\``, embeds: [], components: [], ephemeral: true})
 
     }
 }
