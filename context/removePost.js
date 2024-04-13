@@ -1,0 +1,131 @@
+const { EmbedBuilder, ContextMenuCommandBuilder, ApplicationCommandType, PermissionFlagsBits, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder} = require("discord.js");
+const {client} = require("../constants");
+const sqlite3 = require("sqlite3");
+const {sendPM} = require("../commonFunctions");
+
+module.exports = {
+    data: new ContextMenuCommandBuilder()
+        .setName('Remove Post')
+        .setType(ApplicationCommandType.Message)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
+
+    execute: async function (interaction) {
+        await interaction.deferReply({ephemeral: true})
+        const Embed = new EmbedBuilder();
+        let channel = await client.channels.cache.get(interaction.channelId)
+        let message = await channel.messages.fetch(interaction.targetId)
+        let user = await client.users.fetch(message.author.id);
+
+        switch(true) {
+            //Gallery Channel
+            case (channel.id === '744938437693407393'):
+                Embed.setTitle(`Remove Gallery Post`)
+                    .addFields({
+                        name: 'Message',
+                        value: `[Link to message](${message.url})`
+                    })
+                    .setDescription(`Posted By ${user} (${interaction.targetId})`)
+                    .setFooter({text: `${interaction.targetId}`})
+
+                const gallery_options = new StringSelectMenuBuilder()
+                    .setCustomId('Remove Post.remove')
+                    .setPlaceholder('Rule Broken')
+                    .addOptions(
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Rule 1')
+                            .setDescription('Images and videos only')
+                            .setValue('1'),
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Rule 2')
+                            .setDescription('Low quality or low effort post')
+                            .setValue('2'),
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Rule 3')
+                            .setDescription('Game Boy related content only')
+                            .setValue('3'),
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Rule 4')
+                            .setDescription('No advertising in gallery')
+                            .setValue('4'),
+                    );
+                const rrow = new ActionRowBuilder().addComponents(gallery_options)
+                await interaction.editReply({embeds: [Embed], components: [rrow], ephemeral: true})
+                break;
+
+            //Thread in Marketplace channel
+            case (channel.parentId === '1049401311101206649'):
+                Embed.setTitle(`Remove Marketplace Post`)
+                    .addFields({
+                        name: 'Message',
+                        value: `[Link to message](${message.url})`
+                    })
+                    .setDescription(`Posted By ${user} (${interaction.targetId})`)
+                    .setFooter({text: `${interaction.targetId}`})
+
+                const market_options = new StringSelectMenuBuilder()
+                    .setCustomId('Remove Post.remove')
+                    .setPlaceholder('Rule Broken')
+                    .addOptions(
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Rule 1')
+                            .setDescription('New users are not able to use the marketplace')
+                            .setValue('1'),
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Rule 2')
+                            .setDescription('Only @Verified Modder & @Store/Retailer are allowed to offer modding services')
+                            .setValue('2'),
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Rule 3')
+                            .setDescription('Please include a price & a photo')
+                            .setValue('3'),
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Rule 4')
+                            .setDescription('Do not misrepresent your item/No Raffles')
+                            .setValue('4'),
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Rule 5')
+                            .setDescription('Once your listing is no longer needed, please delete your post!')
+                            .setValue('5'),
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Rule 6')
+                            .setDescription('Avoid random chatter')
+                            .setValue('6'),
+                    );
+                const mrow = new ActionRowBuilder().addComponents(market_options)
+                await interaction.editReply({embeds: [Embed], components: [mrow], ephemeral: true})
+                break;
+
+            //Else we say no
+            default:
+                await interaction.editReply({content: 'This command can only be used in gallery or marketplace', ephemeral: true})
+                break;
+        }
+    },
+
+    remove: async function(interaction) {
+        let rule = '';
+        let chType = '';
+        let chnl = await client.channels.cache.get(interaction.channelId)
+
+        switch(true) {
+            case (interaction.channelId === '744938437693407393'):
+                chType = 'gallery'
+                rule = ['Rule 1: Images and videos only. Captions are allowed, but any chatter will be automatically removed', 'Rule 2: Low quality or low effort posts will be removed, ie blurry pictures, bootleg carts, screenshots etc. Gallery is CURATED, put your best foot forward when posting!', 'Rule 3: Game Boy related content only. Other Nintendo consoles will be removed.', 'Rule 4: No advertising in gallery without the approval of the admins. (This includes stealth advertising)']
+                break;
+
+            case (chnl.parentId === '1049401311101206649'):
+                chType = 'marketplace'
+                rule = ['Rule 1: New users are not able to use the marketplace, users that have been in the discord for less than 30 days or have an account that is younger than 90 days will have their posts removed.', 'Rule 2: Only users with the following roles - @Verified Modder & @Store/Retailer are allowed to offer modding services.', 'Rule 3: If selling, please include a price, country, and at least one photo.', 'Rule 4: Do not misrepresent your item! Communicate as much detail about the item before finalizing a sale/trade. Raffle-type promotions or sales are not allowed.', 'Rule 5: Once your listing is no longer needed, please delete your post!', 'Rule 6: Avoid random chatter, repeat offenses will result in restricted access to marketplace.']
+                break;
+        }
+
+        let reason = rule[parseInt(interaction.values) - 1]
+        let channel = await client.channels.cache.get(interaction.channelId)
+        let message = await channel.messages.fetch(interaction.targetId)
+        let user = await client.users.fetch(message.first().author.id);
+        await message.first().delete()
+        sendPM(user, `Your post in ${chType} has been removed: \`${reason}\``)
+        await interaction.update({content: `Removed ${user.tag}'s ${chType} post: \`${reason}\``, embeds: [], components: [], ephemeral: true})
+
+    }
+}
