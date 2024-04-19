@@ -10,6 +10,10 @@ client.on(Events.MessageCreate, async msg => {
         if (timeSinceJoin/1000/60/60/24 < 30 || timeSinceCreated/1000/60/60/24 < 90) {
             await msg.delete()
             await sendPM(msg.author, "Your message in the marketplace was deleted, Your account is either too new, or you have joined this server recently, please try again in a bit");
+        } else {
+            if(await msg.channel.fetchStarterMessage() === msg){
+                await msg.reply({content: 'Please remember to include your location and the price if applicable. All items being sold must have clear images and prices.'})
+            }
         }
     }
 });
@@ -22,10 +26,7 @@ client.on(Events.ThreadCreate, async thread => {
         if (timeSinceJoin/1000/60/60/24 < 30 || timeSinceCreated/1000/60/60/24 < 90) {
             await thread.delete()
             await sendPM(threadOwner.user, "Your post in the marketplace was deleted, Your account is either too new, or you have joined this server recently, please try again in a bit");
-        } else {
-            setTimeout(function() {
-                thread.send({content: "Please remember to include your location and the price if applicable. All items being sold must have clear images and prices."})
-            }, 10000)
         }
     }
 });
+
