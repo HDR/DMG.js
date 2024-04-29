@@ -12,6 +12,7 @@ module.exports = {
     execute: async function (interaction) {
         await interaction.deferReply({ephemeral: true})
         const Embed = new EmbedBuilder();
+        Embed.setFooter({text: interaction.targetId})
         let channel = await client.channels.cache.get(interaction.channelId)
         let message = await channel.messages.fetch(interaction.targetId)
         let user = await client.users.fetch(message.author.id);
@@ -124,7 +125,7 @@ module.exports = {
                         new StringSelectMenuOptionBuilder()
                             .setLabel('Rule 4')
                             .setDescription('Insufficient information')
-                            .setValue('4')
+                            .setValue('4'),
                     );
                 const trow = new ActionRowBuilder().addComponents(trouble_options)
                 await interaction.editReply({embeds: [Embed], components: [trow], ephemeral: true})
@@ -172,6 +173,7 @@ module.exports = {
     },
 
     remove: async function(interaction) {
+        let targetId = interaction.message.embeds[0].footer.text
         let rule = '';
         let chType = '';
         let chnl = await client.channels.cache.get(interaction.channelId)
@@ -200,9 +202,9 @@ module.exports = {
 
         let reason = rule[parseInt(interaction.values) - 1]
         let channel = await client.channels.cache.get(interaction.channelId)
-        let message = await channel.messages.fetch(interaction.targetId)
-        let user = await client.users.fetch(message.first().author.id);
-        await message.first().delete()
+        let message = await channel.messages.fetch(targetId)
+        let user = await client.users.fetch(message.author.id);
+        await message.delete()
         sendPM(user, `Your post in ${chType} has been removed: \`${reason}\``)
         await interaction.update({content: `Removed ${user.tag}'s ${chType} post: \`${reason}\``, embeds: [], components: [], ephemeral: true})
 
