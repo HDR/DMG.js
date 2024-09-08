@@ -18,7 +18,6 @@ module.exports = {
         let user = await client.users.fetch(message.author.id);
 
         switch(true) {
-            //Gallery Channel
             case (channel.id === '744938437693407393'):
                 Embed.setTitle(`Remove Gallery Post`)
                     .addFields({
@@ -53,7 +52,6 @@ module.exports = {
                 await interaction.editReply({embeds: [Embed], components: [rrow], ephemeral: true})
                 break;
 
-            //Thread in Marketplace channel
             case (channel.parentId === '1049401311101206649'):
                 Embed.setTitle(`Remove Marketplace Post/Message`)
                     .addFields({
@@ -96,7 +94,6 @@ module.exports = {
                 await interaction.editReply({embeds: [Embed], components: [mrow], ephemeral: true})
                 break;
 
-            //Thread in Troubleshooting Channel
             case (channel.parentId === '1006386432065155083'):
                 Embed.setTitle(`Remove Troubleshooting Post/Message`)
                     .addFields({
@@ -131,7 +128,6 @@ module.exports = {
                 await interaction.editReply({embeds: [Embed], components: [trow], ephemeral: true})
                 break;
 
-            //Else we say no
             default:
                 Embed.setTitle(`Remove Post/Message`)
                     .addFields({
