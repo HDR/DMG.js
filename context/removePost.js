@@ -203,6 +203,5 @@ module.exports = {
         await message.delete()
         sendPM(user, `Your post in ${chType} has been removed: \`${reason}\``)
         await interaction.update({content: `Removed ${user.tag}'s ${chType} post: \`${reason}\``, embeds: [], components: [], ephemeral: true})
-
     }
 }

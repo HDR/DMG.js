@@ -95,19 +95,15 @@ module.exports = {
 
                 switch (strikes) {
                     case 0:
-                        //Mute for 2 Hours
                         user.timeout(7200000, reason + ` - ${strikes + 1}/4 Strikes`).then(addStrike(interaction, 1, reason))
                         break;
                     case 1:
-                        //Mute for 24 Hours
                         user.timeout(24 * 60 * 60 * 1000, reason + ` - ${strikes + 1}/4 Strikes`).then(addStrike(interaction, 2, reason))
                         break;
                     case 2:
-                        //Mute for 1 Week
                         user.timeout(7 * 24 * 60 * 60 * 1000, reason + ` - ${strikes + 1}/4 Strikes`).then(addStrike(interaction, 3, reason))
                         break;
                     case 3:
-                    //Ban
                     sendPM(user, `You have been banned from the Game boy discord for reaching 4 strikes`)
                     user.ban({reason: "Automatic Ban, user reached 4/4 strikes"}).then()
 
