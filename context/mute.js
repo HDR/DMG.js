@@ -1,7 +1,7 @@
 const { EmbedBuilder, ContextMenuCommandBuilder, ApplicationCommandType, PermissionFlagsBits, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder} = require("discord.js");
-const {client} = require("../constants");
+const {client} = require("./constants");
 const sqlite3 = require("sqlite3");
-const {sendPM} = require("../commonFunctions");
+const {sendPM} = require("./commonFunctions");
 
 module.exports = {
     data: new ContextMenuCommandBuilder()
