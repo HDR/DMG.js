@@ -47,6 +47,7 @@ module.exports = {
                             .setLabel('Rule 4')
                             .setDescription('No advertising in gallery')
                             .setValue('4'),
+                            //Todo: Add custom removal reason
                     );
                 const rrow = new ActionRowBuilder().addComponents(gallery_options)
                 await interaction.editReply({embeds: [Embed], components: [rrow], ephemeral: true})
@@ -89,6 +90,7 @@ module.exports = {
                             .setLabel('Rule 6')
                             .setDescription('Avoid random chatter')
                             .setValue('6'),
+                            //Todo: Add custom removal reason
                     );
                 const mrow = new ActionRowBuilder().addComponents(market_options)
                 await interaction.editReply({embeds: [Embed], components: [mrow], ephemeral: true})
@@ -123,6 +125,7 @@ module.exports = {
                             .setLabel('Rule 4')
                             .setDescription('Insufficient information')
                             .setValue('4'),
+                            //Todo: Add custom removal reason
                     );
                 const trow = new ActionRowBuilder().addComponents(trouble_options)
                 await interaction.editReply({embeds: [Embed], components: [trow], ephemeral: true})
@@ -161,6 +164,7 @@ module.exports = {
                             .setLabel('Rule 5')
                             .setDescription('Keep topics in the correct channels')
                             .setValue('5'),
+                            //Todo: Add custom removal reason
                     );
                 const drow = new ActionRowBuilder().addComponents(default_options)
                 await interaction.editReply({embeds: [Embed], components: [drow], ephemeral: true})
