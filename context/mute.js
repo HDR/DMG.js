@@ -1,7 +1,11 @@
-const { EmbedBuilder, ContextMenuCommandBuilder, ApplicationCommandType, PermissionFlagsBits, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder} = require("discord.js");
-const {client} = require("./constants");
+const { EmbedBuilder, ContextMenuCommandBuilder, ApplicationCommandType, PermissionFlagsBits, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder,
+    ModalBuilder,
+    TextInputBuilder,
+    TextInputStyle
+} = require("discord.js");
+const {client} = require("../constants");
 const sqlite3 = require("sqlite3");
-const {sendPM} = require("./commonFunctions");
+const {sendPM} = require("../commonFunctions");
 
 module.exports = {
     data: new ContextMenuCommandBuilder()
@@ -55,6 +59,10 @@ module.exports = {
                     .setLabel('Rule 5')
                     .setDescription('Keep topics in the correct channels')
                     .setValue('5'),
+                new StringSelectMenuOptionBuilder()
+                    .setLabel('Custom')
+                    .setDescription('Custom mute/strike message')
+                    .setValue('6'),
             );
 
         const row = new ActionRowBuilder().addComponents(rule_options)
@@ -91,29 +99,53 @@ module.exports = {
                     strikes = strikes - 1;
                 }
 
-                let reason = rule[parseInt(interaction.values) - 1];
+                if(parseInt(interaction.values) === 6) {
+                    const modal = new ModalBuilder()
+                        .setCustomId(`Mute.submit_modal.${user.id}.${strikes}`)
+                        .setTitle(`Custom Mute Reason`)
 
-                switch (strikes) {
-                    case 0:
-                        user.timeout(7200000, reason + ` - ${strikes + 1}/4 Strikes`).then(addStrike(interaction, 1, reason))
-                        break;
-                    case 1:
-                        user.timeout(24 * 60 * 60 * 1000, reason + ` - ${strikes + 1}/4 Strikes`).then(addStrike(interaction, 2, reason))
-                        break;
-                    case 2:
-                        user.timeout(7 * 24 * 60 * 60 * 1000, reason + ` - ${strikes + 1}/4 Strikes`).then(addStrike(interaction, 3, reason))
-                        break;
-                    case 3:
-                    sendPM(user, `You have been banned from the Game boy discord for reaching 4 strikes`)
-                    user.ban({reason: "Automatic Ban, user reached 4/4 strikes"}).then()
+                    const paragraph = new TextInputBuilder()
+                        .setCustomId('Mute.parahraph')
+                        .setLabel('Mute & Strike reason')
+                        .setPlaceholder('Custom reason for why this user was muted and striked',)
+                        .setStyle(TextInputStyle.Paragraph)
+                        .setMaxLength(128)
+                        .setRequired(true)
 
+                    const paragraphRow = new ActionRowBuilder().addComponents(paragraph)
+                    modal.addComponents(paragraphRow)
+                    await interaction.showModal(modal)
+                } else {
+                    calculateStrikes(interaction, strikes, user, rule[parseInt(interaction.values) - 1])
                 }
-                await interaction.update({content: `Muted ${user.user.username}#${user.user.discriminator}, this user now has ${strikes + 1}/4 Strikes`, embeds: [], components: [], ephemeral: true})
 
             });
         });
         db.close();
+    },
+
+    submit_modal: async function (interaction) {
+        await calculateStrikes(interaction, parseInt(interaction.customId.split('.')[3]), await interaction.guild.members.cache.get(interaction.customId.split('.')[2]), interaction.components[0].components[0].value)
     }
+}
+
+async function calculateStrikes(interaction, strikes, user, reason) {
+    switch (strikes) {
+        case 0:
+            user.timeout(7200000, reason + ` - ${strikes + 1}/4 Strikes`).then(addStrike(interaction, 1, reason))
+            break;
+        case 1:
+            user.timeout(24 * 60 * 60 * 1000, reason + ` - ${strikes + 1}/4 Strikes`).then(addStrike(interaction, 2, reason))
+            break;
+        case 2:
+            user.timeout(7 * 24 * 60 * 60 * 1000, reason + ` - ${strikes + 1}/4 Strikes`).then(addStrike(interaction, 3, reason))
+            break;
+        case 3:
+            sendPM(user, `You have been banned from the Game boy discord for reaching 4 strikes`)
+            user.ban({reason: "Automatic Ban, user reached 4/4 strikes"}).then()
+
+    }
+    await interaction.update({content: `Muted ${user.user.username}#${user.user.discriminator}, this user now has ${strikes + 1}/4 Strikes`, embeds: [], components: [], ephemeral: true})
 }
 
 async function addStrike(interaction, strike, reason){
