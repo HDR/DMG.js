@@ -1,7 +1,11 @@
-const { EmbedBuilder, ContextMenuCommandBuilder, ApplicationCommandType, PermissionFlagsBits, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder} = require("discord.js");
-const {client} = require("./constants");
+const { EmbedBuilder, ContextMenuCommandBuilder, ApplicationCommandType, PermissionFlagsBits, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder,
+    ModalBuilder,
+    TextInputBuilder,
+    TextInputStyle
+} = require("discord.js");
+const {client} = require("../constants");
 const sqlite3 = require("sqlite3");
-const {sendPM} = require("./commonFunctions");
+const {sendPM} = require("../commonFunctions");
 
 module.exports = {
     data: new ContextMenuCommandBuilder()
@@ -28,7 +32,7 @@ module.exports = {
                     .setFooter({text: `${interaction.targetId}`})
 
                 const gallery_options = new StringSelectMenuBuilder()
-                    .setCustomId('Remove Post.remove')
+                    .setCustomId('Remove Post.reason')
                     .setPlaceholder('Rule Broken')
                     .addOptions(
                         new StringSelectMenuOptionBuilder()
@@ -47,7 +51,10 @@ module.exports = {
                             .setLabel('Rule 4')
                             .setDescription('No advertising in gallery')
                             .setValue('4'),
-                            //Todo: Add custom removal reason
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Custom')
+                            .setDescription('Custom removal reason')
+                            .setValue('custom'),
                     );
                 const rrow = new ActionRowBuilder().addComponents(gallery_options)
                 await interaction.editReply({embeds: [Embed], components: [rrow], ephemeral: true})
@@ -63,7 +70,7 @@ module.exports = {
                     .setFooter({text: `${interaction.targetId}`})
 
                 const market_options = new StringSelectMenuBuilder()
-                    .setCustomId('Remove Post.remove')
+                    .setCustomId('Remove Post.reason')
                     .setPlaceholder('Rule Broken')
                     .addOptions(
                         new StringSelectMenuOptionBuilder()
@@ -90,7 +97,10 @@ module.exports = {
                             .setLabel('Rule 6')
                             .setDescription('Avoid random chatter')
                             .setValue('6'),
-                            //Todo: Add custom removal reason
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Custom')
+                            .setDescription('Custom removal reason')
+                            .setValue('custom'),
                     );
                 const mrow = new ActionRowBuilder().addComponents(market_options)
                 await interaction.editReply({embeds: [Embed], components: [mrow], ephemeral: true})
@@ -106,7 +116,7 @@ module.exports = {
                     .setFooter({text: `${interaction.targetId}`})
 
                 const trouble_options = new StringSelectMenuBuilder()
-                    .setCustomId('Remove Post.remove')
+                    .setCustomId('Remove Post.reason')
                     .setPlaceholder('Rule Broken')
                     .addOptions(
                         new StringSelectMenuOptionBuilder()
@@ -125,7 +135,10 @@ module.exports = {
                             .setLabel('Rule 4')
                             .setDescription('Insufficient information')
                             .setValue('4'),
-                            //Todo: Add custom removal reason
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Custom')
+                            .setDescription('Custom removal reason')
+                            .setValue('custom'),
                     );
                 const trow = new ActionRowBuilder().addComponents(trouble_options)
                 await interaction.editReply({embeds: [Embed], components: [trow], ephemeral: true})
@@ -141,7 +154,7 @@ module.exports = {
                     .setFooter({text: `${interaction.targetId}`})
 
                 const default_options = new StringSelectMenuBuilder()
-                    .setCustomId('Remove Post.remove')
+                    .setCustomId('Remove Post.reason')
                     .setPlaceholder('Rule Broken')
                     .addOptions(
                         new StringSelectMenuOptionBuilder()
@@ -164,7 +177,10 @@ module.exports = {
                             .setLabel('Rule 5')
                             .setDescription('Keep topics in the correct channels')
                             .setValue('5'),
-                            //Todo: Add custom removal reason
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel('Custom')
+                            .setDescription('Custom removal reason')
+                            .setValue('custom'),
                     );
                 const drow = new ActionRowBuilder().addComponents(default_options)
                 await interaction.editReply({embeds: [Embed], components: [drow], ephemeral: true})
@@ -172,7 +188,7 @@ module.exports = {
         }
     },
 
-    remove: async function(interaction) {
+    reason: async function(interaction) {
         let targetId = interaction.message.embeds[0].footer.text
         let rule = '';
         let chType = '';
@@ -200,12 +216,41 @@ module.exports = {
                 break;
         }
 
-        let reason = rule[parseInt(interaction.values) - 1]
-        let channel = await client.channels.cache.get(interaction.channelId)
-        let message = await channel.messages.fetch(targetId)
-        let user = await client.users.fetch(message.author.id);
-        await message.delete()
-        sendPM(user, `Your post in ${chType} has been removed: \`${reason}\``)
-        await interaction.update({content: `Removed ${user.tag}'s ${chType} post: \`${reason}\``, embeds: [], components: [], ephemeral: true})
+        if(interaction.values[0] === 'custom') {
+            const modal = new ModalBuilder()
+                .setCustomId(`Remove Post.submit_modal.${interaction.channelId}.${targetId}.${chType}`)
+                .setTitle(`Custom Removal Reason`)
+
+            const paragraph = new TextInputBuilder()
+                .setCustomId('Remove Post.parahraph')
+                .setLabel('Removal Reason')
+                .setPlaceholder('Custom reason for why this message was removed',)
+                .setStyle(TextInputStyle.Paragraph)
+                .setMaxLength(128)
+                .setRequired(true)
+
+            const paragraphRow = new ActionRowBuilder().addComponents(paragraph)
+            modal.addComponents(paragraphRow)
+            await interaction.showModal(modal)
+        } else {
+            remove(interaction, interaction.channelId, targetId, chType, rule[parseInt(interaction.values) - 1])
+        }
+
+    },
+
+    submit_modal: async function (interaction) {
+        let channelId = interaction.customId.split('.')[2]
+        let targetId = interaction.customId.split('.')[3]
+        let chType = interaction.customId.split('.')[4]
+        remove(interaction, channelId, targetId, chType, interaction.components[0].components[0].value)
     }
+}
+
+async function remove (interaction, channelId, targetId, chType, reason) {
+    let channel = await client.channels.cache.get(interaction.channelId)
+    let message = await channel.messages.fetch(targetId)
+    let user = await client.users.fetch(message.author.id);
+    await message.delete()
+    sendPM(user, `Your post in ${chType} has been removed: \`${reason}\``)
+    await interaction.update({content: `Removed ${user.tag}'s ${chType} post: \`${reason}\``, embeds: [], components: [], ephemeral: true})
 }
