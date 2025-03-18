@@ -1,5 +1,5 @@
 const { client } = require("../constants");
-const { Events, ChannelType } = require("discord.js");
+const { Events, ChannelType, ActionRowBuilder, ButtonBuilder} = require("discord.js");
 const { troubleshooting_channel } = require("./config/troubleshootingHandler.json");
 
 client.on(Events.MessageCreate, async msg => {
@@ -18,7 +18,11 @@ client.on(Events.MessageCreate, async msg => {
             let tag = msg.channel.appliedTags.map(s => msg.channel.parent.availableTags.find(t => t.id === s)).map(x => x.name)[0];
             let wikiString = "Please remember to provide as much information as possible including all troubleshooting steps you have already taken. If this is a hardware issue, please provide clear in-focus images of the issue, PCB (circuit board), installation, and any soldering you have done. Help us help you, posts with insufficient information will be deleted\n\n";
             wikiString += tagWikiMap[tag] ? `Because this post has the "${tag}" tag, we recommend checking out this wiki page ${tagWikiMap[tag]}` : 'We also recommend checking the wiki https://gbwiki.org/';
-            msg.reply({content: wikiString})
+            wikiString += `\n\nOnce your issue has been resolved, please click the "Solved" button`
+            const solved = new ActionRowBuilder()
+                .addComponents(new ButtonBuilder().setCustomId('commonFunctions.troubleshootingSolved').setLabel('Solved').setStyle('Success').setEmoji('✅'))
+            msg.reply({content: wikiString, components: [solved]})
+            msg.channel.setAppliedTags([...msg.channel.appliedTags, '1006399902978408448'])
         }
     }
 })

@@ -6,6 +6,7 @@ const commands = fs.readdirSync('./commands').filter(file => file.endsWith('.js'
 const context = fs.readdirSync('./context').filter(file => file.endsWith('.js'));
 const handlers = fs.readdirSync('./handlers').filter(file => file.endsWith('.js'));
 const events = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
+const common = require('./commonFunctions.js')
 
 client.commands = new Collection;
 
@@ -96,10 +97,21 @@ client.on(Events.InteractionCreate, async interaction => {
     }
 
     if(interaction.isButton() || interaction.isModalSubmit() || interaction.isAnySelectMenu()) {
-        if(!interaction.message.interaction || interaction.isAnySelectMenu()) {
+        if(interaction.isAnySelectMenu() || interaction.isModalSubmit() || !interaction.message.interaction) {
             try {
                 let modalString = interaction.customId.split('.')
                 const command = interaction.client.commands.get(modalString[0]);
+
+                if(modalString[0] === 'commonFunctions') {
+                    try {
+                        await common[modalString[1]](interaction)
+                        return;
+                    } catch (error) {
+                        console.error(`Error executing ${interaction.commandName}`);
+                        console.error(error);
+                    }
+                }
+
                 if (!command) {
                     console.error(`No command matching ${modalString[0]} was found.`);
                     return;
@@ -117,7 +129,7 @@ client.on(Events.InteractionCreate, async interaction => {
                 console.error(error);
             }
         } else {
-            const command = interaction.client.commands.get(interaction.message.interaction.commandName);
+            const command = interaction.client.commands.get(interaction.message.interaction.commandName.split(' ')[0]);
 
             if (!command) {
                 console.error(`No command matching ${interaction.commandName} was found.`);
