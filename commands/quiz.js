@@ -4,6 +4,9 @@ const sqlite3 = require("sqlite3");
 const { token } = require('../config.json')
 const { getAudioDurationInSeconds } = require('get-audio-duration')
 const axios = require('axios')
+const ffmpeg = require('fluent-ffmpeg');
+const wavDecoder = require("wav-decoder");
+const fs = require('fs');
 
 module.exports = {
 
@@ -58,7 +61,7 @@ module.exports = {
             let attachment = interaction.options.getAttachment('ogg-file')
             await axios({
                 method: 'POST',
-                url: `https://discord.com/api/v9/channels/${Channel.id}/attachments`,
+                url: `https://discord.com/api/v10/channels/${Channel.id}/attachments`,
                 data: {
                     files: [
                         {
@@ -77,13 +80,14 @@ module.exports = {
                     responseType: "arraybuffer"
                 }).then(async function (re1) {
                     let {upload_url, upload_filename} = res.data.attachments[0]
-                    generateWaveformBuffer(re1.data, 256).then(async (waveform) => {
+                    await generateWaveform(re1.data).then(async (waveform) => {
                         await axios({
                             method: "PUT",
                             url: upload_url,
                             headers: {'Content-Type': 'application/json', 'Authorization': `Bot ${token}`},
                             data: re1.data
                         }).then(async function (re2) {
+                            await console.log(waveform)
                             await Channel.send({
                                 flags: 8192,
                                 attachments: [
@@ -191,6 +195,50 @@ module.exports = {
 
     },
 
+    solve_quiz: async function (interaction) {
+        let answer = await getAnswer(interaction.message.embeds[0].url.substring(8).slice(0, -3))
+        let [userScore, usedHint] = await getUserScore(interaction.user.id)
+        let solved = JSON.parse(await getSolved(interaction.user.id))
+
+        await interaction.deferReply({ephemeral: true})
+        const Embed = new EmbedBuilder();
+        Embed.setColor('#15abec');
+
+        if (stringSimilarity(interaction.fields.getTextInputValue('solution').toLowerCase(), answer.toLowerCase()) >= 0.65) {
+            let newScore = 10
+            if (parseInt(usedHint) === 1) {
+                newScore = 5
+            }
+
+            Embed.setTitle("Congratulations! you guessed correctly");
+            Embed.setURL(`https://${interaction.message.embeds[0].url.substring(8).slice(0, -3)}.id`)
+            Embed.setDescription(`You scored ${newScore} point(s)`)
+            Embed.addFields({
+                name: 'New points total',
+                value: `${newScore+parseInt(userScore)}`
+            })
+
+
+            solved.push(`${interaction.message.embeds[0].url.substring(8).slice(0, -3)}`)
+            let db = new sqlite3.Database('./quiz.db', (err) => {if (err) {console.log(err.message);}});
+            db.run(`UPDATE "scoreboard" SET score="${newScore + parseInt(userScore)}", hint="0", solved='${JSON.stringify(solved)}' WHERE userid=${interaction.user.id}`, function (err) {
+                if (err) {
+                    return console.log(`Join ${err.message}`)
+                }
+            })
+        } else {
+            Embed.setTitle("Sorry! you guessed incorrectly");
+            Embed.setDescription(`You have not scored any points, please try again!`)
+        }
+
+        await interaction.editReply({embeds: [Embed], components: [], ephemeral: true})
+
+    },
+
+    reveal: async function(interaction) {
+
+    },
+
     hintyes: async function (interaction) {
         let answer = await getAnswer(interaction.message.embeds[0].url.substring(8).slice(0, -3))
         let db = new sqlite3.Database('./quiz.db', (err) => {if (err) {console.log(err.message);}});
@@ -241,47 +289,7 @@ module.exports = {
         Embed.setDescription('Your points were not reduced')
         await interaction.deferUpdate()
         await interaction.editReply({ embeds: [Embed], components: [], ephemeral: true})
-    },
-
-    solve_quiz: async function (interaction) {
-        let answer = await getAnswer(interaction.message.embeds[0].url.substring(8).slice(0, -3))
-        let [userScore, usedHint] = await getUserScore(interaction.user.id)
-        let solved = JSON.parse(await getSolved(interaction.user.id))
-
-        await interaction.deferReply({ephemeral: true})
-        const Embed = new EmbedBuilder();
-        Embed.setColor('#15abec');
-
-        if (stringSimilarity(interaction.fields.getTextInputValue('solution').toLowerCase(), answer.toLowerCase()) >= 0.65) {
-            let newScore = 10
-            if (parseInt(usedHint) === 1) {
-                newScore = 5
-            }
-
-            Embed.setTitle("Congratulations! you guessed correctly");
-            Embed.setURL(`https://${interaction.message.embeds[0].url.substring(8).slice(0, -3)}.id`)
-            Embed.setDescription(`You scored ${newScore} point(s)`)
-            Embed.addFields({
-                name: 'New points total',
-                value: `${newScore+parseInt(userScore)}`
-            })
-
-
-            solved.push(`${interaction.message.embeds[0].url.substring(8).slice(0, -3)}`)
-            let db = new sqlite3.Database('./quiz.db', (err) => {if (err) {console.log(err.message);}});
-            db.run(`UPDATE "scoreboard" SET score="${newScore + parseInt(userScore)}", hint="0", solved='${JSON.stringify(solved)}' WHERE userid=${interaction.user.id}`, function (err) {
-                if (err) {
-                    return console.log(`Join ${err.message}`)
-                }
-            })
-        } else {
-            Embed.setTitle("Sorry! you guessed incorrectly");
-            Embed.setDescription(`You have not scored any points, please try again!`)
-        }
-
-        await interaction.editReply({embeds: [Embed], components: [], ephemeral: true})
-
-    },
+    }
 }
 
 async function getAnswer(quiz_id) {
@@ -347,28 +355,48 @@ async function resetHints() {
     })
 }
 
-async function generateWaveformBuffer(opusBuffer, numSamples) {
-    try {
-        const frameSize = 960; // Assuming frame size of 20ms at 48kHz
-        const sampleStep = Math.floor(opusBuffer.byteLength / numSamples);
-
-        const volumes = [];
-        for (let i = 0; i < numSamples; i++) {
-            const offset = i * sampleStep;
-            const end = Math.min(offset + frameSize, opusBuffer.byteLength);
-            const frame = Buffer.from(opusBuffer.slice(offset, end));
-
-            let sum = 0;
-            for (let j = 0; j < frame.length; j += 2) {
-                const sample = frame.readInt16LE(j);
-                sum += Math.abs(sample);
-            }
-            const volume = sum / (frame.length / 2);
-            volumes.push(Math.floor(volume));
-        }
-
-        return Buffer.from(volumes).toString('base64')
-    } catch (error) {
-        console.error('Error:', error);
+function extractPCM(inputFile, outputFile, callback) {
+    if(Buffer.isBuffer(inputFile)) {
+        fs.writeFileSync('temp.ogg', inputFile);
+        inputFile = 'temp.ogg';
     }
+
+    ffmpeg(inputFile)
+        .output(outputFile)
+        .audioCodec('pcm_s16le')
+        .audioFrequency(48000)
+        .audioChannels(1)
+        .format('wav')
+        .on('end', () => callback(outputFile))
+        .on('error', (err) => console.error('FFmpeg Error:', err))
+        .run();
+}
+
+async function generateWaveform(opusFile) {
+    return new Promise((resolve, reject) => {
+        extractPCM(opusFile, "temp.wav", async (wavFile) => {
+            try {
+                const buffer = fs.readFileSync(wavFile);
+                const decodedWav = await wavDecoder.decode(buffer);
+
+                let samples = decodedWav.channelData[0];
+                let step = Math.floor(samples.length / 256);
+                let waveform = [];
+
+                for (let i = 0; i < 256; i++) {
+                    let slice = samples.slice(i * step, (i + 1) * step);
+                    let peak = Math.max(...slice.map(s => Math.abs(s)));
+                    waveform.push(Math.round(peak * 255));
+                }
+
+                fs.unlink('temp.ogg', () => {
+                    fs.unlink('temp.wav', () => {
+                        resolve(Buffer.from(waveform).toString('base64'));
+                    })
+                })
+            } catch (err) {
+                reject(err);
+            }
+        })
+    })
 }
