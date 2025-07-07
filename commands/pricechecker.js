@@ -59,19 +59,23 @@ async function getBoxart(url) {
 
 async function buildContainer(gameSearch, page, prevDisabled, nextDisabled) {
     const getResult = await getData(gameSearch)
-    let consoleString = getResult["products"][page]["console-name"].replace('GameBoy', 'Game Boy')
-    let consoleStringParts = consoleString.split(' ')
-    let gConsole = consoleString
-    let region = 'NA'
-
-    if(["PAL", "JP"].includes(consoleStringParts[0])) {
-        region = consoleStringParts[0]
-        gConsole = consoleStringParts.slice(1).join(' ')
-    }
-
     if(getResult === "error") {
         return null;
     } else {
+        let consoleString = getResult["products"][page]["console-name"].replace('GameBoy', 'Game Boy')
+        let consoleStringParts = consoleString.split(' ')
+        let gConsole = consoleString
+        let region = 'NA'
+
+        if(["PAL", "JP"].includes(consoleStringParts[0])) {
+            region = consoleStringParts[0]
+            gConsole = consoleStringParts.slice(1).join(' ')
+        }
+
+        if(Object.keys(getResult.products).length === 1) {
+            nextDisabled = true;
+        }
+
         return {
             "type": 17,
             "accent_color": 1752220,
