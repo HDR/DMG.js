@@ -14,5 +14,4 @@ client.on(Events.GuildMemberUpdate, async(OldGuildMember, NewGuildMember) => {
             await NewGuildMember.kick('Cleared rules too fast')
         }
     }
-
 })

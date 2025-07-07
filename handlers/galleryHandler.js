@@ -7,7 +7,7 @@ client.on(Events.MessageCreate, async msg => {
     if (msg.channel === client.channels.cache.get(gallery)){
         let urlRE = new RegExp("([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_]+@)?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?([^ ])+",'i');
         let content = msg.content.split(' ');
-        for (i = 0; i < content.length; i++){
+        for (let i = 0; i < content.length; i++){
             if(msg.attachments.size > 0){break;}
             if (!urlRE.test(content[i]) && !msg.author.bot){
                 if(i === content.length - 1){

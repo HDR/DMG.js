@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits} = require("discord.js")
+const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags} = require("discord.js")
 const { client } = require("../constants");
 
 module.exports = {
@@ -16,6 +16,10 @@ module.exports = {
                 .addStringOption(option =>
                     option.setName('add_url')
                         .setDescription('Link to the message you want added to resources as an embed')
+                        .setRequired(true))
+                .addBooleanOption(option =>
+                    option.setName('componentsv2')
+                        .setDescription(`Should we use components v2?`)
                         .setRequired(true)))
         .addSubcommand(command =>
             command.setName('edit')
@@ -27,6 +31,10 @@ module.exports = {
                 .addStringOption(option =>
                     option.setName('new_url')
                         .setDescription('Link to the message you want to replace the old embed with')
+                        .setRequired(true))
+                .addBooleanOption(option =>
+                    option.setName('componentsv2')
+                        .setDescription(`Should we use components v2?`)
                         .setRequired(true)))
         .addSubcommand(command =>
             command.setName('delete')
@@ -46,9 +54,12 @@ module.exports = {
                 let add_url = interaction.options.get('add_url').value.split('/');
                 let add_channel = channel.client.channels.cache.get(add_url[5])
                 add_channel.messages.fetch(add_url[6]).then(msg => {
-                    console.log(msg.content)
                     const json = JSON.parse(msg.content.replaceAll('```', ''))
-                    resource_channel.send({embeds: [json.embeds[0]]})
+                    if(interaction.options.get('componentsv2').value) {
+                        resource_channel.send({components: json, flags: [MessageFlags.IsComponentsV2], allowedMentions: {users: []}})
+                    } else {
+                        resource_channel.send({embeds: [json.embeds[0]]})
+                    }
                     interaction.reply({content: `Added embed to ${resource_channel}`})
                 })
                 break;
@@ -60,8 +71,12 @@ module.exports = {
                 let new_channel = channel.client.channels.cache.get(new_url[5])
                 edit_channel.messages.fetch(edit_url[6]).then(msg => {
                     new_channel.messages.fetch(new_url[6]).then(nmsg => {
-                        msg.edit(JSON.parse(nmsg.content.replaceAll('```', ''))).then()
-                        interaction.reply({content: `Edited resource embed in ${resource_channel}`, ephemeral: true });
+                        if(interaction.options.get('componentsv2').value) {
+                            msg.edit({components: JSON.parse(nmsg.content.replaceAll('```', '')), flags: [MessageFlags.IsComponentsV2], allowedMentions: {users: []}})
+                        } else {
+                            msg.edit({content: JSON.parse(nmsg.content.replaceAll('```', ''))})
+                        }
+                        interaction.reply({content: `Edited resource embed in ${edit_channel}`, flags: [MessageFlags.Ephemeral]});
                     })
                 })
                 break;
@@ -71,7 +86,7 @@ module.exports = {
                 let delete_channel = channel.client.channels.cache.get(delete_url[5])
                 delete_channel.messages.fetch(delete_url[6]).then(msg => {
                     msg.delete().then()
-                    interaction.reply({content: `Deleted resource embed in ${resource_channel}`, ephemeral: true });
+                    interaction.reply({content: `Deleted resource embed in ${resource_channel}`, flags: [MessageFlags.Ephemeral]});
                 })
         }
     }

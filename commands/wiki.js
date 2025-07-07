@@ -61,16 +61,16 @@ module.exports = {
     async execute(interaction) {
         let result = interaction.options.getString('query').split("|")
         const Embed = new EmbedBuilder();
-        let description = result[1];
-        if(result[1].length === 0) {
-            description = 'None'
-        }
         Embed.setColor('#7bfdd6')
             .setTitle(`GBWiki: ${result[0]}`)
-            .setDescription(`Description: ${description}...`)
             .setImage('https://gameboy.github.io/assets/images/site/logo.png')
             .setURL(`https://gbwiki.org/${result[2]}`)
             .setFooter({text:`https://gbwiki.org/${result[2]}`})
+
+        if(result[1].length > 0){
+            Embed.setDescription(`Description: ${result[1]}`)
+        }
+
         interaction.reply({embeds: [Embed]})
     },
 }

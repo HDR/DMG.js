@@ -51,33 +51,35 @@ client.on(Events.MessageCreate, async msg => {
     const fHosts = ["aliexpress", "taobao", "ebay", "amazon"];
     const aParams = ["SearchText", "SortType", "page", "CatId", "id", "itm", "dp"];
 
-    const FilterUrls = (link) => {
-        const url = new URL(link);
-        const isMatch = fHosts.some(host => url.hostname.includes(host));
-        if (!isMatch) return false;
-        const filteredParams = new URLSearchParams(url.search);
-        url.searchParams.forEach((_, key) => {
-            if (!aParams.includes(key)) {
-                filteredParams.delete(key);
+    try {
+        const FilterUrls = (link) => {
+            const url = new URL(link);
+            const isMatch = fHosts.some(host => url.hostname.includes(host));
+            if (!isMatch) return false;
+            const filteredParams = new URLSearchParams(url.search);
+            url.searchParams.forEach((_, key) => {
+                if (!aParams.includes(key)) {
+                    filteredParams.delete(key);
+                }
+            });
+            let response = `${url.origin}${url.pathname}`;
+            if (Array.from(filteredParams).length) {
+                response += `?${filteredParams.toString()}`;
             }
-        });
-        let response = `${url.origin}${url.pathname}`;
-        if (Array.from(filteredParams).length) {
-            response += `?${filteredParams.toString()}`;
+            return response;
         }
-        return response;
-    }
 
-    if(msg.content.match(rgxURL) && !msg.author.bot) {
-        if(msg.content.match(rgxURL).toString() !== msg.content.match(rgxURL).map(link => FilterUrls(link)).toString() && FilterUrls(msg.content.match(rgxURL)) !== false){
-            msg.reply({ content: `I've attempted to sanitize your url: ${msg.content.match(rgxURL).map(link => FilterUrls(link))}`, allowedMentions: { repliedUser: false }}).then()
+        if(msg.content.match(rgxURL) && !msg.author.bot) {
+            if(msg.content.match(rgxURL).toString() !== msg.content.match(rgxURL).map(link => FilterUrls(link)).toString() && FilterUrls(msg.content.match(rgxURL)) !== false){
+                msg.reply({ content: `I've attempted to sanitize your url: ${msg.content.match(rgxURL).map(link => FilterUrls(link))}`, allowedMentions: { repliedUser: false }}).then()
+            }
         }
-    }
 
-    let analogueStrings = ['ANALOGUE POCKET', 'ANALOGUE.CO', 'ANALOG POCKET', 'ANALOGPOCKET', 'ANALOGUE', 'ANAL POCKET', 'ANALPOCKET'];
-    if(msg.channelId === '246604458744610816' || msg.channelId === '744938437693407393' || msg.channelId === '332487777986019337' || msg.channelId === '332487991383687169' || msg.channelId === '717097354209001653'){
-        if(!msg.author.bot && analogueStrings.some(string => msg.content.toUpperCase().includes(string))) {
-            sendPM(msg.author, "It seems like you posted something related to the Analogue Pocket, please keep non-game boy content to #off-topic");
+        let analogueStrings = ['ANALOGUE POCKET', 'ANALOGUE.CO', 'ANALOG POCKET', 'ANALOGPOCKET', 'ANALOGUE', 'ANAL POCKET', 'ANALPOCKET'];
+        if(msg.channelId === '246604458744610816' || msg.channelId === '744938437693407393' || msg.channelId === '332487777986019337' || msg.channelId === '332487991383687169' || msg.channelId === '717097354209001653'){
+            if(!msg.author.bot && analogueStrings.some(string => msg.content.toUpperCase().includes(string))) {
+                sendPM(msg.author, "It seems like you posted something related to the Analogue Pocket, please keep non-game boy content to #off-topic");
+            }
         }
-    }
+    } catch (e) {}
 });

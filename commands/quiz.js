@@ -1,4 +1,6 @@
-const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, AttachmentBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require("discord.js");
+const { SlashCommandBuilder, PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, ChannelType, ModalBuilder, TextInputBuilder, TextInputStyle, ContainerBuilder, MessageFlags, ComponentType,
+    EmbedBuilder
+} = require("discord.js");
 const { stringSimilarity } = require('string-similarity-js')
 const sqlite3 = require("sqlite3");
 const { token } = require('../config.json')
@@ -9,13 +11,13 @@ const wavDecoder = require("wav-decoder");
 const fs = require('fs');
 
 module.exports = {
-
     data: new SlashCommandBuilder()
         .setName('quiz')
         .setDescription('Audio Quiz')
         .addChannelOption(option =>
             option.setName('channel')
                 .setDescription('Target text channel')
+                .addChannelTypes(ChannelType.GuildText)
                 .setRequired(true))
         .addStringOption(option =>
             option.setName('answer')
@@ -29,23 +31,59 @@ module.exports = {
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
 
     execute: async function (interaction) {
-        await interaction.deferReply({ephemeral: true})
+        await interaction.deferReply({flags: MessageFlags.Ephemeral})
         let db = new sqlite3.Database('./quiz.db', (err) => {if (err) {console.log(err.message);}});
         db.serialize(() => {db.prepare(`CREATE TABLE IF NOT EXISTS quiz (quiz_id text, answer text)`).run().finalize();});
-        db.serialize(() => {db.prepare(`CREATE TABLE IF NOT EXISTS scoreboard (userid text UNIQUE, score text, hint text, solved text)`).run().finalize();});
+        db.serialize(() => {db.prepare(`CREATE TABLE IF NOT EXISTS scoreboard (userid text UNIQUE, score text, hint text, solved text)`).run().finalize();})
 
-        const navigators = new ActionRowBuilder()
-            .addComponents(new ButtonBuilder().setCustomId('quiz.guess').setLabel('Guess').setStyle('Success').setEmoji('🙋'))
-            .addComponents(new ButtonBuilder().setCustomId('quiz.hint').setLabel('Hint').setStyle('Primary').setEmoji('❔'))
-
-        const Embed = new EmbedBuilder();
-        Embed.setColor('#FCBA03');
-        Embed.setTitle("Quiz Time!");
-        Embed.setURL(`https://${interaction.id}.id`)
-        Embed.setThumbnail("https://martinrefseth.com/gameboy/assets/discord/DMG_512x512_Green_Quiz.png")
-        Embed.setDescription('Guess what GB, GBC or GBA game the sound clip belongs to and score points!')
-        Embed.setFooter({text: `Expires`})
-        Embed.setTimestamp(Date.now() + 4.32e+7)
+        const container = {
+                "type": 17,
+                "accent_color": 16562691,
+                "components": [
+                    {
+                        "type": 9,
+                        "accessory": {
+                            "type": 11,
+                            "media": {
+                                "url": "https://martinrefseth.com/gameboy/assets/discord/DMG_512x512_Green_Quiz.png"
+                            },
+                            "description": interaction.id
+                        },
+                        "components": [
+                            {
+                                "type": 10,
+                                "content": `# Quiz Time\n-# Expires • <t:${Math.floor(Date.now() / 1000 + 43200)}:R>\n**Guess which GB, GBC or GBA game the sound clip belongs to and score points!**`
+                            }
+                        ]
+                    },
+                    {
+                        "type": 1,
+                        "components": [
+                            {
+                                "type": 2,
+                                "style": 3,
+                                "label": "Guess",
+                                "emoji": { "name": "🙋" },
+                                "custom_id": "quiz.guess"
+                            },
+                            {
+                                "type": 2,
+                                "style": 1,
+                                "label": "Hint",
+                                "emoji": { "name": "❔" },
+                                "custom_id": "quiz.hint"
+                            },
+                            {
+                                "type": 2,
+                                "style": 2,
+                                "label": "Leaderboard",
+                                "emoji": { "name": "🥇" },
+                                "custom_id": "quiz.leaderboard"
+                            }
+                        ]
+                    }
+                ]
+        }
 
         let Channel = interaction.options.getChannel('channel')
         db.run(`INSERT INTO "quiz"(quiz_id, answer) VALUES($quiz_id, $answer)`, [interaction.id, interaction.options.getString('answer')], function (err) {
@@ -87,7 +125,6 @@ module.exports = {
                             headers: {'Content-Type': 'application/json', 'Authorization': `Bot ${token}`},
                             data: re1.data
                         }).then(async function (re2) {
-                            await console.log(waveform)
                             await Channel.send({
                                 flags: 8192,
                                 attachments: [
@@ -99,9 +136,10 @@ module.exports = {
                                         waveform: waveform
                                     }
                                 ],
+                                components: []
                             }).then(async function(){
-                                await Channel.send({embeds: [Embed], components: [navigators]})
-                                interaction.editReply({ content: `Posted quiz question in ${Channel}`, ephemeral: true})
+                                await Channel.send({flags: MessageFlags.IsComponentsV2, components: [container]})
+                                interaction.editReply({ content: `Posted quiz question in ${Channel}`, flags: MessageFlags.Ephemeral})
                             })
                         })
                     })
@@ -121,13 +159,36 @@ module.exports = {
         })
         db.close()
 
-        const Embed = new EmbedBuilder();
-        if(Date.now() < Date.parse(interaction.message.embeds[0].timestamp)) {
-            if(JSON.parse(await getSolved(interaction.user.id)).includes(interaction.message.embeds[0].url.substring(8).slice(0, -3))){
-                const Embed = new EmbedBuilder();
-                Embed.setColor('#ec152e');
-                Embed.setTitle(`You have already solved this audio quiz`);
-                await interaction.reply({ embeds: [Embed], ephemeral: true})
+        let quizId = interaction.message.components[0].components[0].accessory.data.description
+        let timestamp = interaction.message.components[0].components[0].components[0].content
+        let match = timestamp.match(/<t:(\d+):R>/)
+        let solveContainer = {}
+
+        if(Date.now() < new Date(parseInt(match[1], 10)* 1000)) {
+            if(JSON.parse(await getSolved(interaction.user.id)).includes(quizId)){
+                solveContainer = {
+                    "type": 17,
+                    "accent_color": 15471918,
+                    "components": [
+                        {
+                            "type": 9,
+                            "accessory": {
+                                "type": 11,
+                                "media": {
+                                    "url": "https://martinrefseth.com/gameboy/assets/discord/DMG_512x512_Green_Quiz.png"
+                                },
+                            },
+                            "components": [
+                                {
+                                    "type": 10,
+                                    "content": "# You have already solved this quiz\n-# No double dipping!"
+                                }
+                            ]
+                        }
+                    ]
+                }
+                await interaction.deferReply({flags: MessageFlags.Ephemeral})
+                await interaction.editReply({ components: [solveContainer], flags: [MessageFlags.IsComponentsV2, MessageFlags.Ephemeral]})
             } else {
                 const modal = new ModalBuilder()
                     .setCustomId('quiz.solve_quiz')
@@ -147,9 +208,28 @@ module.exports = {
                 await interaction.showModal(modal)
             }
         } else {
-            Embed.setColor('#ec152e');
-            Embed.setTitle(`This Quiz has expired`);
-            await interaction.editReply({ embeds: [Embed], ephemeral: true})
+            solveContainer = {
+                "type": 17,
+                "accent_color": 15471918,
+                "components": [
+                    {
+                        "type": 9,
+                        "accessory": {
+                            "type": 11,
+                            "media": {
+                                "url": "https://martinrefseth.com/gameboy/assets/discord/DMG_512x512_Green_Quiz.png"
+                            },
+                        },
+                        "components": [
+                            {
+                                "type": 10,
+                                "content": "# This Quiz has expired\n-# You would need a time machine to solve this one."
+                            }
+                        ]
+                    }
+                ]
+            }
+            await interaction.editReply({ components: [solveContainer], flags: [MessageFlags.IsComponentsV2, MessageFlags.Ephemeral]})
         }
     },
 
@@ -162,47 +242,137 @@ module.exports = {
         })
         db.close()
 
-        await interaction.deferReply({ephemeral: true})
+        let hintContainer = {}
+
+        await interaction.deferReply({flags: MessageFlags.Ephemeral})
         let [userScore, usedHint] = await getUserScore(interaction.user.id)
-        const Embed = new EmbedBuilder();
         if(usedHint === "1") {
-            Embed.setColor('#ec152e');
-            Embed.setTitle(`You have already used a hint`);
-            await interaction.editReply({ embeds: [Embed], components: [], ephemeral: true})
+            hintContainer = {
+                "type": 17,
+                "accent_color": 15471918,
+                "components": [
+                    {
+                        "type": 9,
+                        "accessory": {
+                            "type": 11,
+                            "media": {
+                                "url": "https://martinrefseth.com/gameboy/assets/discord/DMG_512x512_Green_Quiz.png"
+                            },
+                        },
+                        "components": [
+                            {
+                                "type": 10,
+                                "content": "# You have already used a hint\n-# Hints are limited to 1 per quiz"
+                            }
+                        ]
+                    }
+                ]
+            }
         } else {
-            if(Date.now() < Date.parse(interaction.message.embeds[0].timestamp)) {
+            let quizId = interaction.message.components[0].components[0].accessory.data.description
+            let timestamp = interaction.message.components[0].components[0].components[0].content
+            let match = timestamp.match(/<t:(\d+):R>/)
+            if(Date.now() < new Date(parseInt(match[1], 10)* 1000)) {
                 let solved = JSON.parse(await getSolved(interaction.user.id))
-                if(solved.includes(interaction.message.embeds[0].url.substring(8).slice(0, -3))) {
-                    Embed.setColor('#ec152e');
-                    Embed.setTitle(`You have already solved this audio quiz`);
-                    await interaction.editReply({ embeds: [Embed], ephemeral: true})
+                if(solved.includes(quizId)) {
+                    hintContainer = {
+                        "type": 17,
+                        "accent_color": 15471918,
+                        "components": [
+                            {
+                                "type": 9,
+                                "accessory": {
+                                    "type": 11,
+                                    "media": {
+                                        "url": "https://martinrefseth.com/gameboy/assets/discord/DMG_512x512_Green_Quiz.png"
+                                    },
+                                },
+                                "components": [
+                                    {
+                                        "type": 10,
+                                        "content": "# You have already solved this quiz\n-# No double dipping!"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
                 } else {
-                    const navigators = new ActionRowBuilder()
-                        .addComponents(new ButtonBuilder().setCustomId('quiz.hintyes').setLabel('Yes').setStyle('Success'))
-                        .addComponents(new ButtonBuilder().setCustomId('quiz.hintno').setLabel('No').setStyle('Danger'))
-                    Embed.setColor('#b172ff');
-                    Embed.setTitle("Hint");
-                    Embed.setURL(`https://${interaction.message.embeds[0].url.substring(8).slice(0, -3)}.id`)
-                    Embed.setDescription('Are you sure you want a hint? this will reduce your score by half')
-                    await interaction.editReply({ embeds: [Embed], components: [navigators], ephemeral: true})
+                    hintContainer = {
+                        "type": 17,
+                        "accent_color": 11629311,
+                        "components": [
+                            {
+                                "type": 9,
+                                "accessory": {
+                                    "type": 11,
+                                    "media": {
+                                        "url": "https://martinrefseth.com/gameboy/assets/discord/DMG_512x512_Green_Quiz.png"
+                                    },
+                                    "description": `${quizId}`,
+                                },
+                                "components": [
+                                    {
+                                        "type": 10,
+                                        "content": "## Hint\n**Are you sure you want to use a hint?**\n-# Using a hint will cut your score in half"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": 1,
+                                "components": [
+                                    {
+                                        "type": 2,
+                                        "style": 3,
+                                        "label": "Yes",
+                                        "custom_id": "quiz.hintyes"
+                                    },
+                                    {
+                                        "type": 2,
+                                        "style": 4,
+                                        "label": "No",
+                                        "custom_id": "quiz.hintno"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
                 }
             } else {
-                Embed.setColor('#ec152e');
-                Embed.setTitle(`This Quiz has expired`);
-                await interaction.editReply({ embeds: [Embed], ephemeral: true})
+                hintContainer = {
+                    "type": 17,
+                    "accent_color": 15471918,
+                    "components": [
+                        {
+                            "type": 9,
+                            "accessory": {
+                                "type": 11,
+                                "media": {
+                                    "url": "https://martinrefseth.com/gameboy/assets/discord/DMG_512x512_Green_Quiz.png"
+                                },
+                            },
+                            "components": [
+                                {
+                                    "type": 10,
+                                    "content": "# This Quiz has expired\n-# You would need a time machine to solve this one."
+                                }
+                            ]
+                        }
+                    ]
+                }
             }
         }
+        await interaction.editReply({components: [hintContainer], flags: [MessageFlags.IsComponentsV2, MessageFlags.Ephemeral]})
 
     },
 
     solve_quiz: async function (interaction) {
-        let answer = await getAnswer(interaction.message.embeds[0].url.substring(8).slice(0, -3))
+        let quizId = interaction.message.components[0].components[0].accessory.data.description
+        let answer = await getAnswer(quizId)
         let [userScore, usedHint] = await getUserScore(interaction.user.id)
         let solved = JSON.parse(await getSolved(interaction.user.id))
 
-        await interaction.deferReply({ephemeral: true})
-        const Embed = new EmbedBuilder();
-        Embed.setColor('#15abec');
+        await interaction.deferReply({flags: MessageFlags.Ephemeral})
+        let scoreContainer = {}
 
         if (stringSimilarity(interaction.fields.getTextInputValue('solution').toLowerCase(), answer.toLowerCase()) >= 0.65) {
             let newScore = 10
@@ -210,28 +380,58 @@ module.exports = {
                 newScore = 5
             }
 
-            Embed.setTitle("Congratulations! you guessed correctly");
-            Embed.setURL(`https://${interaction.message.embeds[0].url.substring(8).slice(0, -3)}.id`)
-            Embed.setDescription(`You scored ${newScore} point(s)`)
-            Embed.addFields({
-                name: 'New points total',
-                value: `${newScore+parseInt(userScore)}`
-            })
+            scoreContainer = {
+                "type": 17,
+                "accent_color": 1420268,
+                "components": [
+                    {
+                        "type": 9,
+                        "accessory": {
+                            "type": 11,
+                            "media": {
+                                "url": "https://martinrefseth.com/gameboy/assets/discord/DMG_512x512_Green_Quiz.png"
+                            },
+                        },
+                        "components": [
+                            {
+                                "type": 10,
+                                "content": `# Congratulations!\nYou guessed correctly and scored **${newScore}** points`
+                            },
+                            {
+                                "type": 10,
+                                "content": `## New Points Total: **${newScore+parseInt(userScore)}**`
+                            }
+                        ]
+                    },
+                ]
+            }
 
 
-            solved.push(`${interaction.message.embeds[0].url.substring(8).slice(0, -3)}`)
+            solved.push(`${quizId}`)
             let db = new sqlite3.Database('./quiz.db', (err) => {if (err) {console.log(err.message);}});
             db.run(`UPDATE "scoreboard" SET score="${newScore + parseInt(userScore)}", hint="0", solved='${JSON.stringify(solved)}' WHERE userid=${interaction.user.id}`, function (err) {
                 if (err) {
                     return console.log(`Join ${err.message}`)
                 }
             })
-        } else {
-            Embed.setTitle("Sorry! you guessed incorrectly");
-            Embed.setDescription(`You have not scored any points, please try again!`)
+        } else
+            scoreContainer = {
+                "type": 17,
+                "accent_color": 15471918,
+                "spoiler": false,
+                "components": [
+                    {
+                        "type": 10,
+                        "content": "# Sorry!"
+                    },
+                    {
+                        "type": 10,
+                        "content": "You guessed incorrectly and did not score any points"
+                    }
+                ]
         }
 
-        await interaction.editReply({embeds: [Embed], components: [], ephemeral: true})
+        await interaction.editReply({components: [scoreContainer], flags: [MessageFlags.IsComponentsV2, MessageFlags.Ephemeral]})
 
     },
 
@@ -240,7 +440,8 @@ module.exports = {
     },
 
     hintyes: async function (interaction) {
-        let answer = await getAnswer(interaction.message.embeds[0].url.substring(8).slice(0, -3))
+        let quizId = interaction.message.components[0].components[0].accessory.data.description
+        let answer = await getAnswer(quizId)
         let db = new sqlite3.Database('./quiz.db', (err) => {if (err) {console.log(err.message);}});
         db.run(`UPDATE "scoreboard" SET hint="1" WHERE userid=${interaction.user.id}`, function (err) {
             if (err) {
@@ -268,34 +469,113 @@ module.exports = {
             }
         }
 
-        const Embed = new EmbedBuilder();
-        Embed.setColor('#7515ec');
-        Embed.setTitle(`Revealed ${Math.floor((30 / 100) * answer.length)} letter(s)`);
-        Embed.setURL(`https://${interaction.message.embeds[0].url.substring(8).slice(0, -3)}.id`)
-        Embed.setDescription('Your score was reduced by half')
-        Embed.addFields({
-            name: 'Hint',
-            value: `${hint}`
-        })
+        const hintYesContainer = {
+            "type": 17,
+            "accent_color": 7673324,
+            "components": [
+                {
+                    "type": 9,
+                    "accessory": {
+                        "type": 11,
+                        "media": {
+                            "url": "https://martinrefseth.com/gameboy/assets/discord/DMG_512x512_Green_Quiz.png"
+                        },
+                    },
+                    "components": [
+                        {
+                            "type": 10,
+                            "content": `# Revealed ${Math.floor((30 / 100) * answer.length)} letter(s)\n-# Your awarded score for solving the quiz will be cut in half`
+                        },
+                        {
+                            "type": 10,
+                            "content": `## Hint: ${hint}`
+                        }
+                    ]
+                }
+            ]
+        }
         await interaction.deferUpdate()
-        await interaction.editReply({ embeds: [Embed], components: [], ephemeral: true})
+        await interaction.editReply({components: [hintYesContainer], flags: [MessageFlags.IsComponentsV2, MessageFlags.Ephemeral]})
     },
 
     hintno: async function (interaction) {
-        const Embed = new EmbedBuilder();
-        Embed.setColor('#7515ec');
-        Embed.setTitle("No hint provided");
-        Embed.setURL(`https://${interaction.message.embeds[0].url.substring(8).slice(0, -3)}.id`)
-        Embed.setDescription('Your points were not reduced')
+        const noHintContainer = {
+            "type": 17,
+            "accent_color": 7673324,
+            "components": [
+                {
+                    "type": 9,
+                    "accessory": {
+                        "type": 11,
+                        "media": {
+                            "url": "https://martinrefseth.com/gameboy/assets/discord/DMG_512x512_Green_Quiz.png"
+                        },
+                    },
+                    "components": [
+                        {
+                            "type": 10,
+                            "content": "# No hint provided\nYour points have not been reduced"
+                        }
+                    ]
+                },
+            ]
+        }
         await interaction.deferUpdate()
-        await interaction.editReply({ embeds: [Embed], components: [], ephemeral: true})
+        await interaction.editReply({components: [noHintContainer], flags: [MessageFlags.IsComponentsV2, MessageFlags.Ephemeral]})
+    },
+
+    leaderboard: async function(interaction) {
+        let db = new sqlite3.Database('./quiz.db', sqlite3.OPEN_READONLY ,(err) => {if (err) {console.log(err.message);}});
+        return new Promise(async(resolve, reject) => {
+            db.serialize(async() => {
+                db.all(`SELECT * FROM "scoreboard" order by cast(score AS  INTEGER) DESC limit 10`, async (err, val) => {
+                    let topTen = ''
+                    for(const [key, value] of Object.entries(val)) {
+                        if(interaction.guild.members.cache.get(value.userid)) {
+                            if(value.score !== null) {
+                                topTen += `**${interaction.guild.members.cache.get(value.userid).user.globalName}**\nScore: **${value.score}**\n`
+                            }
+                        }
+                        if(parseInt(key)+1 === Object.entries(val).length) {
+                            const leaderboardContainer = {
+                                "type": 17,
+                                "accent_color": 1436851,
+                                "components": [
+                                    {
+                                        "type": 9,
+                                        "accessory": {
+                                            "type": 11,
+                                            "media": {
+                                                "url": "https://martinrefseth.com/gameboy/assets/discord/DMG_512x512_Green_Quiz.png"
+                                            },
+                                        },
+                                        "components": [
+                                            {
+                                                "type": 10,
+                                                "content": "# Audio Quiz Leaderboard\n-# Top 10 Scores"
+                                            },
+                                            {
+                                                "type": 10,
+                                                "content": `${topTen}`
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                            await interaction.deferReply({flags: MessageFlags.Ephemeral})
+                            await interaction.editReply({components: [leaderboardContainer], flags: [MessageFlags.IsComponentsV2, MessageFlags.Ephemeral]})
+                        }
+                    }
+                })
+            })
+        })
     }
 }
 
 async function getAnswer(quiz_id) {
     let db = new sqlite3.Database('./quiz.db', sqlite3.OPEN_READONLY ,(err) => {if (err) {console.log(err.message);}});
     return new Promise((resolve, reject) => {
-         db.serialize(() => {
+        db.serialize(() => {
             db.all(`SELECT * FROM "quiz"`, async (err, val) => {
                 if(val.length === 0) {resolve(["0","0"])}
                 for (const [key, value] of Object.entries(val)) {
@@ -311,7 +591,7 @@ async function getAnswer(quiz_id) {
 async function getUserScore(user_id) {
     let db = new sqlite3.Database('./quiz.db', sqlite3.OPEN_READONLY ,(err) => {if (err) {console.log(err.message);}});
     return new Promise((resolve, reject) => {
-         db.serialize(() => {
+        db.serialize(() => {
             db.all(`SELECT * FROM "scoreboard"`, (err, val) => {
                 if(val.length === 0) {resolve(["0","0"])}
                 for(const [key, value] of Object.entries(val)) {
