@@ -12,7 +12,7 @@
   "dependencies": {
     "@discordjs/rest": "^1.5.0",
     "2fa-util": "^1.2.0",
-    "axios": "1.8.2",
+    "axios": "1.13.5",
     "bad-words": "^3.0.4",
     "discord-api-types": "^0.38.1",
     "discord.js": "^14.19.1",
