@@ -27,7 +27,7 @@ module.exports = {
     open_modal: async function (interaction) {
 
         const modal = new ModalBuilder()
-            .setCustomId('submit_modal')
+            .setCustomId('verified.submit_modal')
             .setTitle('Verified Modder Application Form')
 
         const paragraph = new TextInputBuilder()
